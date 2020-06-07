@@ -1,0 +1,23 @@
+#+TITLE: Readme
+
+* Current 'functionality'
+
+The current, tiny ammount of functionality can be tested as follows.
+1. Run the server in the terminal
+   #+BEGIN_SRC sh
+cargo run
+   #+END_SRC
+2. In a separate terminal run command
+   #+BEGIN_SRC sh
+echo "{\"peers\": [\"user-id-2\", \"user-id-3\", \"user-id-4\"]}" | curl --data-binary @- -X PUT -H "Content-Type:application/json" http://localhost:8000/user/user-id-1/known_peers
+   #+END_SRC
+
+You should see some logs in the first terminal and a '{status: ok}' reply in the second terminal.
+
+* API proposal - a draft of a draft
+All interactions with the server will be done by links formatted like this:
+"/user/<user_id>/<request>". The user id will be a cryptographic hash of the
+user's phone number. This should make the peer discovery easy for users
+(creating account is not required) while simultaneously no personal data would
+actually be transmitted to our server. Later this may be combined with some form
+of client application signing to prevent unauthorized usage of the API.
