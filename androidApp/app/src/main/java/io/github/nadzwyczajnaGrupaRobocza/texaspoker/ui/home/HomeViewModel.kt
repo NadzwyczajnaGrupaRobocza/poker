@@ -1,4 +1,4 @@
-package io.github.NadzwyczajnaGrupaRobocza.texaspoker.ui.home
+package io.github.nadzwyczajnaGrupaRobocza.texaspoker.ui.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

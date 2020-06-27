@@ -1,4 +1,4 @@
-package io.github.NadzwyczajnaGrupaRobocza.texaspoker
+package io.github.nadzwyczajnaGrupaRobocza.texaspoker
 
 import org.junit.Test
 
