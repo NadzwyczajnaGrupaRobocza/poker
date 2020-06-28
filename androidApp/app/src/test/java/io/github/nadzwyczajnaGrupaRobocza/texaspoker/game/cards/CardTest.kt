@@ -7,24 +7,27 @@ import org.hamcrest.core.IsNot.not
 import org.junit.Test
 
 class CardTest {
+    val twoClubs = Card(Suit.Clubs, Rank.Two)
+    val twoDiamonds = Card(Suit.Diamonds, Rank.Two)
+    val threeClubs = Card(Suit.Clubs, Rank.Three)
 
     @Test
     fun `Create Card`() {
-        val card = Card(Suit.Clubs)
+        val card = Card(Suit.Clubs, Rank.King)
     }
 
     @Test
     fun `Cards should be equal with same suite`() {
-        assertThat(Card(Suit.Clubs), equalTo(Card(Suit.Clubs)))
+        assertThat(twoClubs, equalTo(twoClubs))
     }
 
     @Test
     fun `Cards should differ with suite`() {
-        assertThat(Card(Suit.Diamonds), not(Card(Suit.Clubs)))
+        assertThat(twoClubs, not(twoDiamonds))
     }
 
     @Test
-    fun ``() {
-
+    fun `Cards should differ with rank`() {
+        assertThat(twoClubs, not(threeClubs))
     }
 }
