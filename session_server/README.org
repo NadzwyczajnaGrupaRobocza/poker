@@ -11,6 +11,10 @@ cargo run
    #+BEGIN_SRC sh
 echo "{\"peers\": [\"user-id-2\", \"user-id-3\", \"user-id-4\"]}" | curl --data-binary @- -X PUT -H "Content-Type:application/json" http://localhost:8000/user/user-id-1/known_peers
    #+END_SRC
+   or
+   #+BEGIN_SRC sh
+   curl -d "{\"peers\": [\"user-id-2\", \"user-id-3\", \"user-id-4\"]}" -v -X PUT -H "Content-Type:application/json" http://localhost:8000/user/user-id-1/known_peers
+   #+END_SRC
 
 You should see some logs in the first terminal and a '{status: ok}' reply in the second terminal.
 
