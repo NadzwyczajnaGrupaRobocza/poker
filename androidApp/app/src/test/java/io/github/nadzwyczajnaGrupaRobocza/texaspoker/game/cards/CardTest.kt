@@ -17,7 +17,7 @@ class CardTest {
     }
 
     @Test
-    fun `Cards should be equal with same suite`() {
+    fun `Cards should be equal`() {
         assertThat(twoClubs, equalTo(twoClubs))
     }
 

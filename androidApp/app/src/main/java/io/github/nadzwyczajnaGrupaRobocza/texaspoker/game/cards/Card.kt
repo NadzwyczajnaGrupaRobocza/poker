@@ -1,6 +1,6 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards
 
-class Card(val suit: Suit , val rank : Rank) {
+class Card(private val suit: Suit, private val rank : Rank) {
 
     override fun toString(): String {
         return "Card: ${toUnicode(suit)}"
