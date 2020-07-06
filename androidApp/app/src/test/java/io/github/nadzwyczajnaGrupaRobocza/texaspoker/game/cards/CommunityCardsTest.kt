@@ -4,7 +4,11 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.Test
 
-class CommunityCardsTest {
+open class CommunityCardsTest {
+    val flop1 = Card(Suit.Clubs, Rank.Ten)
+    val flop2 = Card(Suit.Spades, Rank.Ten)
+    val flop3 = Card(Suit.Clubs, Rank.King)
+
     @Test
     fun `Community cards should being with no cards`() {
         val noCards = 0
@@ -14,22 +18,19 @@ class CommunityCardsTest {
     @Test
     fun `After flop community cards shuold have size of flop`() {
         val cardsAfterFlop = 3
-        val flop1 = Card(Suit.Clubs, Rank.Ten)
-        val flop2 = Card(Suit.Spades, Rank.Ten)
-        val flop3 = Card(Suit.Clubs, Rank.King)
 
         assertThat(NoCommunityCards().flop(flop1, flop2, flop3).size, equalTo(cardsAfterFlop))
     }
+}
+
+class FlopCommunityCardsTest : CommunityCardsTest() {
+    val flop = NoCommunityCards().flop(flop1, flop2, flop3)
 
     @Test
     fun `After turn community cards should have size four`() {
         val cardsAfterTurn = 4
-        val flop1 = Card(Suit.Clubs, Rank.Ten)
-        val flop2 = Card(Suit.Spades, Rank.Ten)
-        val flop3 = Card(Suit.Clubs, Rank.King)
         val turn = Card(Suit.Clubs, Rank.King)
 
-        assertThat(NoCommunityCards().flop(flop1, flop2, flop3).turn(turn).size, equalTo(cardsAfterTurn))
+        assertThat(flop.turn(turn).size, equalTo(cardsAfterTurn))
     }
-
 }
