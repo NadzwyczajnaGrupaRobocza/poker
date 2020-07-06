@@ -14,7 +14,14 @@ class CommunityCardsTest
     }
 
     @Test
-    fun `Flop should be added to community cards`()
-    {}
+    fun `After flop community cards shuold have size of flop`()
+    {
+        val cardsAfterFlop = 3
+        val flop1 = Card(Suit.Clubs, Rank.Ten)
+        val flop2 = Card(Suit.Spades, Rank.Ten)
+        val flop3 = Card(Suit.Clubs, Rank.King)
+
+        assertThat(CommunityCards().flop(flop1, flop2, flop3).size, equalTo(cardsAfterFlop))
+    }
 
 }
