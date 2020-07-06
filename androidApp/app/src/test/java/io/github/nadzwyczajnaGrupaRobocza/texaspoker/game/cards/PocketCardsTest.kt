@@ -10,7 +10,7 @@ class PocketCardsTest
     @Test
     fun `Hand should have five cards`()
     {
-        val hand = PocketCards(anyCard1, anyCard2)
+        PocketCards(anyCard1, anyCard2)
     }
 
 }
