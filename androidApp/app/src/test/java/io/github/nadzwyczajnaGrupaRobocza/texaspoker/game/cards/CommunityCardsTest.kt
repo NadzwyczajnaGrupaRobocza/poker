@@ -68,6 +68,7 @@ class TurnCommunityCardsTest {
 class RiverCommunityCardsTest {
 
     @Test
-    fun `some test`() {
+    fun `River should return all cards`() {
+        assertThat(river.cards, equalTo(setOf(flop1, flop2, flop3, turnCard, riverCard)))
     }
 }
