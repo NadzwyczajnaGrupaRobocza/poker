@@ -23,14 +23,26 @@ open class CommunityCardsTest {
     }
 }
 
-class FlopCommunityCardsTest : CommunityCardsTest() {
+open class FlopCommunityCardsTest : CommunityCardsTest() {
     val flop = NoCommunityCards().flop(flop1, flop2, flop3)
+    val turnCard = Card(Suit.Clubs, Rank.King)
 
     @Test
     fun `After turn community cards should have size four`() {
         val cardsAfterTurn = 4
-        val turn = Card(Suit.Clubs, Rank.King)
 
-        assertThat(flop.turn(turn).size, equalTo(cardsAfterTurn))
+        assertThat(flop.turn(turnCard).size, equalTo(cardsAfterTurn))
+    }
+}
+
+class TurnCommunityCardsTest : FlopCommunityCardsTest() {
+    val turn = flop.turn(turnCard)
+
+    @Test
+    fun `After river community cards should have size five`() {
+        val cardsAfterTurn = 5
+        val river = Card(Suit.Diamonds, Rank.Two)
+
+        assertThat(turn.river(river).size, equalTo(cardsAfterTurn))
     }
 }

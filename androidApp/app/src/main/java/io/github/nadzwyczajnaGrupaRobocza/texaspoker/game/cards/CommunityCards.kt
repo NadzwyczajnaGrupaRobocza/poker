@@ -19,5 +19,11 @@ class FlopCommunityCards(communityCards: NoCommunityCards, flop1: Card, flop2: C
 }
 
 class TurnCommunityCards(flop: FlopCommunityCards, turn: Card) : CommunityCards {
+    fun river(river: Card) = RiverCommunityCards(this, river)
+
     override val size = 4
+}
+
+class RiverCommunityCards(turn: TurnCommunityCards, river: Card) : CommunityCards {
+    override val size = 5
 }
