@@ -2,14 +2,14 @@ package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards
 
 interface CommunityCards {
     val size: Int
-    val cards: List<Card>
+    val cards: Set<Card>
 }
 
 class NoCommunityCards : CommunityCards {
     override val size
         get() = cards.size
     override val cards
-        get() = emptyList<Card>()
+        get() = emptySet<Card>()
 
     fun flop(flop1: Card, flop2: Card, flop3: Card) =
         FlopCommunityCards(this, flop1, flop2, flop3)
@@ -18,8 +18,7 @@ class NoCommunityCards : CommunityCards {
 class FlopCommunityCards(communityCards: NoCommunityCards, flop1: Card, flop2: Card, flop3: Card) :
     CommunityCards {
     override val size = 3
-    override val cards
-        get() = emptyList<Card>()
+    override val cards = setOf(flop1, flop2, flop3)
 
     fun turn(turn: Card) = TurnCommunityCards(this, turn)
 }
@@ -27,7 +26,7 @@ class FlopCommunityCards(communityCards: NoCommunityCards, flop1: Card, flop2: C
 class TurnCommunityCards(flop: FlopCommunityCards, turn: Card) : CommunityCards {
     override val size = 4
     override val cards
-        get() = emptyList<Card>()
+        get() = emptySet<Card>()
 
     fun river(river: Card) = RiverCommunityCards(this, river)
 }
@@ -35,5 +34,5 @@ class TurnCommunityCards(flop: FlopCommunityCards, turn: Card) : CommunityCards 
 class RiverCommunityCards(turn: TurnCommunityCards, river: Card) : CommunityCards {
     override val size = 5
     override val cards
-        get() = emptyList<Card>()
+        get() = emptySet<Card>()
 }

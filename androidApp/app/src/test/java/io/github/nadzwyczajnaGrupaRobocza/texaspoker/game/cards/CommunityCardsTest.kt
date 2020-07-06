@@ -1,10 +1,7 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards
 
+import com.natpryce.hamkrest.*
 import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.hasSize
-import com.natpryce.hamkrest.isEmpty
-import com.natpryce.hamkrest.lessThan
 import org.junit.Test
 
 private val flop1 = Card(Suit.Clubs, Rank.Ten)
@@ -45,6 +42,11 @@ open class FlopCommunityCardsTest : CommunityCardsTest() {
         val cardsAfterTurn = 4
 
         assertThat(flop.turn(turnCard).size, equalTo(cardsAfterTurn))
+    }
+
+    @Test
+    fun `Flop should return flop cards`() {
+        assertThat(flop.cards, equalTo(setOf(flop1, flop2, flop3)))
     }
 }
 
