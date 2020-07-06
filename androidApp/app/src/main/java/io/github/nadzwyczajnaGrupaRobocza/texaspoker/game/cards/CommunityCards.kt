@@ -5,14 +5,19 @@ interface CommunityCards {
 }
 
 class NoCommunityCards : CommunityCards {
-    fun flop(flop1: Card, flop2: Card, flop3: Card): FlopCommunityCards {
-        return FlopCommunityCards(this, flop1, flop2, flop3)
-    }
-
     override val size = 0
+
+    fun flop(flop1: Card, flop2: Card, flop3: Card) =
+        FlopCommunityCards(this, flop1, flop2, flop3)
 }
 
 class FlopCommunityCards(communityCards: NoCommunityCards, flop1: Card, flop2: Card, flop3: Card) :
     CommunityCards {
     override val size = 3
+
+    fun turn(turn: Card) = TurnCommunityCards(this, turn)
+}
+
+class TurnCommunityCards(flop: FlopCommunityCards, turn: Card) : CommunityCards {
+    override val size = 4
 }

@@ -21,4 +21,15 @@ class CommunityCardsTest {
         assertThat(NoCommunityCards().flop(flop1, flop2, flop3).size, equalTo(cardsAfterFlop))
     }
 
+    @Test
+    fun `After turn community cards should have size four`() {
+        val cardsAfterTurn = 4
+        val flop1 = Card(Suit.Clubs, Rank.Ten)
+        val flop2 = Card(Suit.Spades, Rank.Ten)
+        val flop3 = Card(Suit.Clubs, Rank.King)
+        val turn = Card(Suit.Clubs, Rank.King)
+
+        assertThat(NoCommunityCards().flop(flop1, flop2, flop3).turn(turn).size, equalTo(cardsAfterTurn))
+    }
+
 }
