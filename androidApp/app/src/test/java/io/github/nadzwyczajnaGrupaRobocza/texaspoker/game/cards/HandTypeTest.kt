@@ -7,7 +7,7 @@ import org.junit.Test
 class HandTypeTest {
     @Test
     fun `Hand types should be in order`() {
-        assertThat(HandType.Highcard, lessThan(HandType.Pair))
+        assertThat(HandType.HighCard, lessThan(HandType.Pair))
         assertThat(HandType.Pair, lessThan(HandType.TwoPairs))
         assertThat(HandType.TwoPairs, lessThan(HandType.Three))
         assertThat(HandType.Three, lessThan(HandType.Straight))

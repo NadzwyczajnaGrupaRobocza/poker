@@ -5,9 +5,9 @@ import org.junit.Test
 class HandTest
 {
     @Test
-    fun `aias`()
+    fun `Hand should have two cards`()
     {
-
+        val hand = Hand(Card(Suit.Hearts, Rank.Seven), Card(Suit.Clubs, Rank.Queen))
     }
 
 }

@@ -1,7 +1,7 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards
 
 enum class HandType {
-    Highcard,
+    HighCard,
     Pair,
     TwoPairs,
     Three,
@@ -11,6 +11,4 @@ enum class HandType {
     Four,
     StraightFlush,
     RoyalFlush
-
-
 }
