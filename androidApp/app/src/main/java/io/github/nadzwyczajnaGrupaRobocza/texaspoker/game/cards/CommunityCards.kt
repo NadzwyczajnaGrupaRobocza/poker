@@ -6,7 +6,8 @@ interface CommunityCards {
 }
 
 class NoCommunityCards : CommunityCards {
-    override val size = 0
+    override val size
+        get() = cards.size
     override val cards
         get() = emptyList<Card>()
 
