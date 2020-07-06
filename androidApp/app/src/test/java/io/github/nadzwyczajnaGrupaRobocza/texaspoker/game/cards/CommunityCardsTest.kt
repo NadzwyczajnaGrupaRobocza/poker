@@ -2,31 +2,44 @@ package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.hasSize
+import com.natpryce.hamkrest.isEmpty
+import com.natpryce.hamkrest.lessThan
 import org.junit.Test
 
+private val flop1 = Card(Suit.Clubs, Rank.Ten)
+private val flop2 = Card(Suit.Spades, Rank.Ten)
+private val flop3 = Card(Suit.Clubs, Rank.King)
+private val turnCard = Card(Suit.Clubs, Rank.King)
+private val riverCard = Card(Suit.Diamonds, Rank.Two)
+
+private val communityCards = NoCommunityCards()
+private val flop = communityCards.flop(flop1, flop2, flop3)
+private val turn = flop.turn(turnCard)
+private val river = turn.river(riverCard)
+
 open class CommunityCardsTest {
-    val flop1 = Card(Suit.Clubs, Rank.Ten)
-    val flop2 = Card(Suit.Spades, Rank.Ten)
-    val flop3 = Card(Suit.Clubs, Rank.King)
 
     @Test
     fun `Community cards should being with no cards`() {
         val noCards = 0
-        assertThat(NoCommunityCards().size, equalTo(noCards))
+        assertThat(communityCards.size, equalTo(noCards))
     }
 
     @Test
     fun `After flop community cards shuold have size of flop`() {
         val cardsAfterFlop = 3
 
-        assertThat(NoCommunityCards().flop(flop1, flop2, flop3).size, equalTo(cardsAfterFlop))
+        assertThat(communityCards.flop(flop1, flop2, flop3).size, equalTo(cardsAfterFlop))
+    }
+
+    @Test
+    fun `no cards should return empty cards`() {
+        assertThat(communityCards.cards, isEmpty)
     }
 }
 
 open class FlopCommunityCardsTest : CommunityCardsTest() {
-    val flop = NoCommunityCards().flop(flop1, flop2, flop3)
-    val turnCard = Card(Suit.Clubs, Rank.King)
-
     @Test
     fun `After turn community cards should have size four`() {
         val cardsAfterTurn = 4
@@ -36,8 +49,6 @@ open class FlopCommunityCardsTest : CommunityCardsTest() {
 }
 
 open class TurnCommunityCardsTest : FlopCommunityCardsTest() {
-    val turn = flop.turn(turnCard)
-    val riverCard = Card(Suit.Diamonds, Rank.Two)
 
     @Test
     fun `After river community cards should have size five`() {
@@ -48,7 +59,6 @@ open class TurnCommunityCardsTest : FlopCommunityCardsTest() {
 }
 
 open class RiverCommunityCardsTest : TurnCommunityCardsTest() {
-    val river = turn.river(riverCard)
 
     @Test
     fun `some test`() {
