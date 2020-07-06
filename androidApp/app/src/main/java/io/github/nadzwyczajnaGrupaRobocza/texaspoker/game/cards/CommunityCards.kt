@@ -25,8 +25,7 @@ class FlopCommunityCards(communityCards: NoCommunityCards, flop1: Card, flop2: C
 
 class TurnCommunityCards(flop: FlopCommunityCards, turn: Card) : CommunityCards {
     override val size = 4
-    override val cards
-        get() = emptySet<Card>()
+    override val cards = flop.cards + turn
 
     fun river(river: Card) = RiverCommunityCards(this, river)
 }

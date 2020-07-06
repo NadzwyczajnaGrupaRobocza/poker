@@ -15,7 +15,7 @@ private val flop = communityCards.flop(flop1, flop2, flop3)
 private val turn = flop.turn(turnCard)
 private val river = turn.river(riverCard)
 
-open class CommunityCardsTest {
+class CommunityCardsTest {
 
     @Test
     fun `Community cards should being with no cards`() {
@@ -36,7 +36,7 @@ open class CommunityCardsTest {
     }
 }
 
-open class FlopCommunityCardsTest : CommunityCardsTest() {
+class FlopCommunityCardsTest {
     @Test
     fun `After turn community cards should have size four`() {
         val cardsAfterTurn = 4
@@ -50,7 +50,7 @@ open class FlopCommunityCardsTest : CommunityCardsTest() {
     }
 }
 
-open class TurnCommunityCardsTest : FlopCommunityCardsTest() {
+class TurnCommunityCardsTest {
 
     @Test
     fun `After river community cards should have size five`() {
@@ -58,9 +58,14 @@ open class TurnCommunityCardsTest : FlopCommunityCardsTest() {
 
         assertThat(turn.river(riverCard).size, equalTo(cardsAfterTurn))
     }
+
+    @Test
+    fun `Turn should return flop and turn cards`() {
+        assertThat(turn.cards, equalTo(setOf(flop1, flop2, flop3, turnCard)))
+    }
 }
 
-open class RiverCommunityCardsTest : TurnCommunityCardsTest() {
+class RiverCommunityCardsTest {
 
     @Test
     fun `some test`() {
