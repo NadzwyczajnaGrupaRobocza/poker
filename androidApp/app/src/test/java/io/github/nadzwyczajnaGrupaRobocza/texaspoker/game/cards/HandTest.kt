@@ -47,6 +47,7 @@ class HandTest {
     private val clubsFour = Card(Suit.Clubs, Rank.Four)
     private val clubsFive = Card(Suit.Clubs, Rank.Five)
     private val spadesFive = Card(Suit.Spades, Rank.Five)
+    private val hearsFive = Card(Suit.Hearts, Rank.Five)
 
     @Test
     fun `Hand should be constructed from PockedCards and RiverCommunityCards`() {
@@ -113,5 +114,20 @@ class HandTest {
         )
 
         assertThat(hand.type, equalTo(HandType.TwoPairs))
+    }
+
+    @Test
+    fun `Given three same cards should return Three`() {
+        val hand = createHand(
+            clubsFive,
+            spadesThree,
+            hearsFive,
+            spadesFive,
+            diamondsTen,
+            spadesQueen,
+            diamondKing
+        )
+
+        assertThat(hand.type, equalTo(HandType.Three))
     }
 }
