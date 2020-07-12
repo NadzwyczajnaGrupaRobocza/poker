@@ -8,10 +8,7 @@ class HandTest {
     private fun createPocketCards(
         pocketCard1: Card,
         pocketCard2: Card
-    ): PocketCards {
-        val pockerCards = PocketCards(pocketCard1, pocketCard2)
-        return pockerCards
-    }
+    ) = PocketCards(pocketCard1, pocketCard2)
 
     private fun createRiver(
         flop1: Card,
@@ -19,8 +16,8 @@ class HandTest {
         flop3: Card,
         turnCard: Card,
         riverCard: Card
-    ): RiverCommunityCards {
-        val river = RiverCommunityCards(
+    ) =
+        RiverCommunityCards(
             TurnCommunityCards(
                 FlopCommunityCards(
                     NoCommunityCards(),
@@ -30,11 +27,9 @@ class HandTest {
                 ), turnCard
             ), riverCard
         )
-        return river
-    }
 
     @Test
-    fun `Hand should be contructred from PockedCards and RiverCommunityCards`() {
+    fun `Hand should be constructed from PockedCards and RiverCommunityCards`() {
         val flop1 = Card(Suit.Diamonds, Rank.King)
         val flop2 = Card(Suit.Spades, Rank.Queen)
         val flop3 = Card(Suit.Diamonds, Rank.Ten)
@@ -44,10 +39,13 @@ class HandTest {
         val pocketCard2 = Card(Suit.Clubs, Rank.Five)
 
         val river = createRiver(flop1, flop2, flop3, turnCard, riverCard)
-        val pockerCards = createPocketCards(pocketCard1, pocketCard2)
-        val hand = Hand(river, pockerCards)
+        val pocketCards = createPocketCards(pocketCard1, pocketCard2)
+        val hand = Hand(river, pocketCards)
 
-        assertThat(hand.cards, equalTo(setOf(flop1, flop2, flop3, riverCard, turnCard, pocketCard1, pocketCard2)))
+        assertThat(
+            hand.cards,
+            equalTo(setOf(flop1, flop2, flop3, riverCard, turnCard, pocketCard1, pocketCard2))
+        )
     }
 
 }
