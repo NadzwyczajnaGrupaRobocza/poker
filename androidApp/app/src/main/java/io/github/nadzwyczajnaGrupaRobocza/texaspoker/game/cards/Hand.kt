@@ -6,7 +6,13 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
     val type: HandType = calculateHandType(cards)
 
     private fun calculateHandType(cards: Set<Card>): HandType {
-        if (cards.size == cards.distinctBy { it.rank }.size + 1) return HandType.Pair
+        val pair = 2
+        val onePair = 1
+        val twoPairs = 2
+        val cardsByRank = cards.groupBy { it.rank }
+        val pairsCount = cardsByRank.count { it.value.size == pair }
+        if (pairsCount == onePair)  return HandType.Pair
+        if (pairsCount == twoPairs) return HandType.TwoPairs
 
         return HandType.HighCard
     }

@@ -43,6 +43,7 @@ class HandTest {
     private val diamondsTen = Card(Suit.Diamonds, Rank.Ten)
     private val hearsNine = Card(Suit.Hearts, Rank.Nine)
     private val spadesThree = Card(Suit.Spades, Rank.Three)
+    private val hearsThree = Card(Suit.Hearts, Rank.Three)
     private val clubsFour = Card(Suit.Clubs, Rank.Four)
     private val clubsFive = Card(Suit.Clubs, Rank.Five)
     private val spadesFive = Card(Suit.Spades, Rank.Five)
@@ -99,4 +100,18 @@ class HandTest {
         assertThat(hand.type, equalTo(HandType.Pair))
     }
 
+    @Test
+    fun `Given two pairs should return two pairs`() {
+        val hand = createHand(
+            clubsFive,
+            spadesThree,
+            hearsThree,
+            spadesFive,
+            diamondsTen,
+            spadesQueen,
+            diamondKing
+        )
+
+        assertThat(hand.type, equalTo(HandType.TwoPairs))
+    }
 }
