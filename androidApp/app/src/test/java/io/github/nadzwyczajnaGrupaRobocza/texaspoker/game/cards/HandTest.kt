@@ -45,6 +45,7 @@ class HandTest {
     private val spadesThree = Card(Suit.Spades, Rank.Three)
     private val clubsFour = Card(Suit.Clubs, Rank.Four)
     private val clubsFive = Card(Suit.Clubs, Rank.Five)
+    private val spadesFive = Card(Suit.Spades, Rank.Five)
 
     @Test
     fun `Hand should be constructed from PockedCards and RiverCommunityCards`() {
@@ -54,16 +55,48 @@ class HandTest {
 
         assertThat(
             hand.cards,
-            equalTo(setOf(diamondKing, spadesQueen, diamondsTen, spadesThree, hearsNine, clubsFour, clubsFive))
+            equalTo(
+                setOf(
+                    diamondKing,
+                    spadesQueen,
+                    diamondsTen,
+                    spadesThree,
+                    hearsNine,
+                    clubsFour,
+                    clubsFive
+                )
+            )
         )
     }
 
     @Test
     fun `Given no special cards should return highest card`() {
-        val hand = createHand(clubsFive, clubsFour, spadesThree, hearsNine, diamondsTen, spadesQueen, diamondKing)
+        val hand = createHand(
+            clubsFive,
+            clubsFour,
+            spadesThree,
+            hearsNine,
+            diamondsTen,
+            spadesQueen,
+            diamondKing
+        )
 
         assertThat(hand.type, equalTo(HandType.HighCard))
     }
 
+    @Test
+    fun `Given pair should return pair`() {
+        val hand = createHand(
+            clubsFive,
+            spadesThree,
+            hearsNine,
+            spadesFive,
+            diamondsTen,
+            spadesQueen,
+            diamondKing
+        )
+
+        assertThat(hand.type, equalTo(HandType.Pair))
+    }
 
 }
