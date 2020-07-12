@@ -12,6 +12,7 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         val twoElements = 2
 
         val cardsByRank = cards.groupBy { it.rank }
+        if (isStraight(cards)) return HandType.Straight
 
         val pairsCount = cardsByRank.count { it.value.size == pair }
         val threesCount = cardsByRank.count { it.value.size == three }
@@ -22,5 +23,14 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         return HandType.HighCard
     }
 
+    private fun isStraight(cards: Set<Card>): Boolean {
+        val cardsSortedByRank = cards.sortedBy { it.rank }
+        val cardsDiffs = cardsSortedByRank.take(cards.size - 1)
+            .mapIndexed { index, card -> cardsSortedByRank.elementAt(index + 1).rank - card.rank } + (cardsSortedByRank.last().rank - cardsSortedByRank.first().rank)
+        val countDiffs = cardsDiffs.groupBy { it }
+        return countDiffs[1]?.size == 4
+    }
+
 
 }
+
