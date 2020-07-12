@@ -28,24 +28,42 @@ class HandTest {
             ), riverCard
         )
 
+    private fun createHand(
+        card1: Card,
+        card2: Card,
+        card3: Card,
+        card4: Card,
+        card5: Card,
+        card6: Card,
+        card7: Card
+    ) = Hand(createRiver(card1, card2, card3, card4, card5), createPocketCards(card6, card7))
+
+    private val diamondKing = Card(Suit.Diamonds, Rank.King)
+    private val spadesQueen = Card(Suit.Spades, Rank.Queen)
+    private val diamondsTen = Card(Suit.Diamonds, Rank.Ten)
+    private val hearsNine = Card(Suit.Hearts, Rank.Nine)
+    private val spadesThree = Card(Suit.Spades, Rank.Three)
+    private val clubsFour = Card(Suit.Clubs, Rank.Four)
+    private val clubsFive = Card(Suit.Clubs, Rank.Five)
+
     @Test
     fun `Hand should be constructed from PockedCards and RiverCommunityCards`() {
-        val flop1 = Card(Suit.Diamonds, Rank.King)
-        val flop2 = Card(Suit.Spades, Rank.Queen)
-        val flop3 = Card(Suit.Diamonds, Rank.Ten)
-        val turnCard = Card(Suit.Hearts, Rank.Nine)
-        val riverCard = Card(Suit.Spades, Rank.Three)
-        val pocketCard1 = Card(Suit.Clubs, Rank.Four)
-        val pocketCard2 = Card(Suit.Clubs, Rank.Five)
-
-        val river = createRiver(flop1, flop2, flop3, turnCard, riverCard)
-        val pocketCards = createPocketCards(pocketCard1, pocketCard2)
+        val river = createRiver(diamondKing, spadesQueen, diamondsTen, hearsNine, spadesThree)
+        val pocketCards = createPocketCards(clubsFour, clubsFive)
         val hand = Hand(river, pocketCards)
 
         assertThat(
             hand.cards,
-            equalTo(setOf(flop1, flop2, flop3, riverCard, turnCard, pocketCard1, pocketCard2))
+            equalTo(setOf(diamondKing, spadesQueen, diamondsTen, spadesThree, hearsNine, clubsFour, clubsFive))
         )
     }
+
+    @Test
+    fun `Given no special cards should return highest card`() {
+        val hand = createHand(clubsFive, clubsFour, spadesThree, hearsNine, diamondsTen, spadesQueen, diamondKing)
+
+        assertThat(hand.type, equalTo(HandType.HighCard))
+    }
+
 
 }
