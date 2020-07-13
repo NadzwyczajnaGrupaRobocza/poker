@@ -14,9 +14,11 @@ pub mod db {
         }
     }
 
+    #[derive(Default)]
     pub struct UserData {
         pub known_peers: KnownPeers,
         pub active_sessions: Vec<SessionID>,
+        pub message_queue: Vec<String>,
     }
 
     impl UserData {
@@ -24,11 +26,12 @@ pub mod db {
             UserData {
                 known_peers: KnownPeers::new(),
                 active_sessions: vec![],
+                message_queue: vec![],
             }
         }
     }
 
-    #[derive(Serialize, Deserialize)]
+    #[derive(Serialize, Deserialize, Default)]
     pub struct KnownPeers {
         pub peers: Vec<String>,
     }
@@ -45,6 +48,7 @@ pub mod db {
     }
 
     impl SessionID {
+        // 'new' function has special meaning, trying to avoid it, but this may need revisiting
         pub fn make_new() -> SessionID {
             let id = Uuid::new_v4();
             id.simple();
@@ -55,18 +59,29 @@ pub mod db {
     }
 
     // TODO: remove pub on members here - there's an invariant to preserve with this one
+    #[derive(Clone)]
     pub struct PendingSessionData {
+        pub readable_name: String,
         pub unconfirmed_participants: Vec<UserID>,
         pub confirmed_participants: Vec<UserID>,
     }
 
     pub struct SessionData {
+        pub readable_name: String,
         participants: Vec<UserID>,
     }
 
     #[derive(Serialize, Deserialize)]
     pub struct CreateSessionReq {
+        pub readable_name: String, // as in 'visible to the end-user'
         pub creator_id: String,
         pub other_participants: Vec<String>,
+    }
+
+    #[derive(Serialize, Deserialize)]
+    pub struct JoinSessionReq {
+        pub readable_name: String,
+        pub creator_id: String,
+        pub session_id: SessionID,
     }
 }

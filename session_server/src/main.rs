@@ -52,8 +52,9 @@ fn update_known_peers(
     let users_entry = db
         .users_db
         .entry(db::UserID::new(&id))
-        .or_insert(db::UserData::new());
-    users_entry.known_peers.peers = peers.0.peers;
+        .or_insert_with(db::UserData::new);
+    let peers = peers.into_inner();
+    users_entry.known_peers.peers = peers.peers;
 
     json!({ "status": "ok" })
 }
@@ -72,16 +73,39 @@ fn get_known_peers(id: String, db: State<'_, MutexServerDB>) -> JsonValue {
 fn create_session(req: Json<db::CreateSessionReq>, db: State<'_, MutexServerDB>) -> JsonValue {
     let session_id = db::SessionID::make_new();
     let mut db = db.lock().unwrap();
+
+    let req = req.into_inner();
+
     let session_data = db::PendingSessionData {
-        unconfirmed_participants: req.0.other_participants.iter().map(&db::UserID::new).collect(),
-        confirmed_participants: vec![db::UserID::new(&req.0.creator_id)],
+        readable_name: req.readable_name.clone(),
+        unconfirmed_participants: req.other_participants.iter().map(&db::UserID::new).collect(),
+        confirmed_participants: vec![db::UserID::new(&req.creator_id)],
     };
+
+    let unconfirmed_participants = &session_data.unconfirmed_participants;
+
     // Returns Option<V> which is empty if key is new and contains old value if key is already present.
     // Mayby a better add method should be used? Adding a check for session being empty would be nice.
     // https://doc.rust-lang.org/std/collections/struct.HashMap.html#method.insert
     let _session = db
         .pending_session_db
-        .insert(session_id.clone(), session_data);
+        .insert(session_id.clone(), session_data.clone());
+
+    for participant in unconfirmed_participants.iter() {
+        let join_req = db::JoinSessionReq {
+            readable_name: req.readable_name.clone(),
+            creator_id: req.creator_id.clone(),
+            session_id: session_id.clone(),
+        };
+
+        match serde_json::to_string(&join_req) {
+            Ok(json_str) => match db.users_db.get_mut(&participant) {
+                Some(user_data) => user_data.message_queue.push(json_str),
+                None => print!("error"), // cause we all love meaningful errors
+            }
+            Err(_) => println!("error")
+        }
+    }
 
     json!({"status": "ok",
            "session_id": session_id })
