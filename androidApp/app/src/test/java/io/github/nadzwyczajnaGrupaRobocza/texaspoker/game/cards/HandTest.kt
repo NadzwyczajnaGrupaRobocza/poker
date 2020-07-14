@@ -41,7 +41,7 @@ class HandTest {
 
     @Test
     fun `Hand should be constructed from PockedCards and RiverCommunityCards`() {
-        val river = createRiver(diamondsKing, spadesQueen, diamondsTen, hearsNine, spadesThree)
+        val river = createRiver(diamondsKing, spadesQueen, diamondsTen, heartsNine, spadesThree)
         val pocketCards = createPocketCards(clubsFour, clubsFive)
         val hand = Hand(river, pocketCards)
 
@@ -53,7 +53,7 @@ class HandTest {
                     spadesQueen,
                     diamondsTen,
                     spadesThree,
-                    hearsNine,
+                    heartsNine,
                     clubsFour,
                     clubsFive
                 )
@@ -67,7 +67,7 @@ class HandTest {
             clubsFive,
             clubsFour,
             spadesThree,
-            hearsNine,
+            heartsNine,
             diamondsTen,
             spadesQueen,
             diamondsKing
@@ -81,7 +81,7 @@ class HandTest {
         val hand = createHand(
             clubsFive,
             spadesThree,
-            hearsNine,
+            heartsNine,
             spadesFive,
             diamondsTen,
             spadesQueen,
@@ -96,7 +96,7 @@ class HandTest {
         val hand = createHand(
             clubsFive,
             spadesThree,
-            hearsThree,
+            heartsThree,
             spadesFive,
             diamondsTen,
             spadesQueen,
@@ -111,7 +111,7 @@ class HandTest {
         val hand = createHand(
             clubsFive,
             spadesThree,
-            hearsFive,
+            heartsFive,
             spadesFive,
             diamondsTen,
             spadesQueen,
@@ -122,14 +122,29 @@ class HandTest {
     }
 
     @Test
-    fun `Given five cards in orders hould return Straight`() {
+    fun `Given five cards in order hould return Straight`() {
         val hand = createHand(
             clubsFive,
             spadesThree,
-            hearsFour,
+            heartsFour,
             diamondsTen,
             spadesQueen,
             diamondsSix,
+            spadesTwo
+        )
+
+        assertThat(hand.type, equalTo(HandType.Straight))
+    }
+
+    @Test
+    fun `Given five cards from ace to five should return Straight`() {
+        val hand = createHand(
+            clubsFive,
+            spadesThree,
+            heartsFour,
+            diamondsTen,
+            spadesQueen,
+            diamondsAce,
             spadesTwo
         )
 
