@@ -1,0 +1,29 @@
+
+bg_game.png
+size: 2048,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+bucket
+  rotate: false
+  xy: 2, 2
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+concept
+  rotate: false
+  xy: 2, 70
+  size: 1200, 720
+  split: 0, 0, 0, 0
+  pad: -1, -1, -1, -1
+  orig: 1200, 720
+  offset: 0, 0
+  index: -1
+drop
+  rotate: false
+  xy: 1206, 726
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1

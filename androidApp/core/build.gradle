@@ -1,0 +1,23 @@
+apply plugin: "kotlin"
+
+sourceCompatibility = 1.7
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+eclipse.project.name = appName + "-core"
+
+dependencies {
+    implementation "com.badlogicgames.ashley:ashley:$ashleyVersion"
+    implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    api "io.github.libktx:ktx-app:$ktxVersion"
+    implementation "io.github.libktx:ktx-ashley:$ktxVersion"
+    implementation "io.github.libktx:ktx-assets:$ktxVersion"
+    implementation "io.github.libktx:ktx-collections:$ktxVersion"
+    implementation "io.github.libktx:ktx-graphics:$ktxVersion"
+    implementation "io.github.libktx:ktx-inject:$ktxVersion"
+    implementation "io.github.libktx:ktx-log:$ktxVersion"
+
+    testImplementation 'junit:junit:4.13'
+    testImplementation "com.natpryce:hamkrest:1.7.0.3"
+}
