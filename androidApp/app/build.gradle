@@ -3,12 +3,15 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    buildToolsVersion "29.0.2"
     compileSdkVersion 29
+    sourceSets {
+        main {
+            assets.srcDirs = ['assets']
+            jniLibs.srcDirs = ['libs']
+        }
 
-    packagingOptions {
-        exclude 'META-INF/robovm/ios/robovm.xml'
     }
+
     defaultConfig {
         applicationId "io.github.NadzwyczajnaGrupaRobocza.texaspoker"
         minSdkVersion 28
@@ -90,8 +93,6 @@ task run(type: Exec) {
     def adb = path + "/platform-tools/adb"
     commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.simplektx.game/com.simplektx.game.AndroidLauncher'
 }
-
-eclipse.project.name = appName + "-android"
 
 configurations { natives }
 
