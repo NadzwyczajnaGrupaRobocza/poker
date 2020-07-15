@@ -17,6 +17,12 @@ import ktx.log.logger
 
 private val log = logger<Game>()
 
+/*
+TODO:
+* Add player dummy icons
+* Add ui to set number of players
+* Visualize player at the table in ellipse shape
+ */
 class Game : KtxGame<KtxScreen>() {
     private val context = Context()
 
@@ -41,7 +47,6 @@ class Game : KtxGame<KtxScreen>() {
             )
             addScreen(
                 GameScreen(
-                    inject(),
                     inject(),
                     inject(),
                     inject(),
