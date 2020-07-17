@@ -196,5 +196,19 @@ class HandTest {
         assertThat(hand.type, equalTo(HandType.Full))
     }
 
+    @Test
+    fun `Given five cards in the same suit should return Flush`() {
+        val hand = createHand(
+            diamondsJack,
+            heartsFive,
+            diamondsKing,
+            diamondsTen,
+            diamondsAce,
+            diamondsSix,
+            spadesThree
+        )
+
+        assertThat(hand.type, equalTo(HandType.Flush))
+    }
 }
 
