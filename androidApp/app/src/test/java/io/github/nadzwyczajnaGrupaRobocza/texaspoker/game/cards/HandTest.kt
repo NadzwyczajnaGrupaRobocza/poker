@@ -227,7 +227,7 @@ class HandTest {
     }
 
     @Test
-    fun `Fiven four cards with same rank should return Four`() {
+    fun `Given four cards with same rank should return Four`() {
         val hand = createHand(
             clubsFive,
             diamondsEight,
@@ -235,6 +235,21 @@ class HandTest {
             heartsFive,
             diamondsFive,
             diamondsSix,
+            spadesFive
+        )
+
+        assertThat(hand.type, equalTo(HandType.Four))
+    }
+
+    @Test
+    fun `Given four and three cards with same rank should return Four`() {
+        val hand = createHand(
+            clubsFive,
+            diamondsEight,
+            clubsEight,
+            heartsFive,
+            diamondsFive,
+            spadesEight,
             spadesFive
         )
 
