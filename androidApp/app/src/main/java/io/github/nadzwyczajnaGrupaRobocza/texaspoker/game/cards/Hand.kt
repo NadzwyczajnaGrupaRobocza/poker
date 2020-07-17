@@ -12,10 +12,11 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         val twoElements = 2
 
         val cardsByRank = cards.groupBy { it.rank }
-        if (isStraight(cards)) return HandType.Straight
-
         val pairsCount = cardsByRank.count { it.value.size == pair }
         val threesCount = cardsByRank.count { it.value.size == three }
+
+        if (threesCount == oneElement && pairsCount >= oneElement ) return HandType.Flush
+        if (isStraight(cards)) return HandType.Straight
         if (threesCount == oneElement) return HandType.Three
         if (pairsCount == oneElement) return HandType.Pair
         if (pairsCount == twoElements) return HandType.TwoPairs

@@ -165,4 +165,36 @@ class HandTest {
 
         assertThat(hand.type, equalTo(HandType.Straight))
     }
+
+    @Test
+    fun `Given three same rank cards and dwo other same rank cards should return Flush`() {
+        val hand = createHand(
+            clubsFive,
+            heartsFive,
+            spadesFive,
+            diamondsJack,
+            heartsThree,
+            spadesQueen,
+            spadesThree
+        )
+
+        assertThat(hand.type, equalTo(HandType.Flush))
+    }
+
+    @Test
+    fun `Given three same rank cards and twice two other same rank cards should return Flush`() {
+        val hand = createHand(
+            clubsFive,
+            heartsFive,
+            spadesFive,
+            heartsThree,
+            clubsFour,
+            heartsFour,
+            spadesThree
+        )
+
+        assertThat(hand.type, equalTo(HandType.Flush))
+    }
+
 }
+
