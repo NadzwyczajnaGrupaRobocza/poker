@@ -19,8 +19,8 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         val cardsBySuite = cards.groupBy { it.suit }
         val maxCardsInOneSuite = cardsBySuite.maxBy { it.value.size }?.value?.size
 
-        if (threesCount == oneElement && pairsCount >= oneElement ) return HandType.Full
-        if (maxCardsInOneSuite == fiveElements) return HandType.Flush
+        if (threesCount == oneElement && pairsCount >= oneElement) return HandType.Full
+        maxCardsInOneSuite?.let { if (maxCardsInOneSuite >= fiveElements) return HandType.Flush }
         if (isStraight(cards)) return HandType.Straight
         if (threesCount == oneElement) return HandType.Three
         if (pairsCount == oneElement) return HandType.Pair
@@ -33,11 +33,13 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         val cardsSortedByRank = cards.sortedBy { it.rank }
         val cardsDiffs = cardsSortedByRank.take(cards.size - 1)
             .mapIndexed { index, card -> cardsSortedByRank.elementAt(index + 1).rank - card.rank } + (cardsSortedByRank.last().rank - cardsSortedByRank.first().rank)
-        val stringDiff = cardsDiffs.fold("") {acc: String, i: Int -> "$acc$i|" }
+        val stringDiff = cardsDiffs.fold("") { acc: String, i: Int -> "$acc$i|" }
         val fourDiffsInRow = "1|1|1|1|"
         val beginAceToFiveStraight = "1|1|1|"
         val endAceToFiveStraight = "12|"
-        return  fourDiffsInRow in stringDiff  || stringDiff.startsWith(beginAceToFiveStraight) && stringDiff.endsWith(endAceToFiveStraight)
+        return fourDiffsInRow in stringDiff || stringDiff.startsWith(beginAceToFiveStraight) && stringDiff.endsWith(
+            endAceToFiveStraight
+        )
     }
 
 
