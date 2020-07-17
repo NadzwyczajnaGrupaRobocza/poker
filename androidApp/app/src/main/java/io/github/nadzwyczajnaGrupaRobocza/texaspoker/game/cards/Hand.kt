@@ -27,10 +27,11 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         val cardsSortedByRank = cards.sortedBy { it.rank }
         val cardsDiffs = cardsSortedByRank.take(cards.size - 1)
             .mapIndexed { index, card -> cardsSortedByRank.elementAt(index + 1).rank - card.rank } + (cardsSortedByRank.last().rank - cardsSortedByRank.first().rank)
-        val stringDiff = cardsDiffs.fold("") {acc: String, i: Int -> acc+ i.toString() }
-        return "1111" in stringDiff
-        //val countDiffs = cardsDiffs.groupBy { it }
-        //return countDiffs[1]?.size == 4
+        val stringDiff = cardsDiffs.fold("") {acc: String, i: Int -> "$acc$i|" }
+        val fourDiffsInRow = "1|1|1|1|"
+        val beginAceToFiveStraight = "1|1|1|"
+        val endAceToFiveStraight = "12|"
+        return  fourDiffsInRow in stringDiff  || stringDiff.startsWith(beginAceToFiveStraight) && stringDiff.endsWith(endAceToFiveStraight)
     }
 
 

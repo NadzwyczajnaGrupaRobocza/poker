@@ -122,14 +122,14 @@ class HandTest {
     }
 
     @Test
-    fun `Given five cards in order hould return Straight`() {
+    fun `Given five cards in order should return Straight`() {
         val hand = createHand(
             clubsFive,
             spadesThree,
             heartsFour,
             diamondsTen,
-            spadesQueen,
             diamondsSix,
+            spadesQueen,
             spadesTwo
         )
 
@@ -140,12 +140,27 @@ class HandTest {
     fun `Given five cards from ace to five should return Straight`() {
         val hand = createHand(
             clubsFive,
-            spadesThree,
             heartsFour,
             diamondsTen,
+            spadesThree,
             spadesQueen,
             diamondsAce,
             spadesTwo
+        )
+
+        assertThat(hand.type, equalTo(HandType.Straight))
+    }
+
+    @Test
+    fun `Given five cards from ten to ace should return Straight`() {
+        val hand = createHand(
+            diamondsTen,
+            heartsFour,
+            diamondsJack,
+            spadesThree,
+            spadesQueen,
+            diamondsAce,
+            diamondsKing
         )
 
         assertThat(hand.type, equalTo(HandType.Straight))
