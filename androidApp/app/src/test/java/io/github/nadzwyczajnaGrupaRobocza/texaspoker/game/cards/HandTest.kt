@@ -178,7 +178,7 @@ class HandTest {
             spadesThree
         )
 
-        assertThat(hand.type, equalTo(HandType.Flush))
+        assertThat(hand.type, equalTo(HandType.Full))
     }
 
     @Test
@@ -193,7 +193,7 @@ class HandTest {
             spadesThree
         )
 
-        assertThat(hand.type, equalTo(HandType.Flush))
+        assertThat(hand.type, equalTo(HandType.Full))
     }
 
 }

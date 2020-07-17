@@ -15,7 +15,7 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         val pairsCount = cardsByRank.count { it.value.size == pair }
         val threesCount = cardsByRank.count { it.value.size == three }
 
-        if (threesCount == oneElement && pairsCount >= oneElement ) return HandType.Flush
+        if (threesCount == oneElement && pairsCount >= oneElement ) return HandType.Full
         if (isStraight(cards)) return HandType.Straight
         if (threesCount == oneElement) return HandType.Three
         if (pairsCount == oneElement) return HandType.Pair
