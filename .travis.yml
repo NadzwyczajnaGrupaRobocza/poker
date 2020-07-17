@@ -4,7 +4,7 @@ android:
   components: 
     - tools 
     - platform-tools 
-    - android-29
+    - android-29.0.6
   licenses:
     - android-sdk-preview-license-.+
     - android-sdk-license-.+
