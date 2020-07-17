@@ -225,5 +225,20 @@ class HandTest {
 
         assertThat(hand.type, equalTo(HandType.Flush))
     }
+
+    @Test
+    fun `Fiven four cards with same rank should return Four`() {
+        val hand = createHand(
+            clubsFive,
+            diamondsEight,
+            diamondsKing,
+            heartsFive,
+            diamondsFive,
+            diamondsSix,
+            spadesFive
+        )
+
+        assertThat(hand.type, equalTo(HandType.Four))
+    }
 }
 

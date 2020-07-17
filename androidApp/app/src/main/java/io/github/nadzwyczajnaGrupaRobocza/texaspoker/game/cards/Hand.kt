@@ -8,6 +8,7 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
     private fun calculateHandType(cards: Set<Card>): HandType {
         val pair = 2
         val three = 3
+        val four = 4
         val oneElement = 1
         val twoElements = 2
         val fiveElements = 5
@@ -15,10 +16,12 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         val cardsByRank = cards.groupBy { it.rank }
         val pairsCount = cardsByRank.count { it.value.size == pair }
         val threesCount = cardsByRank.count { it.value.size == three }
+        val foursCount = cardsByRank.count { it.value.size == four }
 
         val cardsBySuite = cards.groupBy { it.suit }
         val maxCardsInOneSuite = cardsBySuite.maxBy { it.value.size }?.value?.size
 
+        if (foursCount == oneElement) return HandType.Four
         if (threesCount == oneElement && pairsCount >= oneElement) return HandType.Full
         maxCardsInOneSuite?.let { if (maxCardsInOneSuite >= fiveElements) return HandType.Flush }
         if (isStraight(cards)) return HandType.Straight
