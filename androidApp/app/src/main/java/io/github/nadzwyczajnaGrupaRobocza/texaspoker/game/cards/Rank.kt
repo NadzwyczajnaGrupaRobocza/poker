@@ -16,7 +16,7 @@ enum class Rank {
     Ace,
 }
 
-fun toString(rank: Rank) = when (rank) {
+fun toUnicode(rank: Rank) = when (rank) {
     Rank.Ace -> {
         "A"
     }

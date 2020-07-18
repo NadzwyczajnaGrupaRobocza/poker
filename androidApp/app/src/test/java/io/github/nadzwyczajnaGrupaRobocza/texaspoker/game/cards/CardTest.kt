@@ -7,9 +7,9 @@ import org.hamcrest.core.IsNot.not
 import org.junit.Test
 
 class CardTest {
-    val twoClubs = Card(Suit.Clubs, Rank.Two)
-    val twoDiamonds = Card(Suit.Diamonds, Rank.Two)
-    val threeClubs = Card(Suit.Clubs, Rank.Three)
+    private val twoClubs = Card(Suit.Clubs, Rank.Two)
+    private val twoDiamonds = Card(Suit.Diamonds, Rank.Two)
+    private val threeClubs = Card(Suit.Clubs, Rank.Three)
 
     @Test
     fun `Create Card`() {

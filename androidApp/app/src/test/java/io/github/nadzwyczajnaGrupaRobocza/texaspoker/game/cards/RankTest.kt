@@ -9,4 +9,9 @@ class RankTest {
     fun `Hand should have five cards`() {
         assertThat(diamondsKing.rank - spadesQueen.rank, equalTo(1))
     }
+
+    @Test
+    fun `toString should print`() {
+        assertThat(toUnicode(diamondsKing.rank), equalTo("K"))
+    }
 }

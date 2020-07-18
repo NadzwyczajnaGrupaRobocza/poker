@@ -24,7 +24,7 @@ class CommunityCardsTest {
     }
 
     @Test
-    fun `After flop community cards shuold have size of flop`() {
+    fun `After flop community cards should have size of flop`() {
         val cardsAfterFlop = 3
 
         assertThat(communityCards.flop(flop1, flop2, flop3).size, equalTo(cardsAfterFlop))

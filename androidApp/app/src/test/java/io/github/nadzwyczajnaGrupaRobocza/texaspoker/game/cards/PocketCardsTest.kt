@@ -4,8 +4,8 @@ import org.junit.Test
 
 class PocketCardsTest
 {
-    val anyCard1 = Card(Suit.Clubs, Rank.Queen)
-    val anyCard2 = Card(Suit.Hearts, Rank.Ace)
+    private val anyCard1 = Card(Suit.Clubs, Rank.Queen)
+    private val anyCard2 = Card(Suit.Hearts, Rank.Ace)
 
     @Test
     fun `Hand should have five cards`()

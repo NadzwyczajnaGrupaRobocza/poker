@@ -95,7 +95,7 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
                 thisCard,
                 max(cardsInRow + 1, 2),
                 newMax,
-                (suites + thisCard.suit + if (cardsInRow == 0) previousCard.suit else null).filter { it != null } as List<Suit>
+                (suites + thisCard.suit + if (cardsInRow == 0) previousCard.suit else null).filterNotNull()
             )
         if (diff == 0)
             return isStraight(
@@ -103,7 +103,7 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
                 thisCard,
                 cardsInRow,
                 newMax,
-                (suites + thisCard.suit + if (cardsInRow == 0) previousCard.suit else null).filter { it != null } as List<Suit>
+                (suites + thisCard.suit + if (cardsInRow == 0) previousCard.suit else null).filterNotNull()
             )
         return isStraight(
             cards = cards.subList(1, cards.size),
