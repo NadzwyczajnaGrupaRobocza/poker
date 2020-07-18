@@ -58,18 +58,26 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
     ): StraightType? {
         val newMax = max(maxCardsInRow, cardsInRow)
         if (cards.isEmpty()) {
-            val suiteCount = suites.groupBy { it }
-            val maxSuiteCount = suiteCount.maxBy { it.value.size }?.value?.size ?: 0
-            return when {
-                newMax < 5 -> null
-                maxSuiteCount < 5 -> StraightType.Normal
-                previousCard.rank == Rank.Ace -> StraightType.Royal
-                else -> StraightType.Flush
-            }
+            return calculateStraightType(suites, newMax, previousCard)
         }
         val thisCard = cards.first()
         val diff = thisCard.rank - previousCard.rank
         return diffBasedDecision(diff, cards, thisCard, previousCard, cardsInRow, newMax, suites)
+    }
+
+    private fun calculateStraightType(
+        suites: List<Suit>,
+        newMax: Int,
+        previousCard: Card
+    ): StraightType? {
+        val suiteCount = suites.groupBy { it }
+        val maxSuiteCount = suiteCount.maxBy { it.value.size }?.value?.size ?: 0
+        return when {
+            newMax < 5 -> null
+            maxSuiteCount < 5 -> StraightType.Normal
+            previousCard.rank == Rank.Ace -> StraightType.Royal
+            else -> StraightType.Flush
+        }
     }
 
     private fun diffBasedDecision(
