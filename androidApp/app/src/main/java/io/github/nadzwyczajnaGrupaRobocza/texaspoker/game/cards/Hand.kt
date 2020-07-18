@@ -9,7 +9,8 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
 
     enum class StraightType {
         Normal,
-        Flush
+        Flush,
+        Royal
     }
 
     private fun calculateHandType(cards: Set<Card>): HandType {
@@ -30,6 +31,7 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
 
         val straightType = isStraight(cards)
 
+        if (straightType == StraightType.Royal) return HandType.RoyalFlush
         if (straightType == StraightType.Flush) return HandType.StraightFlush
         if (foursCount == oneElement) return HandType.Four
         if (threesCount == oneElement && pairsCount >= oneElement) return HandType.Full
@@ -60,8 +62,9 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
             val maxSuiteCount = suiteCount.maxBy { it.value.size }?.value?.size ?: 0
             return when {
                 newMax < 5 -> null
-                maxSuiteCount >= 5 -> StraightType.Flush
-                else -> StraightType.Normal
+                maxSuiteCount < 5 -> StraightType.Normal
+                previousCard.rank == Rank.Ace -> StraightType.Royal
+                else -> StraightType.Flush
             }
         }
         val thisCard = cards.first()

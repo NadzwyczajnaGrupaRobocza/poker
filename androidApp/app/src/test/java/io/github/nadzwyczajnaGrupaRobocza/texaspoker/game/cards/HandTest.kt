@@ -285,5 +285,20 @@ class HandTest {
 
         assertThat(hand.type, equalTo(HandType.StraightFlush))
     }
+
+    @Test
+    fun `Given royal straight return RoyalFlush`() {
+        val hand = createHand(
+            diamondsAce,
+            diamondsKing,
+            diamondsTen,
+            diamondsJack,
+            diamondsQueen,
+            spadesEight,
+            spadesFive
+        )
+
+        assertThat(hand.type, equalTo(HandType.RoyalFlush))
+    }
 }
 
