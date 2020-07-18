@@ -137,6 +137,21 @@ class HandTest {
     }
 
     @Test
+    fun `Given five cards when two has pair should return Straight`() {
+        val hand = createHand(
+            clubsFive,
+            spadesThree,
+            heartsFour,
+            diamondsFive,
+            diamondsSix,
+            clubsThree,
+            spadesTwo
+        )
+
+        assertThat(hand.type, equalTo(HandType.Straight))
+    }
+
+    @Test
     fun `Given five cards from ace to five should return Straight`() {
         val hand = createHand(
             clubsFive,

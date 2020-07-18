@@ -1,5 +1,6 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards
 
+val clubsThree = Card(Suit.Clubs, Rank.Three)
 val clubsFive = Card(Suit.Clubs, Rank.Five)
 val clubsEight = Card(Suit.Clubs, Rank.Eight)
 val clubsFour = Card(Suit.Clubs, Rank.Four)

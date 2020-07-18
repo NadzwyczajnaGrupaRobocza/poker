@@ -1,5 +1,7 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards
 
+import java.lang.Integer.max
+
 class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
     val cards = river.cards + pocketCards.card1 + pocketCards.card2
 
@@ -34,14 +36,33 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
 
     private fun isStraight(cards: Set<Card>): Boolean {
         val cardsSortedByRank = cards.sortedBy { it.rank }
-        val cardsDiffs = cardsSortedByRank.take(cards.size - 1)
-            .mapIndexed { index, card -> cardsSortedByRank.elementAt(index + 1).rank - card.rank } + (cardsSortedByRank.last().rank - cardsSortedByRank.first().rank)
-        val stringDiff = cardsDiffs.fold("") { acc: String, i: Int -> "$acc$i|" }
-        val fourDiffsInRow = "1|1|1|1|"
-        val beginAceToFiveStraight = "1|1|1|"
-        val endAceToFiveStraight = "12|"
-        return fourDiffsInRow in stringDiff || stringDiff.startsWith(beginAceToFiveStraight) && stringDiff.endsWith(
-            endAceToFiveStraight
+        return isStraight(cards = cardsSortedByRank, previousCard = cardsSortedByRank.last())
+    }
+
+    private fun isStraight(
+        cards: List<Card>,
+        previousCard: Card,
+        cardsInRow: Int = 0,
+        maxCardsInRow: Int = 0
+    ): Boolean {
+        val newMax = max(maxCardsInRow, cardsInRow)
+        if (cards.isEmpty())
+            return newMax >= 5
+        val thisCard = cards.first()
+        val diff = thisCard.rank - previousCard.rank
+        if (diff == 1 || diff == -12)
+            return isStraight(
+                cards.subList(1, cards.size),
+                thisCard,
+                max(cardsInRow + 1, 2),
+                newMax
+            )
+        if (diff == 0)
+            return isStraight(cards.subList(1, cards.size), thisCard, cardsInRow, newMax)
+        return isStraight(
+            cards = cards.subList(1, cards.size),
+            previousCard = thisCard,
+            maxCardsInRow = newMax
         )
     }
 
