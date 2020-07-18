@@ -270,5 +270,20 @@ class HandTest {
 
         assertThat(hand.type, equalTo(HandType.Four))
     }
+
+    @Test
+    fun `Given straight in same suite should return StraightFlush`() {
+        val hand = createHand(
+            diamondsNine,
+            diamondsEight,
+            diamondsTen,
+            diamondsJack,
+            diamondsQueen,
+            spadesEight,
+            spadesFive
+        )
+
+        assertThat(hand.type, equalTo(HandType.StraightFlush))
+    }
 }
 
