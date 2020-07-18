@@ -50,6 +50,16 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
             return newMax >= 5
         val thisCard = cards.first()
         val diff = thisCard.rank - previousCard.rank
+        return diffBasedDecision(diff, cards, thisCard, cardsInRow, newMax)
+    }
+
+    private fun diffBasedDecision(
+        diff: Int,
+        cards: List<Card>,
+        thisCard: Card,
+        cardsInRow: Int,
+        newMax: Int
+    ): Boolean {
         if (diff == 1 || diff == -12)
             return isStraight(
                 cards.subList(1, cards.size),
