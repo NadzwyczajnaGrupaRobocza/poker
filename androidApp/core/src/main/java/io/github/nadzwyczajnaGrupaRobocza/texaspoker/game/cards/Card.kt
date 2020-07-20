@@ -3,9 +3,7 @@ package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards
 class Card(val suit: Suit, val rank: Rank) {
 
     override fun toString(): String {
-        return "${toUnicode(
-            suit
-        )}$rank"
+        return "${toUnicode(suit)}${toUnicode(rank)}"
     }
 
     override fun equals(other: Any?): Boolean {

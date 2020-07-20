@@ -8,10 +8,7 @@ class HandTest {
     private fun createPocketCards(
         pocketCard1: Card,
         pocketCard2: Card
-    ) = PocketCards(
-        pocketCard1,
-        pocketCard2
-    )
+    ) = PocketCards(pocketCard1, pocketCard2)
 
     private fun createRiver(
         flop1: Card,
@@ -39,34 +36,14 @@ class HandTest {
         card5: Card,
         card6: Card,
         card7: Card
-    ) = Hand(
-        createRiver(
-            card1,
-            card2,
-            card3,
-            card4,
-            card5
-        ), createPocketCards(card6, card7)
-    )
+    ) = Hand(createRiver(card1, card2, card3, card4, card5), createPocketCards(card6, card7))
 
 
     @Test
     fun `Hand should be constructed from PockedCards and RiverCommunityCards`() {
-        val river = createRiver(
-            diamondsKing,
-            spadesQueen,
-            diamondsTen,
-            hearsNine,
-            spadesThree
-        )
-        val pocketCards = createPocketCards(
-            clubsFour,
-            clubsFive
-        )
-        val hand = Hand(
-            river,
-            pocketCards
-        )
+        val river = createRiver(diamondsKing, spadesQueen, diamondsTen, heartsNine, spadesThree)
+        val pocketCards = createPocketCards(clubsFour, clubsFive)
+        val hand = Hand(river, pocketCards)
 
         assertThat(
             hand.cards,
@@ -76,7 +53,7 @@ class HandTest {
                     spadesQueen,
                     diamondsTen,
                     spadesThree,
-                    hearsNine,
+                    heartsNine,
                     clubsFour,
                     clubsFive
                 )
@@ -90,7 +67,7 @@ class HandTest {
             clubsFive,
             clubsFour,
             spadesThree,
-            hearsNine,
+            heartsNine,
             diamondsTen,
             spadesQueen,
             diamondsKing
@@ -104,7 +81,7 @@ class HandTest {
         val hand = createHand(
             clubsFive,
             spadesThree,
-            hearsNine,
+            heartsNine,
             spadesFive,
             diamondsTen,
             spadesQueen,
@@ -119,7 +96,7 @@ class HandTest {
         val hand = createHand(
             clubsFive,
             spadesThree,
-            hearsThree,
+            heartsThree,
             spadesFive,
             diamondsTen,
             spadesQueen,
@@ -134,7 +111,7 @@ class HandTest {
         val hand = createHand(
             clubsFive,
             spadesThree,
-            hearsFive,
+            heartsFive,
             spadesFive,
             diamondsTen,
             spadesQueen,
@@ -145,17 +122,183 @@ class HandTest {
     }
 
     @Test
-    fun `Given five cards in orders hould return Straight`() {
+    fun `Given five cards in order should return Straight`() {
         val hand = createHand(
             clubsFive,
             spadesThree,
-            hearsFour,
+            heartsFour,
             diamondsTen,
-            spadesQueen,
             diamondsSix,
+            spadesQueen,
             spadesTwo
         )
 
         assertThat(hand.type, equalTo(HandType.Straight))
     }
+
+    @Test
+    fun `Given five cards when two has pair should return Straight`() {
+        val hand = createHand(
+            clubsFive,
+            spadesThree,
+            heartsFour,
+            diamondsFive,
+            diamondsSix,
+            clubsThree,
+            spadesTwo
+        )
+
+        assertThat(hand.type, equalTo(HandType.Straight))
+    }
+
+    @Test
+    fun `Given five cards from ace to five should return Straight`() {
+        val hand = createHand(
+            clubsFive,
+            heartsFour,
+            diamondsTen,
+            spadesThree,
+            spadesQueen,
+            diamondsAce,
+            spadesTwo
+        )
+
+        assertThat(hand.type, equalTo(HandType.Straight))
+    }
+
+    @Test
+    fun `Given five cards from ten to ace should return Straight`() {
+        val hand = createHand(
+            diamondsTen,
+            heartsFour,
+            diamondsJack,
+            spadesThree,
+            spadesQueen,
+            diamondsAce,
+            diamondsKing
+        )
+
+        assertThat(hand.type, equalTo(HandType.Straight))
+    }
+
+    @Test
+    fun `Given three same rank cards and dwo other same rank cards should return Flush`() {
+        val hand = createHand(
+            clubsFive,
+            heartsFive,
+            spadesFive,
+            diamondsJack,
+            heartsThree,
+            spadesQueen,
+            spadesThree
+        )
+
+        assertThat(hand.type, equalTo(HandType.Full))
+    }
+
+    @Test
+    fun `Given three same rank cards and twice two other same rank cards should return Flush`() {
+        val hand = createHand(
+            clubsFive,
+            heartsFive,
+            spadesFive,
+            heartsThree,
+            clubsFour,
+            heartsFour,
+            spadesThree
+        )
+
+        assertThat(hand.type, equalTo(HandType.Full))
+    }
+
+    @Test
+    fun `Given five cards in the same suite should return Flush`() {
+        val hand = createHand(
+            diamondsJack,
+            heartsFive,
+            diamondsKing,
+            diamondsTen,
+            diamondsAce,
+            diamondsSix,
+            spadesThree
+        )
+
+        assertThat(hand.type, equalTo(HandType.Flush))
+    }
+
+    @Test
+    fun `Given all cards in the same suite should return Flush`() {
+        val hand = createHand(
+            diamondsJack,
+            diamondsEight,
+            diamondsKing,
+            diamondsTen,
+            diamondsAce,
+            diamondsSix,
+            diamondsSeven
+        )
+
+        assertThat(hand.type, equalTo(HandType.Flush))
+    }
+
+    @Test
+    fun `Given four cards with same rank should return Four`() {
+        val hand = createHand(
+            clubsFive,
+            diamondsEight,
+            diamondsKing,
+            heartsFive,
+            diamondsFive,
+            diamondsSix,
+            spadesFive
+        )
+
+        assertThat(hand.type, equalTo(HandType.Four))
+    }
+
+    @Test
+    fun `Given four and three cards with same rank should return Four`() {
+        val hand = createHand(
+            clubsFive,
+            diamondsEight,
+            clubsEight,
+            heartsFive,
+            diamondsFive,
+            spadesEight,
+            spadesFive
+        )
+
+        assertThat(hand.type, equalTo(HandType.Four))
+    }
+
+    @Test
+    fun `Given straight in same suite should return StraightFlush`() {
+        val hand = createHand(
+            diamondsNine,
+            diamondsEight,
+            diamondsTen,
+            diamondsJack,
+            diamondsQueen,
+            spadesEight,
+            spadesFive
+        )
+
+        assertThat(hand.type, equalTo(HandType.StraightFlush))
+    }
+
+    @Test
+    fun `Given royal straight return RoyalFlush`() {
+        val hand = createHand(
+            diamondsAce,
+            diamondsKing,
+            diamondsTen,
+            diamondsJack,
+            diamondsQueen,
+            spadesEight,
+            spadesFive
+        )
+
+        assertThat(hand.type, equalTo(HandType.RoyalFlush))
+    }
 }
+
