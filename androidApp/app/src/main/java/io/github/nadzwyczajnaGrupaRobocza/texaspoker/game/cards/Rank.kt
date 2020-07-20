@@ -1,7 +1,6 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards
 
 enum class Rank {
-    Ace,
     Two,
     Three,
     Four,
@@ -13,10 +12,11 @@ enum class Rank {
     Ten,
     Jack,
     Queen,
-    King
+    King,
+    Ace,
 }
 
-fun toString(rank: Rank) = when (rank) {
+fun toUnicode(rank: Rank) = when (rank) {
     Rank.Ace -> {
         "A"
     }
