@@ -41,6 +41,7 @@ fn index() -> &'static str {
     "Hello, world!"
 }
 
+// example: curl -d "{\"peers\": [\"user-id-2\", \"user-id-3\", \"user-id-4\"]}" -v -X PUT -H "Content-Type:application/json" http://localhost:8000/user/user-id-1/known_peers
 #[put("/user/<id>/known_peers", format = "json", data = "<peers>")]
 fn update_known_peers(
     id: String,
@@ -59,6 +60,7 @@ fn update_known_peers(
     json!({ "status": "ok" })
 }
 
+// example: curl -v -X GET -H "Content-Type:application/json" http://localhost:8000/user/user-id-1/known_peers
 #[get("/user/<id>/known_peers")]
 fn get_known_peers(id: String, db: State<'_, MutexServerDB>) -> JsonValue {
     let db = db.lock().unwrap();
@@ -69,6 +71,7 @@ fn get_known_peers(id: String, db: State<'_, MutexServerDB>) -> JsonValue {
     }
 }
 
+// example: curl -d "{\"readable_name\": \"jakas nazwa\", \"creator_id\": \"ID-dummy\", \"other_participants\": [\"user-id-2\", \"user-id-3\", \"user-id-4\"]}" -v -X PUT -H "Content-Type:application/json" http://localhost:8000/session/create
 #[put("/session/create", format = "json", data = "<req>")]
 fn create_session(req: Json<db::CreateSessionReq>, db: State<'_, MutexServerDB>) -> JsonValue {
     let session_id = db::SessionID::make_new();
@@ -78,7 +81,11 @@ fn create_session(req: Json<db::CreateSessionReq>, db: State<'_, MutexServerDB>)
 
     let session_data = db::PendingSessionData {
         readable_name: req.readable_name.clone(),
-        unconfirmed_participants: req.other_participants.iter().map(&db::UserID::new).collect(),
+        unconfirmed_participants: req
+            .other_participants
+            .iter()
+            .map(&db::UserID::new)
+            .collect(),
         confirmed_participants: vec![db::UserID::new(&req.creator_id)],
     };
 
@@ -102,8 +109,8 @@ fn create_session(req: Json<db::CreateSessionReq>, db: State<'_, MutexServerDB>)
             Ok(json_str) => match db.users_db.get_mut(&participant) {
                 Some(user_data) => user_data.message_queue.push(json_str),
                 None => print!("error"), // cause we all love meaningful errors
-            }
-            Err(_) => println!("error")
+            },
+            Err(_) => println!("error"),
         }
     }
 
