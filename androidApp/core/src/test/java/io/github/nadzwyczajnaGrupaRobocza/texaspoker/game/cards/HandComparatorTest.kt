@@ -30,6 +30,30 @@ private fun assertHandLess(
 
 class HandComparatorTest {
     @Test
+    fun `HighCard should be biger then Pair`() {
+        val lhs = createHand(
+            spadesThree,
+            spadesFour,
+            diamondsThree,
+            spadesNine,
+            clubsTen,
+            diamondsQueen,
+            spadesKing
+        )
+        val rhs = createHand(
+            clubsFive,
+            clubsFour,
+            clubsThree,
+            heartsNine,
+            diamondsTen,
+            spadesQueen,
+            diamondsKing
+        )
+
+        assertHandBigger(lhs, rhs)
+    }
+
+    @Test
     fun `HighCard should be less then Pair`() {
         val lhs = createHand(
             clubsFive,
