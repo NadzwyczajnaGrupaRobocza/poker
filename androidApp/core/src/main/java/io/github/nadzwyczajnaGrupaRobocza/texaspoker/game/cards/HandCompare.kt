@@ -5,9 +5,13 @@ private data class RanksToCompare(val lhs: Rank, val rhs: Rank)
 
 private val equal = 0
 private val bigger = 1
-private val lesser = -1
+private val less = -1
 
 fun Hand.compareTo(other: Hand): Int {
+    when {
+        this.type < other.type -> return less
+        this.type > other.type -> return bigger
+    }
     val ownCards = this.cards.sortedByDescending { it.rank }.take(5)
     val otherCards = other.cards.sortedByDescending { it.rank }.take(5)
     val rankPairs =
@@ -18,7 +22,7 @@ fun Hand.compareTo(other: Hand): Int {
 private fun compareToFirstNotEqual(ranks: List<RanksToCompare>): Int = when {
     ranks.isEmpty() -> equal
     ranks.first().lhs == ranks.first().rhs -> compareToFirstNotEqual(ranks.drop(1))
-    ranks.first().lhs < ranks.first().rhs -> lesser
+    ranks.first().lhs < ranks.first().rhs -> less
     else -> bigger
 }
 

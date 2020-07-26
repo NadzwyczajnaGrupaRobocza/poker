@@ -7,7 +7,54 @@ import com.natpryce.hamkrest.lessThan
 import compareTo
 import org.junit.Test
 
+private fun assertHandsEqual(
+    lhs: Hand,
+    rhs: Hand
+) {
+    assertThat(lhs.compareTo(rhs), equalTo(0))
+}
+
+private fun assertHandBigger(
+    lhs: Hand,
+    rhs: Hand
+) {
+    assertThat(lhs.compareTo(rhs), greaterThan(0))
+}
+
+private fun assertHandLess(
+    lhs: Hand,
+    rhs: Hand
+) {
+    assertThat(lhs.compareTo(rhs), lessThan(0))
+}
+
 class HandComparatorTest {
+    @Test
+    fun `HighCard should be less then Pair`() {
+        val lhs = createHand(
+            clubsFive,
+            clubsFour,
+            clubsThree,
+            heartsNine,
+            diamondsTen,
+            spadesQueen,
+            diamondsKing
+        )
+        val rhs = createHand(
+            spadesThree,
+            spadesFour,
+            diamondsThree,
+            spadesNine,
+            clubsTen,
+            diamondsQueen,
+            spadesKing
+        )
+
+        assertHandLess(lhs, rhs)
+    }
+}
+
+class HighCardsComparatorTest {
     @Test
     fun `HighCards should be equal when only differ in suit`() {
         val lhs = createHand(
@@ -128,25 +175,78 @@ class HandComparatorTest {
 
         assertHandsEqual(lhs, rhs)
     }
+}
 
-    private fun assertHandsEqual(
-        lhs: Hand,
-        rhs: Hand
-    ) {
-        assertThat(lhs.compareTo(rhs), equalTo(0))
+class PairCompareTest {
+    @Test
+    fun `Same pairs with same kickers should be equal`() {
+        val lhs = createHand(
+            clubsFive,
+            diamondsFive,
+            spadesThree,
+            heartsNine,
+            diamondsTen,
+            spadesQueen,
+            diamondsKing
+        )
+        val rhs = createHand(
+            spadesFive,
+            heartsFive,
+            diamondsThree,
+            spadesNine,
+            clubsTen,
+            diamondsQueen,
+            spadesKing
+        )
+
+        assertHandsEqual(lhs, rhs)
     }
 
-    private fun assertHandBigger(
-        lhs: Hand,
-        rhs: Hand
-    ) {
-        assertThat(lhs.compareTo(rhs), greaterThan(0))
+    @Test
+    fun `Same pairs with bigger first kicker should be bigger`() {
+        val lhs = createHand(
+            clubsFive,
+            diamondsFive,
+            spadesThree,
+            heartsNine,
+            diamondsTen,
+            spadesQueen,
+            spadesAce
+        )
+        val rhs = createHand(
+            spadesFive,
+            heartsFive,
+            diamondsThree,
+            spadesNine,
+            clubsTen,
+            diamondsQueen,
+            diamondsKing
+        )
+
+        assertHandBigger(lhs, rhs)
     }
 
-    private fun assertHandLess(
-        lhs: Hand,
-        rhs: Hand
-    ) {
-        assertThat(lhs.compareTo(rhs), lessThan(0))
+    @Test
+    fun `Less pair with bigger first kicker should be less`() {
+        val lhs = createHand(
+            clubsFive,
+            diamondsThree,
+            spadesThree,
+            heartsNine,
+            diamondsTen,
+            spadesQueen,
+            spadesAce
+        )
+        val rhs = createHand(
+            spadesFive,
+            heartsFive,
+            spadesTwo,
+            spadesNine,
+            clubsTen,
+            diamondsQueen,
+            diamondsKing
+        )
+
+        assertHandLess(lhs, rhs)
     }
 }
