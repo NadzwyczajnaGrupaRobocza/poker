@@ -3,6 +3,7 @@ package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.greaterThan
+import com.natpryce.hamkrest.lessThan
 import compareTo
 import org.junit.Test
 
@@ -55,6 +56,31 @@ class HandComparatorTest {
         assertHandBigger(lhs, rhs)
     }
 
+    @Test
+    fun `HighCard should be lesser when second card is lesser`() {
+        val lhs = createHand(
+            clubsFive,
+            clubsFour,
+            spadesThree,
+            heartsNine,
+            diamondsTen,
+            spadesJack,
+            diamondsKing
+        )
+        val rhs = createHand(
+            diamondsFive,
+            spadesFour,
+            diamondsThree,
+            spadesNine,
+            clubsTen,
+            diamondsQueen,
+            spadesKing
+        )
+
+        assertHandLess(lhs, rhs)
+    }
+
+
     private fun assertHandsEqual(
         lhs: Hand,
         rhs: Hand
@@ -67,5 +93,12 @@ class HandComparatorTest {
         rhs: Hand
     ) {
         assertThat(lhs.compareTo(rhs), greaterThan(0))
+    }
+
+    private fun assertHandLess(
+        lhs: Hand,
+        rhs: Hand
+    ) {
+        assertThat(lhs.compareTo(rhs), lessThan(0))
     }
 }
