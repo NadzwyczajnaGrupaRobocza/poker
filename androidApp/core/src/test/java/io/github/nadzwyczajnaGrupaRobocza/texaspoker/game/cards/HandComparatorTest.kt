@@ -57,7 +57,7 @@ class HandComparatorTest {
     }
 
     @Test
-    fun `HighCard should be lesser when second card is lesser`() {
+    fun `HighCard should be less when second card is less`() {
         val lhs = createHand(
             clubsFive,
             clubsFour,
@@ -80,6 +80,54 @@ class HandComparatorTest {
         assertHandLess(lhs, rhs)
     }
 
+    @Test
+    fun `HighCard should be bigger when fifth card is less`() {
+        val lhs = createHand(
+            diamondsSix,
+            clubsFour,
+            spadesThree,
+            heartsNine,
+            diamondsTen,
+            spadesQueen,
+            diamondsKing
+        )
+        val rhs = createHand(
+            diamondsFive,
+            spadesFour,
+            diamondsThree,
+            spadesNine,
+            clubsTen,
+            diamondsQueen,
+            spadesKing
+        )
+
+        assertHandBigger(lhs, rhs)
+    }
+
+
+    @Test
+    fun `HighCard should be qual when sixth card is bigger`() {
+        val lhs = createHand(
+            clubsFive,
+            clubsFour,
+            spadesThree,
+            heartsNine,
+            diamondsTen,
+            spadesQueen,
+            diamondsKing
+        )
+        val rhs = createHand(
+            diamondsFive,
+            spadesTwo,
+            diamondsThree,
+            spadesNine,
+            clubsTen,
+            diamondsQueen,
+            spadesKing
+        )
+
+        assertHandsEqual(lhs, rhs)
+    }
 
     private fun assertHandsEqual(
         lhs: Hand,
