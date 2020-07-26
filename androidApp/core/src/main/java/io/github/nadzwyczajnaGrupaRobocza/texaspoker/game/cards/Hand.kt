@@ -65,14 +65,7 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
             emptyList()
         )
         if (threes.size == oneElement) return InternalHand(HandType.Three, emptyList(), emptyList())
-        if (pairs.size == oneElement) {
-            val pairRank = pairs.first().first().rank
-            return InternalHand(
-                HandType.Pair,
-                cards.filter { it.rank == pairRank },
-                cards.filter { it.rank != pairRank }.sortedByDescending { it.rank }.take(3)
-            )
-        }
+        if (pairs.size == oneElement) return getPairInternalHand(pairs, cards)
         if (pairs.size >= twoElements) return InternalHand(
             HandType.TwoPairs,
             emptyList(),
@@ -83,6 +76,18 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
             HandType.HighCard,
             cards.sortedByDescending { it.rank }.take(5),
             emptyList()
+        )
+    }
+
+    private fun getPairInternalHand(
+        pairs: List<List<Card>>,
+        cards: Set<Card>
+    ): InternalHand {
+        val pairRank = pairs.first().first().rank
+        return InternalHand(
+            HandType.Pair,
+            cards.filter { it.rank == pairRank },
+            cards.filter { it.rank != pairRank }.sortedByDescending { it.rank }.take(3)
         )
     }
 
