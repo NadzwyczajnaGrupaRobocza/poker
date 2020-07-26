@@ -39,7 +39,7 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         if (straightType == StraightType.Normal) return HandType.Straight
         if (threesCount == oneElement) return HandType.Three
         if (pairsCount == oneElement) return HandType.Pair
-        if (pairsCount == twoElements) return HandType.TwoPairs
+        if (pairsCount >= twoElements) return HandType.TwoPairs
 
         return HandType.HighCard
     }

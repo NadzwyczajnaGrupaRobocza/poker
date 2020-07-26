@@ -73,6 +73,21 @@ class HandTest {
     }
 
     @Test
+    fun `Given three pairs should return two pairs`() {
+        val hand = createHand(
+            clubsFive,
+            spadesThree,
+            heartsThree,
+            spadesFive,
+            diamondsTen,
+            spadesTen,
+            diamondsKing
+        )
+
+        assertThat(hand.type, equalTo(HandType.TwoPairs))
+    }
+
+    @Test
     fun `Given three same cards should return Three`() {
         val hand = createHand(
             clubsFive,
