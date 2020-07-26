@@ -114,7 +114,3 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
     }
 }
 
-fun Hand.compareTo(other: Hand): Int {
-    return 0
-}
-

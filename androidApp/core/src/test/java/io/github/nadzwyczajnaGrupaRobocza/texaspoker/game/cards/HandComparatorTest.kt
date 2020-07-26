@@ -2,6 +2,7 @@ package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import compareTo
 import org.junit.Test
 
 class HandComparatorTest {
