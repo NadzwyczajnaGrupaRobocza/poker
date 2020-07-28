@@ -55,7 +55,7 @@ class GameScreen(
 
     fun createCardFrames() {
         val centerOfTable_x = tableWidth / 2
-        val centerOfTable_y = (tableHeight / 2) - (cardHeight / 2)
+        val centerOfTable_y = tableHeight / 2 - cardHeight / 2
 
 //        frames.add(
 //            createVisibleObject(
@@ -111,7 +111,7 @@ class GameScreen(
     fun createCard() {
         card = createVisibleObject(
             camera.viewportWidth / 2,
-            (camera.viewportHeight / 2) - (cardHeight / 2),
+            camera.viewportHeight / 2 - cardHeight / 2,
             100f,
             152f,
             "JH"
