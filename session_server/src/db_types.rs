@@ -14,11 +14,25 @@ pub mod db {
         }
     }
 
+    #[derive(Serialize, Deserialize, Default, Clone)]
+    pub struct MessageQueue {
+        data: Vec<String>,
+    }
+
+    impl MessageQueue {
+        pub fn new() -> MessageQueue {
+            MessageQueue { data: vec![] }
+        }
+        pub fn append(&mut self, msg: String) {
+            self.data.push(msg)
+        }
+    }
+
     #[derive(Default)]
     pub struct UserData {
         pub known_peers: KnownPeers,
         pub active_sessions: Vec<SessionID>,
-        pub message_queue: Vec<String>,
+        pub message_queue: MessageQueue,
     }
 
     impl UserData {
@@ -26,12 +40,12 @@ pub mod db {
             UserData {
                 known_peers: KnownPeers::new(),
                 active_sessions: vec![],
-                message_queue: vec![],
+                message_queue: MessageQueue::new(),
             }
         }
     }
 
-    #[derive(Serialize, Deserialize, Default)]
+    #[derive(Serialize, Deserialize, Default, Debug)]
     pub struct KnownPeers {
         pub peers: Vec<String>,
     }

@@ -49,13 +49,13 @@ fn update_known_peers(
     db: State<'_, MutexServerDB>,
 ) -> JsonValue {
     let mut db = db.lock().unwrap();
-    println!("updated peers for {} to {:?}", id, peers.0.peers);
+    let peers = peers.into_inner();
+    println!("updated peers for {} to {:?}", id, peers);
     let users_entry = db
         .users_db
         .entry(db::UserID::new(&id))
         .or_insert_with(db::UserData::new);
-    let peers = peers.into_inner();
-    users_entry.known_peers.peers = peers.peers;
+    users_entry.known_peers = peers;
 
     json!({ "status": "ok" })
 }
@@ -107,8 +107,8 @@ fn create_session(req: Json<db::CreateSessionReq>, db: State<'_, MutexServerDB>)
 
         match serde_json::to_string(&join_req) {
             Ok(json_str) => match db.users_db.get_mut(&participant) {
-                Some(user_data) => user_data.message_queue.push(json_str),
-                None => print!("error"), // cause we all love meaningful errors
+                Some(user_data) => user_data.message_queue.append(json_str),
+                None => println!("error"), // cause we all love meaningful errors
             },
             Err(_) => println!("error"),
         }
@@ -116,6 +116,25 @@ fn create_session(req: Json<db::CreateSessionReq>, db: State<'_, MutexServerDB>)
 
     json!({"status": "ok",
            "session_id": session_id })
+}
+
+#[get("/user/<id>/queue")]
+fn get_messages_for(id: String, db: State<'_, MutexServerDB>) -> JsonValue {
+    let mut db = db.lock().unwrap();
+    match db.users_db.get_mut(&db::UserID::new(&id)) {
+        Some(user_data) => {
+            // TODO: figure out how to do a swap here
+            let current_message_queue = user_data.message_queue.clone();
+            user_data.message_queue = db::MessageQueue::new();
+            match serde_json::to_value(current_message_queue) {
+                Ok(json_value) => JsonValue::from(json_value),
+                Err(_) => json!({"status": "failed to serialize"})
+            }
+        }
+        None => json!({
+            "status": "user not found",
+        }),
+    }
 }
 
 fn main() {
