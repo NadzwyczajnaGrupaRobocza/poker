@@ -10,8 +10,8 @@ object DesktopLauncher {
     fun main(arg: Array<String>) {
         val config = LwjglApplicationConfiguration().apply {
             title = "TexasPoker"
-            width = 800
-            height = 400
+            width = 1200
+            height = 800
         }
         LwjglApplication(Game(), config).logLevel = Application.LOG_DEBUG
     }

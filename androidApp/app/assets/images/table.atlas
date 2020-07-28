@@ -34,49 +34,49 @@ repeat: none
   index: -1
 2C
   rotate: false
-  xy: 834, 4
+  xy: 1622, 184
   size: 100, 152
   orig: 100, 152
   offset: 0, 0
   index: -1
 2D
   rotate: false
-  xy: 1250, 24
+  xy: 1726, 340
   size: 100, 152
   orig: 100, 152
   offset: 0, 0
   index: -1
 2H
   rotate: false
-  xy: 1830, 496
+  xy: 1934, 652
   size: 100, 152
   orig: 100, 152
   offset: 0, 0
   index: -1
 2S
   rotate: false
-  xy: 1726, 184
+  xy: 1934, 496
   size: 100, 152
   orig: 100, 152
   offset: 0, 0
   index: -1
 3C
   rotate: false
-  xy: 1934, 340
+  xy: 1934, 184
   size: 100, 152
   orig: 100, 152
   offset: 0, 0
   index: -1
 3D
   rotate: false
-  xy: 1518, 184
+  xy: 1146, 4
   size: 100, 152
   orig: 100, 152
   offset: 0, 0
   index: -1
 3H
   rotate: false
-  xy: 1146, 4
+  xy: 1250, 24
   size: 100, 152
   orig: 100, 152
   offset: 0, 0
@@ -104,7 +104,7 @@ repeat: none
   index: -1
 4H
   rotate: false
-  xy: 1830, 184
+  xy: 1518, 184
   size: 100, 152
   orig: 100, 152
   offset: 0, 0
@@ -153,14 +153,14 @@ repeat: none
   index: -1
 6D
   rotate: false
-  xy: 1934, 808
+  xy: 834, 4
   size: 100, 152
   orig: 100, 152
   offset: 0, 0
   index: -1
 6H
   rotate: false
-  xy: 1622, 184
+  xy: 1622, 340
   size: 100, 152
   orig: 100, 152
   offset: 0, 0
@@ -174,7 +174,7 @@ repeat: none
   index: -1
 7C
   rotate: false
-  xy: 1042, 4
+  xy: 1934, 340
   size: 100, 152
   orig: 100, 152
   offset: 0, 0
@@ -188,7 +188,7 @@ repeat: none
   index: -1
 7H
   rotate: false
-  xy: 1934, 184
+  xy: 1830, 340
   size: 100, 152
   orig: 100, 152
   offset: 0, 0
@@ -216,7 +216,7 @@ repeat: none
   index: -1
 8H
   rotate: false
-  xy: 1622, 340
+  xy: 1726, 496
   size: 100, 152
   orig: 100, 152
   offset: 0, 0
@@ -300,28 +300,28 @@ JD
   index: -1
 JH
   rotate: false
-  xy: 1726, 496
+  xy: 1830, 652
   size: 100, 152
   orig: 100, 152
   offset: 0, 0
   index: -1
 JS
   rotate: false
-  xy: 1830, 652
+  xy: 1934, 808
   size: 100, 152
   orig: 100, 152
   offset: 0, 0
   index: -1
 KC
   rotate: false
-  xy: 1934, 652
+  xy: 938, 4
   size: 100, 152
   orig: 100, 152
   offset: 0, 0
   index: -1
 KD
   rotate: false
-  xy: 938, 4
+  xy: 1726, 184
   size: 100, 152
   orig: 100, 152
   offset: 0, 0
@@ -335,7 +335,7 @@ KH
   index: -1
 KS
   rotate: false
-  xy: 1934, 496
+  xy: 1830, 184
   size: 100, 152
   orig: 100, 152
   offset: 0, 0
@@ -370,7 +370,7 @@ QS
   index: -1
 back
   rotate: false
-  xy: 1830, 340
+  xy: 1042, 4
   size: 100, 152
   orig: 100, 152
   offset: 0, 0
@@ -384,7 +384,7 @@ background
   index: -1
 frame
   rotate: false
-  xy: 1726, 340
+  xy: 1830, 496
   size: 100, 152
   orig: 100, 152
   offset: 0, 0

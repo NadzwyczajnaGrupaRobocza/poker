@@ -27,7 +27,7 @@ class Game : KtxGame<KtxScreen>() {
             bindSingleton(BitmapFont())
             bindSingleton(AssetManager())
             bindSingleton(OrthographicCamera().apply {
-                setToOrtho(false, 800f, 480f) })
+                setToOrtho(false, 1200f, 800f) })
             bindSingleton(PooledEngine())
 
             addScreen(
