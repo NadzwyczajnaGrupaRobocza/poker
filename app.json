@@ -1,0 +1,10 @@
+{	
+  "name": "Example Rust application",
+  "description": "test heorku app",
+  "repository": "https://github.com/NadzwyczajnaGrupaRobocza/poker",
+  "success_url": "/",
+  "keywords": ["rust", "rocket"],
+  "env": {
+	"BUILDPACK_URL": "https://github.com/emk/heroku-buildpack-rust.git"
+   }
+}
