@@ -29,7 +29,7 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
     private fun calculateInternalHand(cards: Set<Card>): InternalHand {
         val oneElement = 1
         val twoElements = 2
-        val fiveElements = 5
+        val fiveElements = handCardsCount
 
         val cardsByRank = groupCardsByRank(cards)
         val (pairs, threes, fours) = calculateMultipleRanks(cardsByRank)
@@ -70,22 +70,32 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
 
         return InternalHand(
             HandType.HighCard,
-            cards.sortedByDescending { it.rank }.take(5),
+            cards.sortedByDescending { it.rank }.take(handCardsCount),
             emptyList()
         )
     }
+
+    private fun getInternalHand(
+        type: HandType,
+        handCardCount: Int,
+        handCardFilter: (Card) -> Boolean
+    ) =
+        InternalHand(
+            type,
+            cards.getNDescendingConformingPredicate(handCardFilter, handCardCount),
+            cards.getNDescendingNotConformingPredicate(
+                handCardFilter,
+                handCardsCount - handCardCount
+            )
+        )
+
 
     private fun getPairInternalHand(
         pairs: List<List<Card>>,
         cards: Set<Card>
     ): InternalHand {
         val pairRank = pairs.first().first().rank
-        val predicate = { it: Card -> it.rank == pairRank }
-        return InternalHand(
-            HandType.Pair,
-            cards.getNDescendingConformingPredicate(predicate, 2),
-            cards.getNDescendingNotConformingPredicate(predicate, 3)
-        )
+        return getInternalHand(HandType.Pair, 2) { it -> it.rank == pairRank }
     }
 
     private fun getTwoPairsInternalHand(
@@ -94,12 +104,10 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
     ): InternalHand {
         val topTwoRanks =
             pairs.sortedByDescending { it.first().rank }.take(2).map { it.first().rank }
-        val predicate = { card: Card -> topTwoRanks.find { it == card.rank } != null }
-        return InternalHand(
+        return getInternalHand(
             HandType.TwoPairs,
-            cards.getNDescendingConformingPredicate(predicate, 4),
-            cards.getNDescendingNotConformingPredicate(predicate, 1)
-        )
+            4
+        ) { card: Card -> topTwoRanks.find { it == card.rank } != null }
     }
 
     private fun calculateMaxCardsInOneSuit(cards: Set<Card>): Int? {
@@ -192,6 +200,10 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
             maxCardsInRow = newMax,
             suites = emptyList()
         )
+    }
+
+    companion object {
+        private const val handCardsCount = 5
     }
 }
 
