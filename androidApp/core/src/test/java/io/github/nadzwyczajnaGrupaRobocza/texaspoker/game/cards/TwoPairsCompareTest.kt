@@ -62,13 +62,13 @@ class TwoPairsCompareTest {
     }
 
     @Test
-    fun `Less pair with bigger first kicker should be less`() {
+    fun `Same pairs with less second kicker should be equal`() {
         val lhs =
             createHand(
                 clubsFive,
-                diamondsThree,
+                diamondsFive,
                 spadesThree,
-                heartsNine,
+                heartsThree,
                 diamondsTen,
                 spadesQueen,
                 spadesAce
@@ -77,40 +77,40 @@ class TwoPairsCompareTest {
             createHand(
                 spadesFive,
                 heartsFive,
-                spadesTwo,
-                spadesNine,
+                diamondsThree,
+                clubsThree,
                 clubsTen,
-                diamondsQueen,
+                diamondsAce,
                 diamondsKing
             )
 
-        assertHandLess(
+        assertHandsEqual(
             lhs,
             rhs
         )
     }
 
     @Test
-    fun `Same pair with bigger third kicker should be bigger`() {
+    fun `Same pairs with bigger second kicker smaller then pairs should be bigger`() {
         val lhs =
             createHand(
-                clubsFive,
-                diamondsFive,
+                clubsNine,
+                diamondsNine,
                 spadesThree,
-                heartsNine,
-                diamondsJack,
-                spadesQueen,
-                spadesKing
+                heartsThree,
+                spadesFour,
+                clubsTwo,
+                clubsEight
             )
         val rhs =
             createHand(
-                spadesFive,
-                heartsFive,
-                spadesTwo,
                 spadesNine,
-                clubsTen,
-                diamondsQueen,
-                diamondsKing
+                heartsNine,
+                diamondsThree,
+                clubsThree,
+                spadesTwo,
+                diamondsSix,
+                diamondsFive
             )
 
         assertHandBigger(
@@ -120,29 +120,29 @@ class TwoPairsCompareTest {
     }
 
     @Test
-    fun `Same pair with bigger fourth kicker should be equal`() {
+    fun `Bigger first pair should be bigger`() {
         val lhs =
             createHand(
-                clubsFive,
-                diamondsFive,
+                clubsNine,
+                diamondsNine,
                 spadesThree,
-                heartsNine,
-                diamondsTen,
-                spadesQueen,
-                spadesKing
+                heartsThree,
+                spadesFour,
+                clubsTwo,
+                clubsEight
             )
         val rhs =
             createHand(
                 spadesFive,
                 heartsFive,
+                diamondsThree,
+                clubsThree,
                 spadesTwo,
-                spadesEight,
-                clubsTen,
-                diamondsQueen,
-                diamondsKing
+                diamondsSix,
+                diamondsAce
             )
 
-        assertHandsEqual(
+        assertHandBigger(
             lhs,
             rhs
         )

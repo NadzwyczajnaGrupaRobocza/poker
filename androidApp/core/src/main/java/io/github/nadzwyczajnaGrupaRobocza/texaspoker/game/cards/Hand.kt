@@ -91,10 +91,13 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         pairs: List<List<Card>>,
         cards: Set<Card>
     ): InternalHand {
+        val topTwoRanks =
+            pairs.sortedByDescending { it.first().rank }.take(2).map { it.first().rank }
         return InternalHand(
             HandType.TwoPairs,
-            emptyList(),
-            cards.sortedByDescending { it.rank }.take(5)
+            cards.filter { card -> topTwoRanks.find { it == card.rank } != null }.sortedByDescending { it.rank },
+            cards.filter { card -> topTwoRanks.find { it == card.rank } == null }
+                .sortedByDescending { it.rank }.take(1)
         )
     }
 
