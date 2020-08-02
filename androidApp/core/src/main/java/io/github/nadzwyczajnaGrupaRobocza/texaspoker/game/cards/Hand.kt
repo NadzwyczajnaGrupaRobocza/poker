@@ -80,10 +80,11 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         cards: Set<Card>
     ): InternalHand {
         val pairRank = pairs.first().first().rank
+        val predicate = { it: Card -> it.rank == pairRank }
         return InternalHand(
             HandType.Pair,
-            cards.filter { it.rank == pairRank },
-            cards.filter { it.rank != pairRank }.sortedByDescending { it.rank }.take(3)
+            cards.getNDescendingConformingPredicate(predicate, 2),
+            cards.getNDescendingNotConformingPredicate(predicate, 3)
         )
     }
 
@@ -93,11 +94,11 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
     ): InternalHand {
         val topTwoRanks =
             pairs.sortedByDescending { it.first().rank }.take(2).map { it.first().rank }
+        val predicate = { card: Card -> topTwoRanks.find { it == card.rank } != null }
         return InternalHand(
             HandType.TwoPairs,
-            cards.filter { card -> topTwoRanks.find { it == card.rank } != null }.sortedByDescending { it.rank },
-            cards.filter { card -> topTwoRanks.find { it == card.rank } == null }
-                .sortedByDescending { it.rank }.take(1)
+            cards.getNDescendingConformingPredicate(predicate, 4),
+            cards.getNDescendingNotConformingPredicate(predicate, 1)
         )
     }
 
@@ -194,3 +195,19 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
     }
 }
 
+fun Set<Card>.getNDescendingConformingPredicate(
+    predicate: (Card) -> Boolean,
+    numberOfCards: Int
+) =
+    this.filter(predicate).getNDescending(numberOfCards)
+
+fun Set<Card>.getNDescendingNotConformingPredicate(
+    predicate: (Card) -> Boolean,
+    numberOfCards: Int
+) =
+    this.filterNot(predicate).getNDescending(numberOfCards)
+
+fun List<Card>.getNDescending(
+    numberOfCards: Int
+) =
+    this.sortedByDescending { it.rank }.take(numberOfCards)

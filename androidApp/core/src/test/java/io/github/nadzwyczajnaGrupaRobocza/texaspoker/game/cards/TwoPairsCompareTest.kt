@@ -147,4 +147,33 @@ class TwoPairsCompareTest {
             rhs
         )
     }
+
+    @Test
+    fun `Less second pair should be less`() {
+        val lhs =
+            createHand(
+                clubsNine,
+                diamondsNine,
+                spadesThree,
+                heartsThree,
+                spadesFour,
+                clubsTwo,
+                clubsEight
+            )
+        val rhs =
+            createHand(
+                spadesFive,
+                heartsFive,
+                diamondsNine,
+                clubsNine,
+                spadesTwo,
+                diamondsSix,
+                diamondsAce
+            )
+
+        assertHandLess(
+            lhs,
+            rhs
+        )
+    }
 }
