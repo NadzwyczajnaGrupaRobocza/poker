@@ -31,4 +31,33 @@ class ThreeCompareTest {
             rhs
         )
     }
+    @Test
+
+    fun `Same three with bigger first kicker should be bigger`() {
+        val lhs =
+            createHand(
+                clubsFive,
+                diamondsFive,
+                spadesFive,
+                heartsThree,
+                diamondsTen,
+                spadesQueen,
+                diamondsAce
+            )
+        val rhs =
+            createHand(
+                spadesFive,
+                heartsFive,
+                diamondsFive,
+                clubsThree,
+                clubsTen,
+                diamondsQueen,
+                spadesKing
+            )
+
+        assertHandBigger(
+            lhs,
+            rhs
+        )
+    }
 }

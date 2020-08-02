@@ -64,9 +64,9 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
             emptyList(),
             emptyList()
         )
-        if (threes.size == oneElement) return InternalHand(HandType.Three, emptyList(), emptyList())
-        if (pairs.size == oneElement) return getPairInternalHand(pairs, cards)
-        if (pairs.size >= twoElements) return getTwoPairsInternalHand(pairs, cards)
+        if (threes.size == oneElement) return getThreeInternalHand(threes)
+        if (pairs.size == oneElement) return getPairInternalHand(pairs)
+        if (pairs.size >= twoElements) return getTwoPairsInternalHand(pairs)
 
         return InternalHand(
             HandType.HighCard,
@@ -90,24 +90,23 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         )
 
 
-    private fun getPairInternalHand(
-        pairs: List<List<Card>>,
-        cards: Set<Card>
-    ): InternalHand {
+    private fun getPairInternalHand(pairs: List<List<Card>>): InternalHand {
         val pairRank = pairs.first().first().rank
-        return getInternalHand(HandType.Pair, 2) { it -> it.rank == pairRank }
+        return getInternalHand(HandType.Pair, 2) { it.rank == pairRank }
     }
 
-    private fun getTwoPairsInternalHand(
-        pairs: List<List<Card>>,
-        cards: Set<Card>
-    ): InternalHand {
+    private fun getTwoPairsInternalHand(pairs: List<List<Card>>): InternalHand {
         val topTwoRanks =
             pairs.sortedByDescending { it.first().rank }.take(2).map { it.first().rank }
         return getInternalHand(
             HandType.TwoPairs,
             4
         ) { card: Card -> topTwoRanks.find { it == card.rank } != null }
+    }
+
+    private fun getThreeInternalHand(threes: List<List<Card>>): InternalHand {
+        val threeRank = threes.first().first().rank
+        return getInternalHand(HandType.Three, 3) { it.rank == threeRank }
     }
 
     private fun calculateMaxCardsInOneSuit(cards: Set<Card>): Int? {
