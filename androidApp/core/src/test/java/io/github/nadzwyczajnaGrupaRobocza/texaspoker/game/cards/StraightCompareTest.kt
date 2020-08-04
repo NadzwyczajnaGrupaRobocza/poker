@@ -60,4 +60,91 @@ class StraightCompareTest {
             rhs
         )
     }
+
+    @Test
+    fun `Same straight with different pairs should be equal`() {
+        val lhs =
+            createHand(
+                diamondsFive,
+                spadesSix,
+                heartsSeven,
+                clubsEight,
+                diamondsNine,
+                clubsFive,
+                spadesKing
+            )
+        val rhs =
+            createHand(
+                clubsFive,
+                spadesSix,
+                heartsSeven,
+                clubsEight,
+                clubsNine,
+                spadesNine,
+                heartsKing
+            )
+
+        assertHandsEqual(
+            lhs,
+            rhs
+        )
+    }
+
+    @Test
+    fun `Bigger straight should be bigger`() {
+        val lhs =
+            createHand(
+                diamondsTen,
+                spadesSix,
+                heartsSeven,
+                clubsEight,
+                diamondsNine,
+                clubsTwo,
+                spadesKing
+            )
+        val rhs =
+            createHand(
+                clubsFive,
+                spadesSix,
+                heartsSeven,
+                clubsEight,
+                clubsNine,
+                spadesTwo,
+                heartsKing
+            )
+
+        assertHandBigger(
+            lhs,
+            rhs
+        )
+    }
+
+    @Test
+    fun `Less straight with more cards in order should be less`() {
+        val lhs =
+            createHand(
+                diamondsFive,
+                spadesSix,
+                heartsSeven,
+                clubsEight,
+                diamondsNine,
+                clubsFour,
+                diamondsJack
+            )
+        val rhs =
+            createHand(
+                clubsFive,
+                spadesSix,
+                heartsSeven,
+                clubsEight,
+                clubsNine,
+                spadesFour,
+                diamondsTen
+            )
+
+        assertHandLess(
+            lhs,
+            rhs
+        )
+    }
 }
