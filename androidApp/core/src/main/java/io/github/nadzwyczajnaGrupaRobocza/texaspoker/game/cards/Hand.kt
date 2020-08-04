@@ -51,11 +51,7 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
             emptyList()
         )
         if (fours.size == oneElement) return InternalHand(HandType.Four, emptyList(), emptyList())
-        if (threes.size == twoElements || threes.size == oneElement && pairs.size >= oneElement) return InternalHand(
-            HandType.Full,
-            emptyList(),
-            emptyList()
-        )
+        if (threes.size == twoElements || threes.size == oneElement && pairs.size >= oneElement) return getFullInternalHand(threes, pairs)
         maxCardsInOneSuite?.let {
             if (maxCardsInOneSuite >= fiveElements) return getFlushInternalHand(cardsBySuite)
         }
@@ -72,6 +68,15 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
             cards.sortedByDescending { it.rank }.take(handCardsCount),
             emptyList()
         )
+    }
+
+    private fun getFullInternalHand(
+        threes: List<List<Card>>,
+        pairs: List<List<Card>>
+    ): InternalHand {
+        val flushRankCount = 2
+        val flushRanks = (threes.map { it.first().rank } + pairs.map { it.first().rank}).sortedDescending().take(flushRankCount)
+        return getInternalHand(HandType.Full, handCardsCount) { flushRanks.contains(it.rank)}
     }
 
     private fun getFlushInternalHand(cardsBySuite: Map<Suit, List<Card>>): InternalHand {
