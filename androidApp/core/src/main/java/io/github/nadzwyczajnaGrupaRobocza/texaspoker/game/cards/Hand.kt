@@ -51,7 +51,7 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
             emptyList()
         )
         if (fours.size == oneElement) return InternalHand(HandType.Four, emptyList(), emptyList())
-        if (threes.size == oneElement && pairs.size >= oneElement) return InternalHand(
+        if (threes.size == twoElements || threes.size == oneElement && pairs.size >= oneElement) return InternalHand(
             HandType.Full,
             emptyList(),
             emptyList()
@@ -162,7 +162,16 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         }
         val thisCard = cards.first()
         val diff = thisCard.rank - previousCard.rank
-        return diffBasedDecision(diff, cards, thisCard, previousCard, cardsInRow, newMax, suites, bestStraightCard)
+        return diffBasedDecision(
+            diff,
+            cards,
+            thisCard,
+            previousCard,
+            cardsInRow,
+            newMax,
+            suites,
+            bestStraightCard
+        )
     }
 
     private fun calculateStraightType(

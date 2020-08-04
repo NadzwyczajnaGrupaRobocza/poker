@@ -193,6 +193,21 @@ class HandTest {
     }
 
     @Test
+    fun `Given three same rank cards twice should return Flush`() {
+        val hand = createHand(
+            clubsFive,
+            heartsFive,
+            spadesFive,
+            heartsThree,
+            clubsThree,
+            heartsFour,
+            spadesThree
+        )
+
+        assertThat(hand.type, equalTo(HandType.Full))
+    }
+
+    @Test
     fun `Given five cards in the same suite should return Flush`() {
         val hand = createHand(
             diamondsJack,
