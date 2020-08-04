@@ -147,4 +147,62 @@ class StraightCompareTest {
             rhs
         )
     }
+
+    @Test
+    fun `Less straight with Ace as lowest card should be less`() {
+        val lhs =
+            createHand(
+                diamondsAce,
+                clubsTwo,
+                clubsThree,
+                spadesFour,
+                heartsFive,
+                clubsFour,
+                diamondsJack
+            )
+        val rhs =
+            createHand(
+                diamondsSix,
+                clubsTwo,
+                clubsThree,
+                spadesFour,
+                heartsFive,
+                clubsFour,
+                diamondsJack
+            )
+
+        assertHandLess(
+            lhs,
+            rhs
+        )
+    }
+
+    @Test
+    fun `Bigger straight with Ace as highest card should be bigger`() {
+        val lhs =
+            createHand(
+                diamondsAce,
+                clubsKing,
+                clubsQueen,
+                spadesJack,
+                diamondsTen,
+                heartsNine,
+                spadesEight
+            )
+        val rhs =
+            createHand(
+                diamondsThree,
+                clubsKing,
+                clubsQueen,
+                spadesJack,
+                diamondsTen,
+                heartsNine,
+                spadesEight
+            )
+
+        assertHandBigger(
+            lhs,
+            rhs
+        )
+    }
 }
