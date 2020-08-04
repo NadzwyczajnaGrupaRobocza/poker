@@ -12,21 +12,50 @@ class FlushCompareTest {
                 diamondsAce,
                 diamondsNine,
                 diamondsThree,
-                diamondsAce,
+                diamondsKing,
                 spadesKing
             )
         val rhs =
             createHand(
-                diamondsNine,
-                diamondsQueen,
+                diamondsFive,
+                diamondsJack,
                 diamondsAce,
-                diamondsTen,
+                diamondsNine,
+                diamondsThree,
                 diamondsKing,
-                spadesAce,
                 heartsKing
             )
 
         assertHandsEqual(
+            lhs,
+            rhs
+        )
+    }
+
+    @Test
+    fun `Flush with smaller biggest card should be less`() {
+        val lhs =
+            createHand(
+                diamondsFive,
+                diamondsJack,
+                diamondsQueen,
+                diamondsNine,
+                diamondsThree,
+                diamondsKing,
+                spadesKing
+            )
+        val rhs =
+            createHand(
+                diamondsFive,
+                diamondsJack,
+                diamondsAce,
+                diamondsNine,
+                diamondsThree,
+                diamondsKing,
+                heartsKing
+            )
+
+        assertHandLess(
             lhs,
             rhs
         )

@@ -36,7 +36,8 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
 
         val cardsByRank = groupCardsByRank(cards)
         val (pairs, threes, fours) = calculateMultipleRanks(cardsByRank)
-        val maxCardsInOneSuite = calculateMaxCardsInOneSuit(cards)
+        val cardsBySuite = groupCardsBySuit(cards)
+        val maxCardsInOneSuite = calculateMaxCardsInOneSuit(cardsBySuite)
         val straight = calculateStraight(cards)
 
         if (straight?.type == StraightType.Royal) return InternalHand(
@@ -56,11 +57,7 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
             emptyList()
         )
         maxCardsInOneSuite?.let {
-            if (maxCardsInOneSuite >= fiveElements) return InternalHand(
-                HandType.Flush,
-                emptyList(),
-                emptyList()
-            )
+            if (maxCardsInOneSuite >= fiveElements) return getFlushInternalHand(cardsBySuite)
         }
         if (straight?.type == StraightType.Normal) return getStraightInternalHand(
             HandType.Straight,
@@ -75,6 +72,11 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
             cards.sortedByDescending { it.rank }.take(handCardsCount),
             emptyList()
         )
+    }
+
+    private fun getFlushInternalHand(cardsBySuite: Map<Suit, List<Card>>): InternalHand {
+        val suit = cardsBySuite.toList().find { it.second.size >= handCardsCount }?.first
+        return getInternalHand(HandType.Flush, handCardsCount) { it.suit == suit }
     }
 
     private fun getInternalHand(
@@ -115,8 +117,7 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         return InternalHand(hand, listOf(highCard), emptyList())
     }
 
-    private fun calculateMaxCardsInOneSuit(cards: Set<Card>): Int? {
-        val cardsBySuite = groupCardsBySuit(cards)
+    private fun calculateMaxCardsInOneSuit(cardsBySuite: Map<Suit, List<Card>>): Int? {
         return cardsBySuite.maxBy { it.value.size }?.value?.size
     }
 
