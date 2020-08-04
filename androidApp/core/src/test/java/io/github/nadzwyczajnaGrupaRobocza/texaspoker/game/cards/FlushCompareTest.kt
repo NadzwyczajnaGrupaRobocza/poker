@@ -60,4 +60,33 @@ class FlushCompareTest {
             rhs
         )
     }
+
+    @Test
+    fun `Different suit flush with smae ranks should be equal`() {
+        val lhs =
+            createHand(
+                clubsFive,
+                clubsJack,
+                clubsQueen,
+                clubsNine,
+                diamondsThree,
+                clubsKing,
+                spadesKing
+            )
+        val rhs =
+            createHand(
+                diamondsFive,
+                diamondsJack,
+                diamondsAce,
+                diamondsNine,
+                diamondsThree,
+                diamondsKing,
+                heartsKing
+            )
+
+        assertHandLess(
+            lhs,
+            rhs
+        )
+    }
 }
