@@ -89,4 +89,33 @@ class ThreeCompareTest {
             rhs
         )
     }
+
+    @Test
+    fun `Same three with less third kicker should be equal`() {
+        val lhs =
+            createHand(
+                clubsFive,
+                diamondsFive,
+                spadesFive,
+                heartsThree,
+                diamondsNine,
+                spadesQueen,
+                diamondsKing
+            )
+        val rhs =
+            createHand(
+                spadesFive,
+                heartsFive,
+                diamondsFive,
+                clubsThree,
+                clubsTen,
+                diamondsQueen,
+                spadesKing
+            )
+
+        assertHandsEqual(
+            lhs,
+            rhs
+        )
+    }
 }
