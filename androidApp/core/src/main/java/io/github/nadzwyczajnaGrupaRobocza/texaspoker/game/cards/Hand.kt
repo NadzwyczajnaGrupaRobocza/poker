@@ -40,15 +40,13 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         val maxCardsInOneSuite = calculateMaxCardsInOneSuit(cardsBySuite)
         val straight = calculateStraight(cards)
 
-        if (straight?.type == StraightType.Royal) return InternalHand(
+        if (straight?.type == StraightType.Royal) return getStraightInternalHand(
             HandType.RoyalFlush,
-            emptyList(),
-            emptyList()
+            straight.straightCards
         )
-        if (straight?.type == StraightType.Flush) return InternalHand(
+        if (straight?.type == StraightType.Flush) return getStraightInternalHand(
             HandType.StraightFlush,
-            emptyList(),
-            emptyList()
+            straight.straightCards
         )
         if (fours.size == oneElement) return getFourInternalHand(fours)
         if (threes.size == twoElements || threes.size == oneElement && pairs.size >= oneElement) return getFullInternalHand(
@@ -177,7 +175,7 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
                 suites,
                 newMax,
                 previousCard,
-                straightCards.reversed().filterOutDuplicatedRanks().take(handCardsCount)
+                straightCards.reversed()
             )
         }
         val thisCard = cards.first()
@@ -201,12 +199,20 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         straightCards: List<Card>
     ): Straight? {
         val suiteCount = suites.groupBy { it }
-        val maxSuiteCount = suiteCount.maxBy { it.value.size }?.value?.size ?: 0
+        val maxSuitEntry = suiteCount.maxBy { it.value.size }
+        val maxSuiteCount = maxSuitEntry?.value?.size ?: 0
+        val maxSuit = maxSuitEntry?.key
         return when {
             newMax < 5 -> null
-            maxSuiteCount < 5 -> Straight(StraightType.Normal, straightCards)
-            previousCard.rank == Rank.Ace -> Straight(StraightType.Royal, straightCards)
-            else -> Straight(StraightType.Flush, straightCards)
+            maxSuiteCount < 5 -> Straight(StraightType.Normal, getFiveMaxRankedCards(straightCards))
+            previousCard.rank == Rank.Ace -> Straight(
+                StraightType.Royal,
+                getFiveMaxRankedCards(straightCards.filter { it.suit == maxSuit })
+            )
+            else -> Straight(
+                StraightType.Flush,
+                getFiveMaxRankedCards(straightCards.filter { it.suit == maxSuit })
+            )
         }
     }
 
@@ -245,6 +251,9 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
                 straightCards = if (newMax >= handCardsCount) straightCards else emptyList()
             )
         }
+
+    private fun getFiveMaxRankedCards(cards: List<Card>) =
+        cards.filterOutDuplicatedRanks().take(Hand.handCardsCount)
 
     companion object {
         private const val handCardsCount = 5

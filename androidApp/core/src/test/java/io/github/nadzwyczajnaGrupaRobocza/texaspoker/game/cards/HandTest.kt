@@ -391,6 +391,11 @@ class HandTest {
         )
 
         assertThat(hand.type, equalTo(HandType.StraightFlush))
+        assertThat(
+            hand.importantCards,
+            equalTo(listOf(diamondsQueen, diamondsJack, diamondsTen, diamondsNine, diamondsEight))
+        )
+        assertThat(hand.kickers, isEmpty)
     }
 
     @Test
@@ -401,11 +406,16 @@ class HandTest {
             diamondsTen,
             diamondsJack,
             diamondsQueen,
-            spadesEight,
-            spadesFive
+            diamondsNine,
+            spadesAce
         )
 
         assertThat(hand.type, equalTo(HandType.RoyalFlush))
+        assertThat(
+            hand.importantCards,
+            equalTo(listOf(diamondsAce, diamondsKing, diamondsQueen, diamondsJack, diamondsTen))
+        )
+        assertThat(hand.kickers, isEmpty)
     }
 }
 
