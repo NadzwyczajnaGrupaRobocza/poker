@@ -2,6 +2,7 @@ package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.isEmpty
 import org.junit.Test
 
 class HandTest {
@@ -40,6 +41,11 @@ class HandTest {
         )
 
         assertThat(hand.type, equalTo(HandType.HighCard))
+        assertThat(
+            hand.importantCards,
+            equalTo(listOf(diamondsKing, spadesQueen, diamondsTen, heartsNine, clubsFive))
+        )
+        assertThat(hand.kickers, isEmpty)
     }
 
     @Test
@@ -55,6 +61,11 @@ class HandTest {
         )
 
         assertThat(hand.type, equalTo(HandType.Pair))
+        assertThat(
+            hand.importantCards.toSet(),
+            equalTo(setOf(clubsFive, spadesFive))
+        )
+        assertThat(hand.kickers, equalTo(listOf(diamondsKing, spadesQueen, diamondsTen)))
     }
 
     @Test
