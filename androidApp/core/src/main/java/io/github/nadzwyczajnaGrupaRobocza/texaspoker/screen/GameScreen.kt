@@ -15,7 +15,9 @@ import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.systems.CollisionSystem
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.systems.RenderSystem
 import ktx.app.KtxScreen
 import ktx.ashley.entity
+import ktx.ashley.get
 import ktx.ashley.with
+import ktx.collections.sortBy
 import ktx.log.debug
 import ktx.log.logger
 
@@ -39,54 +41,99 @@ class GameScreen(
     private val tableWidth = camera.viewportWidth
     private val tableHeight = camera.viewportHeight
 
-    private var card = Entity()
+    private var cards = Array<Entity>(numberOfFrames)
     private var frames = Array<Entity>(numberOfFrames)
+    private var clickId = 0
 
     override fun render(delta: Float) {
         if (Gdx.input.justTouched()) {
             log.debug { "camera w: ${camera.viewportWidth} h: ${camera.viewportHeight}" }
-            if (cardCreated())
-                removeCard()
-            else
-                createCard()
+            clickId = (clickId + 1) % (numberOfFrames + 1)
+            updateCards()
+            //if (cardCreated())
+            //    removeCard()
+            // else
+            //     createCard()
         }
         engine.update(delta)
+    }
+
+    fun updateCards() {
+        if (clickId == 0) {
+            for (card in cards) {
+                engine.removeEntity(card)
+
+            }
+            return
+        } else {
+            frames[clickId-1][TransformComponent.mapper]?.let { transform ->
+                cards.add(
+                    createVisibleObject(
+                        transform.bounds.x,
+                        transform.bounds.y,
+                        cardWidth,
+                        cardHeight,
+                        "JH"
+                    )
+                )
+            }
+        }
     }
 
     fun createCardFrames() {
         val centerOfTable_x = tableWidth / 2
         val centerOfTable_y = tableHeight / 2 - cardHeight / 2
 
-//        frames.add(
-//            createVisibleObject(
-//                centerOfTable_x,
-//                centerOfTable_y,
-//                cardWidth,
-//                cardHeight,
-//                frameAssetName
-//            )
-//        )
-        for (frameId in 0..numberOfFrames) {
-            val nextFrameOffset = (frameId - 3) * cardWidth
+        val halfCardWidth = cardWidth / 2
+        val lastCardId = numberOfFrames - 1
+
+        var offset = halfCardWidth
+
+        if (numberOfFrames % 2 == 1) {
             frames.add(
                 createVisibleObject(
-                    centerOfTable_x + nextFrameOffset,
+                    centerOfTable_x - halfCardWidth,
                     centerOfTable_y,
                     cardWidth,
                     cardHeight,
                     frameAssetName
                 )
             )
+            offset = cardWidth
         }
+
+        var halfOfCards = numberOfFrames / 2
+        for (frameId in 1..halfOfCards) {
+            frames.add(
+                createVisibleObject(
+                    centerOfTable_x - offset - halfCardWidth,
+                    centerOfTable_y,
+                    cardWidth,
+                    cardHeight,
+                    frameAssetName
+                )
+            )
+            frames.add(
+                createVisibleObject(
+                    centerOfTable_x + offset - halfCardWidth,
+                    centerOfTable_y,
+                    cardWidth,
+                    cardHeight,
+                    frameAssetName
+                )
+            )
+            offset += cardWidth
+        }
+        frames.sortBy { it[TransformComponent.mapper]!!.bounds.x }
     }
 
-    fun cardCreated(): Boolean {
-        return engine.entities.contains(card)
-    }
+    //fun cardCreated(): Boolean {
+    //    return engine.entities.contains(card)
+    //}
 
-    fun removeCard() {
-        engine.removeEntity(card)
-    }
+    //fun removeCard() {
+    //    engine.removeEntity(card)
+    //}
 
     fun createVisibleObject(
         pos_x: Float,
@@ -108,15 +155,15 @@ class GameScreen(
         }
     }
 
-    fun createCard() {
-        card = createVisibleObject(
-            camera.viewportWidth / 2,
-            camera.viewportHeight / 2 - cardHeight / 2,
-            100f,
-            152f,
-            "JH"
-        )
-    }
+//    fun createCard() {
+    //       card = createVisibleObject(
+    //          camera.viewportWidth / 2 - cardWidth / 2,
+    //         camera.viewportHeight / 2 - cardHeight / 2,
+    ///        100f,
+    //      152f,
+    //     "JH"
+    //)
+    //}
 
     fun createEmptyTable() {
         engine.entity {
