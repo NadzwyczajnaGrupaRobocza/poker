@@ -62,7 +62,7 @@ class FlushCompareTest {
     }
 
     @Test
-    fun `Different suit flush with smae ranks should be equal`() {
+    fun `Different suit flush with same ranks should be equal`() {
         val lhs =
             createHand(
                 clubsFive,

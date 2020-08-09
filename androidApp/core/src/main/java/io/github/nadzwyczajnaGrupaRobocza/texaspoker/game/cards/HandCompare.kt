@@ -1,6 +1,4 @@
-import io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards.Card
-import io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards.Hand
-import io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards.Rank
+package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards
 
 private data class RanksToCompare(val lhs: Rank, val rhs: Rank)
 

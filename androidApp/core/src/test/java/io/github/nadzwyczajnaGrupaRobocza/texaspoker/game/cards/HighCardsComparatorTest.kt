@@ -121,7 +121,7 @@ class HighCardsComparatorTest {
 
 
     @Test
-    fun `HighCard should be qual when sixth card is bigger`() {
+    fun `HighCard should be equal when sixth card is bigger`() {
         val lhs =
             createHand(
                 clubsFive,

@@ -33,7 +33,7 @@ class StraightFlushCompareTest {
     }
 
     @Test
-    fun `Same StraightFlush with different suit should be euqal`() {
+    fun `Same StraightFlush with different suit should be equal`() {
         val lhs =
             createHand(
                 diamondsNine,

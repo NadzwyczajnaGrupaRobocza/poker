@@ -26,8 +26,7 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         Royal
     }
 
-    private class Straight(val type: StraightType, val straightCards: List<Card>) {
-    }
+    private class Straight(val type: StraightType, val straightCards: List<Card>)
 
     private fun calculateInternalHand(cards: Set<Card>): InternalHand {
         val oneElement = 1
@@ -253,7 +252,7 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         }
 
     private fun getFiveMaxRankedCards(cards: List<Card>) =
-        cards.filterOutDuplicatedRanks().take(Hand.handCardsCount)
+        cards.filterOutDuplicatedRanks().take(handCardsCount)
 
     companion object {
         private const val handCardsCount = 5
