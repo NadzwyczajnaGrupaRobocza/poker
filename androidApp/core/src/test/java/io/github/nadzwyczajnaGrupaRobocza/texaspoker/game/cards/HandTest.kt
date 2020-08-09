@@ -398,6 +398,27 @@ class HandTest {
         assertThat(hand.kickers, isEmpty)
     }
 
+
+    @Test
+    fun `Given straight in same suite with bigger straight without color should return StraightFlush`() {
+        val hand = createHand(
+            diamondsEight,
+            diamondsNine,
+            diamondsTen,
+            diamondsJack,
+            diamondsQueen,
+            spadesKing,
+            spadesFive
+        )
+
+        assertThat(hand.type, equalTo(HandType.StraightFlush))
+        assertThat(
+            hand.importantCards,
+            equalTo(listOf(diamondsQueen, diamondsJack, diamondsTen, diamondsNine, diamondsEight))
+        )
+        assertThat(hand.kickers, isEmpty)
+    }
+
     @Test
     fun `Given royal straight return RoyalFlush`() {
         val hand = createHand(
