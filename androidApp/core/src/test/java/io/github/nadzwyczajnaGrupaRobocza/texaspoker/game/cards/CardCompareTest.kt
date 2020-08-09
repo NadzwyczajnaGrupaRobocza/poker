@@ -1,10 +1,7 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards
 
-import com.natpryce.hamkrest.assertion.assertThat
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.core.IsNot.not
-
 import org.junit.Test
 
 class CardCompareTest {

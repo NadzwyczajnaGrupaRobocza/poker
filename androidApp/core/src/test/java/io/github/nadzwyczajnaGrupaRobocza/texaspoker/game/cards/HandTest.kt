@@ -5,6 +5,7 @@ import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.isEmpty
 import com.natpryce.hamkrest.isIn
 import org.junit.Test
+import org.hamcrest.core.IsNot.not
 
 class HandTest {
     @Test
@@ -245,6 +246,15 @@ class HandTest {
         )
 
         assertThat(hand.type, equalTo(HandType.Full))
+        assertThat(
+            hand.importantCards.take(3).toSet(),
+            equalTo(setOf(clubsFive, heartsFive, spadesFive))
+        )
+        assertThat(
+            hand.importantCards.takeLast(2).toSet(),
+            equalTo(setOf(heartsThree, spadesThree))
+        )
+        assertThat(hand.kickers, isEmpty)
     }
 
     @Test
@@ -260,6 +270,15 @@ class HandTest {
         )
 
         assertThat(hand.type, equalTo(HandType.Full))
+        assertThat(
+            hand.importantCards.take(3).toSet(),
+            equalTo(setOf(clubsFive, heartsFive, spadesFive))
+        )
+        assertThat(
+            hand.importantCards.takeLast(2).toSet(),
+            equalTo(setOf(clubsFour, heartsFour))
+        )
+        assertThat(hand.kickers, isEmpty)
     }
 
     @Test
@@ -275,6 +294,15 @@ class HandTest {
         )
 
         assertThat(hand.type, equalTo(HandType.Full))
+        assertThat(
+            hand.importantCards.take(3).toSet(),
+            equalTo(setOf(clubsFive, heartsFive, spadesFive))
+        )
+        val threes = setOf(heartsThree, clubsThree, spadesThree)
+        assertThat(hand.importantCards[3], isIn(threes))
+        assertThat(hand.importantCards[4], isIn(threes))
+        org.hamcrest.MatcherAssert.assertThat(hand.importantCards[3], not(hand.importantCards[4]))
+        assertThat(hand.kickers, isEmpty)
     }
 
     @Test
@@ -320,6 +348,12 @@ class HandTest {
         )
 
         assertThat(hand.type, equalTo(HandType.Four))
+        assertThat(hand.importantCards.size, equalTo(4))
+        assertThat(
+            hand.importantCards.toSet(),
+            equalTo(setOf(diamondsFive, clubsFive, spadesFive, heartsFive))
+        )
+        assertThat(hand.kickers, equalTo(listOf(diamondsKing)))
     }
 
     @Test
@@ -335,6 +369,13 @@ class HandTest {
         )
 
         assertThat(hand.type, equalTo(HandType.Four))
+        assertThat(hand.importantCards.size, equalTo(4))
+        assertThat(
+            hand.importantCards.toSet(),
+            equalTo(setOf(diamondsFive, clubsFive, spadesFive, heartsFive))
+        )
+        assertThat(hand.kickers.size, equalTo(1))
+        assertThat(hand.kickers.first(), isIn(setOf(diamondsEight, clubsEight, spadesEight)))
     }
 
     @Test
