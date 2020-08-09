@@ -26,7 +26,7 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         Royal
     }
 
-    private class Straight(val type: StraightType, val highCard: Card) {
+    private class Straight(val type: StraightType, val straightCards: List<Card>) {
     }
 
     private fun calculateInternalHand(cards: Set<Card>): InternalHand {
@@ -51,13 +51,16 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
             emptyList()
         )
         if (fours.size == oneElement) return InternalHand(HandType.Four, emptyList(), emptyList())
-        if (threes.size == twoElements || threes.size == oneElement && pairs.size >= oneElement) return getFullInternalHand(threes, pairs)
+        if (threes.size == twoElements || threes.size == oneElement && pairs.size >= oneElement) return getFullInternalHand(
+            threes,
+            pairs
+        )
         maxCardsInOneSuite?.let {
             if (maxCardsInOneSuite >= fiveElements) return getFlushInternalHand(cardsBySuite)
         }
         if (straight?.type == StraightType.Normal) return getStraightInternalHand(
             HandType.Straight,
-            straight.highCard
+            straight.straightCards
         )
         if (threes.size == oneElement) return getThreeInternalHand(threes)
         if (pairs.size == oneElement) return getPairInternalHand(pairs)
@@ -75,8 +78,10 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         pairs: List<List<Card>>
     ): InternalHand {
         val flushRankCount = 2
-        val flushRanks = (threes.map { it.first().rank } + pairs.map { it.first().rank}).sortedDescending().take(flushRankCount)
-        return getInternalHand(HandType.Full, handCardsCount) { flushRanks.contains(it.rank)}
+        val flushRanks =
+            (threes.map { it.first().rank } + pairs.map { it.first().rank }).sortedDescending()
+                .take(flushRankCount)
+        return getInternalHand(HandType.Full, handCardsCount) { flushRanks.contains(it.rank) }
     }
 
     private fun getFlushInternalHand(cardsBySuite: Map<Suit, List<Card>>): InternalHand {
@@ -118,8 +123,8 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         return getInternalHand(HandType.Three, 3) { it.rank == threeRank }
     }
 
-    private fun getStraightInternalHand(hand: HandType, highCard: Card): InternalHand {
-        return InternalHand(hand, listOf(highCard), emptyList())
+    private fun getStraightInternalHand(hand: HandType, cards: List<Card>): InternalHand {
+        return InternalHand(hand, cards, emptyList())
     }
 
     private fun calculateMaxCardsInOneSuit(cardsBySuite: Map<Suit, List<Card>>): Int? {
@@ -149,7 +154,7 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         return calculateStraight(
             cards = cardsSortedByRank,
             previousCard = cardsSortedByRank.last(),
-            bestStraightCard = cardsSortedByRank.first()
+            straightCards = listOf(cards.last())
         )
     }
 
@@ -159,11 +164,16 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         cardsInRow: Int = 0,
         maxCardsInRow: Int = 0,
         suites: List<Suit> = emptyList(),
-        bestStraightCard: Card
+        straightCards: List<Card>
     ): Straight? {
         val newMax = max(maxCardsInRow, cardsInRow)
         if (cards.isEmpty()) {
-            return calculateStraightType(suites, newMax, previousCard, bestStraightCard)
+            return calculateStraightType(
+                suites,
+                newMax,
+                previousCard,
+                straightCards.reversed().filterOutDuplicatedRanks().take(handCardsCount)
+            )
         }
         val thisCard = cards.first()
         val diff = thisCard.rank - previousCard.rank
@@ -175,7 +185,7 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
             cardsInRow,
             newMax,
             suites,
-            bestStraightCard
+            straightCards
         )
     }
 
@@ -183,15 +193,15 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         suites: List<Suit>,
         newMax: Int,
         previousCard: Card,
-        bestStraightCard: Card
+        straightCards: List<Card>
     ): Straight? {
         val suiteCount = suites.groupBy { it }
         val maxSuiteCount = suiteCount.maxBy { it.value.size }?.value?.size ?: 0
         return when {
             newMax < 5 -> null
-            maxSuiteCount < 5 -> Straight(StraightType.Normal, bestStraightCard)
-            previousCard.rank == Rank.Ace -> Straight(StraightType.Royal, bestStraightCard)
-            else -> Straight(StraightType.Flush, bestStraightCard)
+            maxSuiteCount < 5 -> Straight(StraightType.Normal, straightCards)
+            previousCard.rank == Rank.Ace -> Straight(StraightType.Royal, straightCards)
+            else -> Straight(StraightType.Flush, straightCards)
         }
     }
 
@@ -203,34 +213,33 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         cardsInRow: Int,
         newMax: Int,
         suites: List<Suit>,
-        bestStraightCard: Card
-    ): Straight? {
-        if (diff == 1 || diff == -12)
-            return calculateStraight(
+        straightCards: List<Card>
+    ) =
+        when (diff) {
+            1, -12 -> calculateStraight(
                 cards.subList(1, cards.size),
                 thisCard,
                 max(cardsInRow + 1, 2),
                 newMax,
                 (suites + thisCard.suit + if (cardsInRow == 0) previousCard.suit else null).filterNotNull(),
-                thisCard
+                (if (cardsInRow == 0) listOf(previousCard) else emptyList()) + straightCards + thisCard
             )
-        if (diff == 0)
-            return calculateStraight(
+            0 -> calculateStraight(
                 cards.subList(1, cards.size),
                 thisCard,
                 cardsInRow,
                 newMax,
                 (suites + thisCard.suit + if (cardsInRow == 0) previousCard.suit else null).filterNotNull(),
-                thisCard
+                (if (cardsInRow == 0) listOf(previousCard) else emptyList()) + straightCards + thisCard
             )
-        return calculateStraight(
-            cards = cards.subList(1, cards.size),
-            previousCard = thisCard,
-            maxCardsInRow = newMax,
-            suites = emptyList(),
-            bestStraightCard = bestStraightCard
-        )
-    }
+            else -> calculateStraight(
+                cards = cards.subList(1, cards.size),
+                previousCard = thisCard,
+                maxCardsInRow = newMax,
+                suites = emptyList(),
+                straightCards = if (newMax >= handCardsCount) straightCards else emptyList()
+            )
+        }
 
     companion object {
         private const val handCardsCount = 5
@@ -253,3 +262,10 @@ fun List<Card>.getNDescending(
     numberOfCards: Int
 ) =
     this.sortedByDescending { it.rank }.take(numberOfCards)
+
+fun List<Card>.filterOutDuplicatedRanks() =
+    when {
+        isEmpty() -> this
+        else -> listOf(first()) + this.takeLast(size - 1)
+            .filterIndexed { index, card -> this[index].rank != card.rank }
+    }

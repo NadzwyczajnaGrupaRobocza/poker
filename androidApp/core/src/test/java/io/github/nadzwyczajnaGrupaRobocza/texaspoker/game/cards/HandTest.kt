@@ -3,6 +3,7 @@ package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.isEmpty
+import com.natpryce.hamkrest.isIn
 import org.junit.Test
 
 class HandTest {
@@ -81,6 +82,13 @@ class HandTest {
         )
 
         assertThat(hand.type, equalTo(HandType.TwoPairs))
+        assertThat(hand.importantCards.size, equalTo(4))
+        assertThat(hand.importantCards.take(2).toSet(), equalTo(setOf(clubsFive, spadesFive)))
+        assertThat(
+            hand.importantCards.takeLast(2).toSet(),
+            equalTo(setOf(spadesThree, heartsThree))
+        )
+        assertThat(hand.kickers, equalTo(listOf(diamondsKing)))
     }
 
     @Test
@@ -96,6 +104,13 @@ class HandTest {
         )
 
         assertThat(hand.type, equalTo(HandType.TwoPairs))
+        assertThat(hand.importantCards.size, equalTo(4))
+        assertThat(hand.importantCards.take(2).toSet(), equalTo(setOf(spadesTen, diamondsTen)))
+        assertThat(
+            hand.importantCards.takeLast(2).toSet(),
+            equalTo(setOf(spadesFive, clubsFive))
+        )
+        assertThat(hand.kickers, equalTo(listOf(diamondsKing)))
     }
 
     @Test
@@ -111,6 +126,9 @@ class HandTest {
         )
 
         assertThat(hand.type, equalTo(HandType.Three))
+        assertThat(hand.importantCards.size, equalTo(3))
+        assertThat(hand.importantCards.toSet(), equalTo(setOf(clubsFive, spadesFive, heartsFive)))
+        assertThat(hand.kickers, equalTo(listOf(diamondsKing, spadesQueen)))
     }
 
     @Test
@@ -126,6 +144,11 @@ class HandTest {
         )
 
         assertThat(hand.type, equalTo(HandType.Straight))
+        assertThat(
+            hand.importantCards,
+            equalTo(listOf(diamondsSix, clubsFive, heartsFour, spadesThree, spadesTwo))
+        )
+        assertThat(hand.kickers, isEmpty)
     }
 
     @Test
@@ -141,6 +164,12 @@ class HandTest {
         )
 
         assertThat(hand.type, equalTo(HandType.Straight))
+        assertThat(hand.importantCards[0], equalTo(diamondsSix))
+        assertThat(hand.importantCards[1], isIn(diamondsFive, clubsFive))
+        assertThat(hand.importantCards[2], equalTo(heartsFour))
+        assertThat(hand.importantCards[3], isIn(spadesThree, clubsThree))
+        assertThat(hand.importantCards[4], equalTo(spadesTwo))
+        assertThat(hand.kickers, isEmpty)
     }
 
     @Test
@@ -156,6 +185,11 @@ class HandTest {
         )
 
         assertThat(hand.type, equalTo(HandType.Straight))
+        assertThat(
+            hand.importantCards,
+            equalTo(listOf(clubsFive, heartsFour, spadesThree, spadesTwo, diamondsAce))
+        )
+        assertThat(hand.kickers, isEmpty)
     }
 
     @Test
@@ -171,6 +205,31 @@ class HandTest {
         )
 
         assertThat(hand.type, equalTo(HandType.Straight))
+        assertThat(
+            hand.importantCards,
+            equalTo(listOf(diamondsAce, diamondsKing, spadesQueen, diamondsJack, diamondsTen))
+        )
+        assertThat(hand.kickers, isEmpty)
+    }
+
+    @Test
+    fun `Given six cards in row should return biggest Straight`() {
+        val hand = createHand(
+            diamondsTen,
+            spadesEight,
+            diamondsJack,
+            spadesThree,
+            spadesQueen,
+            diamondsNine,
+            diamondsKing
+        )
+
+        assertThat(hand.type, equalTo(HandType.Straight))
+        assertThat(
+            hand.importantCards,
+            equalTo(listOf(diamondsKing, spadesQueen, diamondsJack, diamondsTen, diamondsNine))
+        )
+        assertThat(hand.kickers, isEmpty)
     }
 
     @Test
