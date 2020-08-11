@@ -128,7 +128,7 @@ fn get_messages_for(id: String, db: State<'_, MutexServerDB>) -> JsonValue {
             user_data.message_queue = db::MessageQueue::new();
             match serde_json::to_value(current_message_queue) {
                 Ok(json_value) => JsonValue::from(json_value),
-                Err(_) => json!({"status": "failed to serialize"})
+                Err(_) => json!({"status": "failed to serialize"}),
             }
         }
         None => json!({
@@ -137,12 +137,26 @@ fn get_messages_for(id: String, db: State<'_, MutexServerDB>) -> JsonValue {
     }
 }
 
+#[put("/user/<session_id>/join/<user_id>")]
+fn join_session(session_id: String, user_id: String, db: State<'_, MutexServerDB>) -> JsonValue {
+    let session_id = db::SessionID::make(&session_id);
+    let user_id = db::UserID::new(&user_id);
+    let mut db = db.lock().unwrap();
+}
+
 fn main() {
     println!("rocket launch?");
     rocket::ignite()
         .mount(
             "/",
-            routes![index, get_known_peers, update_known_peers, create_session],
+            routes![
+                index,
+                get_known_peers,
+                update_known_peers,
+                create_session,
+                get_messages_for,
+                join_session
+            ],
         )
         .manage(Mutex::new(ServerDB::new()))
         .launch();
