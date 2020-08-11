@@ -7,9 +7,9 @@ pub mod db {
     }
 
     impl UserID {
-        pub fn new(id: &String) -> UserID {
+        pub fn new(id: &str) -> UserID {
             UserID {
-                user_id: id.clone(),
+                user_id: id.to_string(),
             }
         }
     }
@@ -68,6 +68,11 @@ pub mod db {
             id.simple();
             SessionID {
                 session_id: format!("{}", id.simple()),
+            }
+        }
+        pub fn make(id: &str) -> SessionID {
+            SessionID {
+                session_id: id.to_string(),
             }
         }
     }
