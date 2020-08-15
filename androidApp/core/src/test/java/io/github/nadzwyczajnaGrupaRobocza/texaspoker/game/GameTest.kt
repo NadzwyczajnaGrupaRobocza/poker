@@ -18,4 +18,36 @@ class GameTest {
         assertThat({ Game(listOf(player)) }, throws(equalTo(InvalidPlayersNumber(1))))
     }
 
+    @Test
+    fun `Game should be constructed with two players`() {
+        val player = Player()
+        Game(listOf(player, player))
+    }
+
+    @Test
+    fun `Game should not be constructed with nine players`() {
+        val player = Player()
+        assertThat({
+            Game(
+                listOf(
+                    player,
+                    player,
+                    player,
+                    player,
+                    player,
+                    player,
+                    player,
+                    player,
+                    player
+                )
+            )
+        }, throws(equalTo(InvalidPlayersNumber(9))))
+    }
+
+    @Test
+    fun `Game should be constructed with eight players`() {
+        val player = Player()
+        Game(listOf(player, player, player, player, player, player, player, player))
+    }
+
 }

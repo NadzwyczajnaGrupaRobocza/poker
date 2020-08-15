@@ -2,7 +2,7 @@ package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game
 
 class Game(val players: List<Player>) {
     init {
-        throw InvalidPlayersNumber(players.size)
+        if (players.size > 8 || players.size < 2) throw InvalidPlayersNumber(players.size)
     }
 
 }
