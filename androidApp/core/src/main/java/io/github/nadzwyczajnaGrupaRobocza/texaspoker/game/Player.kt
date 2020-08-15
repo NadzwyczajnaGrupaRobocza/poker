@@ -1,5 +1,5 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game
 
-class Player {
+class Player(val uuid: String) {
 
 }

@@ -6,6 +6,15 @@ import com.natpryce.hamkrest.throws
 import org.junit.Test
 
 class GameTest {
+    val player1= Player("1")
+    val player2= Player("2")
+    val player3= Player("3")
+    val player4= Player("4")
+    val player5= Player("5")
+    val player6= Player("6")
+    val player7= Player("7")
+    val player8= Player("8")
+    val player9= Player("9")
 
     @Test
     fun `Game should not be constructed with no players`() {
@@ -14,31 +23,28 @@ class GameTest {
 
     @Test
     fun `Game should not be constructed with one player`() {
-        val player = Player()
-        assertThat({ Game(listOf(player)) }, throws(equalTo(InvalidPlayersNumber(1))))
+        assertThat({ Game(listOf(player1)) }, throws(equalTo(InvalidPlayersNumber(1))))
     }
 
     @Test
     fun `Game should be constructed with two players`() {
-        val player = Player()
-        Game(listOf(player, player))
+        Game(listOf(player1, player2))
     }
 
     @Test
     fun `Game should not be constructed with nine players`() {
-        val player = Player()
         assertThat({
             Game(
                 listOf(
-                    player,
-                    player,
-                    player,
-                    player,
-                    player,
-                    player,
-                    player,
-                    player,
-                    player
+                    player1,
+                    player2,
+                    player3,
+                    player4,
+                    player5,
+                    player6,
+                    player7,
+                    player8,
+                    player9
                 )
             )
         }, throws(equalTo(InvalidPlayersNumber(9))))
@@ -46,8 +52,7 @@ class GameTest {
 
     @Test
     fun `Game should be constructed with eight players`() {
-        val player = Player()
-        Game(listOf(player, player, player, player, player, player, player, player))
+        Game(listOf(player1, player2, player3, player4, player5, player6, player7, player8))
     }
 
 }
