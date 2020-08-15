@@ -2,17 +2,17 @@ package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game
 
 class Game(val players: List<Player>) {
     init {
-        throw NotEnoughPlayers(players.size)
+        throw InvalidPlayersNumber(players.size)
     }
 
 }
 
-class NotEnoughPlayers(val size: Int) : Throwable() {
+class InvalidPlayersNumber(val size: Int) : Throwable() {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as NotEnoughPlayers
+        other as InvalidPlayersNumber
 
         if (size != other.size) return false
 
