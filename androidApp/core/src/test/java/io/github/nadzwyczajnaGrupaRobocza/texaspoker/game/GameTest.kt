@@ -50,8 +50,7 @@ class GameTest {
                     player7,
                     player8,
                     player9
-                )
-                , startingChips
+                ), startingChips
             )
         }, throws(equalTo(InvalidPlayersNumber(9))))
     }
@@ -72,4 +71,13 @@ class GameTest {
         )
     }
 
+    @Test
+    fun `When all players active Game should start Deal with all players`() {
+        assertThat(fourPlayersGame.deal().players.toSet(), equalTo(fourPlayersGame.activePlayers))
+    }
+
+    @Test
+    fun `When applying DealResult with player lost his chips should return three active players`() {
+        
+    }
 }

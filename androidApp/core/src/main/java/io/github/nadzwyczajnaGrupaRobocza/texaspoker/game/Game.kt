@@ -1,8 +1,13 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game
 
 class Game(players: List<Player>, startingChips: Int) {
+    fun deal() = Deal(activePlayersInOrder)
+
     val activePlayers: Set<Player>
-        get() = players.filter { it.chips > 0 }.toExternal().toSet()
+        get() = activePlayersInOrder.toSet()
+
+    private val activePlayersInOrder: List<Player>
+        get() = players.filter { it.chips > 0 }.toExternal()
 
     private val players = players.toInternal(startingChips)
 
