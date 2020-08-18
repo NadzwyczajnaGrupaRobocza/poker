@@ -1,7 +1,13 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game
 
 class Game(players: List<Player>, startingChips: Int) {
-    fun deal() = Deal(activePlayersInOrder)
+    fun deal(): Deal {
+        val playersToPlay = activePlayersInOrder
+        val shift = dealsCount % playersToPlay.size
+        val deal = Deal(playersToPlay.drop(shift) + playersToPlay.take(shift))
+        dealsCount = dealsCount.inc()
+        return deal
+    }
 
     fun acceptDealResult(result: DealResult) {
         result.playersResults.forEach {
@@ -16,6 +22,7 @@ class Game(players: List<Player>, startingChips: Int) {
         get() = players.filter { it.value.chips.amount > 0 }.toExternal()
 
     private val players = players.toInternal(startingChips)
+    private var dealsCount = 0
 
     init {
         if (players.size > 8 || players.size < 2) throw InvalidPlayersNumber(players.size)

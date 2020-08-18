@@ -3,20 +3,24 @@ package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.throws
+import org.junit.Before
 import org.junit.Test
 
-class GameTest {
-    private val player1 = Player("1")
-    private val player2 = Player("2")
-    private val player3 = Player("3")
-    private val player4 = Player("4")
+open class GameTestData {
+    val player1 = Player("1")
+    val player2 = Player("2")
+    val player3 = Player("3")
+    val player4 = Player("4")
+    val startingChips = 1000
+    val fourPlayersGame = Game(listOf(player1, player2, player3, player4), startingChips)
+}
+
+class GameTest : GameTestData(){
     private val player5 = Player("5")
     private val player6 = Player("6")
     private val player7 = Player("7")
     private val player8 = Player("8")
     private val player9 = Player("9")
-    private val startingChips = 1000
-    private val fourPlayersGame = Game(listOf(player1, player2, player3, player4), startingChips)
 
     @Test
     fun `Game should not be constructed with no players`() {
@@ -101,5 +105,42 @@ class GameTest {
             fourPlayersGame.deal().players.toSet(),
             equalTo(setOf(player1, player3, player4))
         )
+    }
+
+    @Test
+    fun `In first deal last player should be dealer`() {
+        assertThat(fourPlayersGame.deal().dealer, equalTo(player4.uuid))
+    }
+
+    @Test
+    fun `In first deal first player should be on small blind`() {
+        assertThat(fourPlayersGame.deal().smallBlind, equalTo(player1.uuid))
+    }
+
+    @Test
+    fun `In first deal last player should be on big blind`() {
+        assertThat(fourPlayersGame.deal().bigBlind, equalTo(player2.uuid))
+    }
+}
+
+class GameAfterFirstDealTest : GameTestData() {
+    @Before
+    fun runFirstDeal() {
+        fourPlayersGame.deal()
+    }
+
+    @Test
+    fun `In second deal first player should be dealer`() {
+        assertThat(fourPlayersGame.deal().dealer, equalTo(player1.uuid))
+    }
+
+    @Test
+    fun `In second deal second player should be on small blind`() {
+        assertThat(fourPlayersGame.deal().smallBlind, equalTo(player2.uuid))
+    }
+
+    @Test
+    fun `In second deal third player should be on big blind`() {
+        assertThat(fourPlayersGame.deal().bigBlind, equalTo(player3.uuid))
     }
 }
