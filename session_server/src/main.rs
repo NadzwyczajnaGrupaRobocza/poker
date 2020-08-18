@@ -145,9 +145,11 @@ fn join_session(session_id: String, user_id: String, db: State<'_, MutexServerDB
     match db.pending_session_db.get_mut(&session_id) {
         Some(session_data) => {
             if !session_data.unconfirmed_participants.contains(&user_id) {
-                return json!({"status" : "user not in the session!"})
+                return json!({"status" : "user not in the session!"});
             }
-            session_data.unconfirmed_participants.retain(|element| element != &user_id);
+            session_data
+                .unconfirmed_participants
+                .retain(|element| element != &user_id);
 
             if session_data.unconfirmed_participants.is_empty() {
                 match db.pending_session_db.remove(&session_id) {
@@ -157,13 +159,13 @@ fn join_session(session_id: String, user_id: String, db: State<'_, MutexServerDB
                             participants: session_data.confirmed_participants,
                         };
                         db.session_db.insert(session_id, confirmed_session_data);
-                    },
+                    }
                     None => return json!({"status":"internal error"}),
                 }
             }
 
-            return json!({"status" : "ok"})
-        },
+            return json!({"status" : "ok"});
+        }
         None => json!({
             "status" : "session not found!"
         }),
