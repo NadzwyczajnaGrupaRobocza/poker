@@ -151,6 +151,8 @@ fn join_session(session_id: String, user_id: String, db: State<'_, MutexServerDB
                 .unconfirmed_participants
                 .retain(|element| element != &user_id);
 
+            session_data.confirmed_participants.push(user_id);
+
             if session_data.unconfirmed_participants.is_empty() {
                 match db.pending_session_db.remove(&session_id) {
                     Some(session_data) => {
@@ -166,9 +168,32 @@ fn join_session(session_id: String, user_id: String, db: State<'_, MutexServerDB
 
             return json!({"status" : "ok"});
         }
-        None => json!({
+        None => return json!({
             "status" : "session not found!"
         }),
+    }
+}
+
+#[put("/session/<session_id>/broadcast", format = "json", data = "<msg>")]
+fn session_broadcast(session_id: String, msg : String, db: State<'_, MutexServerDB>) -> JsonValue {
+    let session_id = db::SessionID::make(&session_id);
+    let mut db = db.lock().unwrap();
+    let session_db = &db.session_db;
+    let mut users_db = &mut db.users_db;
+
+    match session_db.get(&session_id) {
+        Some(session) => {
+            for participant_id in session.participants.iter() {
+                match users_db.get_mut(&participant_id) {
+                    Some(user) => {
+                        user.message_queue.append(msg.clone())
+                    }
+                    None => print!("broadcast: user not found")
+                }
+            }
+            json!({"status" : "ok"})
+        },
+        None => json!({"status" : "session not found"})
     }
 }
 
@@ -183,7 +208,8 @@ fn main() {
                 update_known_peers,
                 create_session,
                 get_messages_for,
-                join_session
+                join_session,
+                session_broadcast,
             ],
         )
         .manage(Mutex::new(ServerDB::new()))
