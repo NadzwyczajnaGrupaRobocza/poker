@@ -7,7 +7,7 @@ pub mod db {
     }
 
     impl UserID {
-        pub fn new(id: &str) -> UserID {
+        pub fn new(id: &String) -> UserID {
             UserID {
                 user_id: id.to_string(),
             }
@@ -85,9 +85,10 @@ pub mod db {
         pub confirmed_participants: Vec<UserID>,
     }
 
+    #[derive(Clone)]
     pub struct SessionData {
         pub readable_name: String,
-        participants: Vec<UserID>,
+        pub participants: Vec<UserID>,
     }
 
     #[derive(Serialize, Deserialize)]
