@@ -10,7 +10,6 @@ use std::collections::HashMap;
 use std::sync::Mutex;
 
 use rocket_contrib::json::{Json, JsonValue};
-use uuid::Uuid;
 
 pub use session_server::db_types::db;
 
@@ -137,11 +136,38 @@ fn get_messages_for(id: String, db: State<'_, MutexServerDB>) -> JsonValue {
     }
 }
 
-#[put("/user/<session_id>/join/<user_id>")]
+#[put("/user/<user_id>/join/<session_id>")]
 fn join_session(session_id: String, user_id: String, db: State<'_, MutexServerDB>) -> JsonValue {
     let session_id = db::SessionID::make(&session_id);
     let user_id = db::UserID::new(&user_id);
     let mut db = db.lock().unwrap();
+
+    match db.pending_session_db.get_mut(&session_id) {
+        Some(session_data) => {
+            if !session_data.unconfirmed_participants.contains(&user_id) {
+                return json!({"status" : "user not in the session!"})
+            }
+            session_data.unconfirmed_participants.retain(|element| element != &user_id);
+
+            if session_data.unconfirmed_participants.is_empty() {
+                match db.pending_session_db.remove(&session_id) {
+                    Some(session_data) => {
+                        let confirmed_session_data = db::SessionData {
+                            readable_name: session_data.readable_name,
+                            participants: session_data.confirmed_participants,
+                        };
+                        db.session_db.insert(session_id, confirmed_session_data);
+                    },
+                    None => return json!({"status":"internal error"}),
+                }
+            }
+
+            return json!({"status" : "ok"})
+        },
+        None => json!({
+            "status" : "session not found!"
+        }),
+    }
 }
 
 fn main() {
