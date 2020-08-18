@@ -3,11 +3,17 @@ package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game
 class Game(players: List<Player>, startingChips: Int) {
     fun deal() = Deal(activePlayersInOrder)
 
+    fun acceptDealResult(result: DealResult) {
+        result.playersResults.forEach {
+            players[it.uuid]?.chipsChange(it.chips)
+        }
+    }
+
     val activePlayers: Set<Player>
         get() = activePlayersInOrder.toSet()
 
     private val activePlayersInOrder: List<Player>
-        get() = players.filter { it.chips > 0 }.toExternal()
+        get() = players.filter { it.value.chips.amount > 0 }.toExternal()
 
     private val players = players.toInternal(startingChips)
 
@@ -17,11 +23,16 @@ class Game(players: List<Player>, startingChips: Int) {
 
 }
 
-private class InternalPlayer(val player: Player, val chips: Int)
+private class InternalPlayer(val player: Player, val chips: Chips) {
+    fun chipsChange(change: ChipsChange) {
+        chips.change(change)
+    }
+}
 
-private fun List<Player>.toInternal(startingChips: Int) = map { InternalPlayer(it, startingChips) }
+private fun List<Player>.toInternal(startingChips: Int) =
+    map { it.uuid to InternalPlayer(it, Chips(startingChips)) }.toMap()
 
-private fun List<InternalPlayer>.toExternal() = map { it.player }
+private fun Map<String, InternalPlayer>.toExternal() = map { it.value.player }
 
 class InvalidPlayersNumber(val size: Int) : Throwable() {
     override fun equals(other: Any?): Boolean {

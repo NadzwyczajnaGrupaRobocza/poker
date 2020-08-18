@@ -78,6 +78,28 @@ class GameTest {
 
     @Test
     fun `When applying DealResult with player lost his chips should return three active players`() {
-        
+        fourPlayersGame.acceptDealResult(
+            DealResult(
+                listOf(
+                    PlayerResult(
+                        player1.uuid, ChipsChange(1000),
+                    ),
+                    PlayerResult(
+                        player2.uuid, ChipsChange(-1000),
+                    ),
+                    PlayerResult(
+                        player3.uuid, ChipsChange(0),
+                    ),
+                    PlayerResult(
+                        player4.uuid, ChipsChange(0),
+                    ),
+                )
+            )
+        )
+
+        assertThat(
+            fourPlayersGame.deal().players.toSet(),
+            equalTo(setOf(player1, player3, player4))
+        )
     }
 }
