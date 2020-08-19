@@ -6,7 +6,7 @@ class Game(players: List<Player>, startingChips: Int) {
         if (playersToPlay.size == 1)
             throw InvalidPlayersNumber(1)
         val shift = dealsCount % playersToPlay.size
-        val deal = Deal(playersToPlay.drop(shift) + playersToPlay.take(shift))
+        val deal = Deal((playersToPlay.drop(shift) + playersToPlay.take(shift)).toDealPlayer())
         dealsCount = dealsCount.inc()
         return deal
     }
@@ -23,10 +23,10 @@ class Game(players: List<Player>, startingChips: Int) {
     }
 
     val activePlayers: Set<Player>
-        get() = activePlayersInOrder.toSet()
+        get() = activePlayersInOrder.toExternal().toSet()
 
-    private val activePlayersInOrder: List<Player>
-        get() = players.filter { it.value.chips.amount > 0 }.toExternal()
+    private val activePlayersInOrder: List<InternalPlayer>
+        get() = players.filter { it.value.chips.amount > 0 }.values.toList()
 
     private val players = players.toInternal(startingChips)
     private var dealsCount = 0
@@ -46,7 +46,11 @@ private class InternalPlayer(val player: Player, val chips: Chips) {
 private fun List<Player>.toInternal(startingChips: Int) =
     map { it.uuid to InternalPlayer(it, Chips(startingChips)) }.toMap()
 
-private fun Map<String, InternalPlayer>.toExternal() = map { it.value.player }
+private fun List<InternalPlayer>.toExternal() = map { it.player }
+
+private fun List<InternalPlayer>.toDealPlayer() =
+    map { DealPlayer(it.player.uuid, it.chips.amount) }
+
 
 class InvalidPlayersNumber(val size: Int) : Throwable() {
     override fun equals(other: Any?): Boolean {

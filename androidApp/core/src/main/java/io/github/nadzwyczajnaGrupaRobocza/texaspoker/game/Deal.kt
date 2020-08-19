@@ -1,6 +1,6 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game
 
-class Deal(val players: List<Player>) {
+class Deal(val players: List<DealPlayer>) {
     init {
         assert(players.size > 1)
     }
