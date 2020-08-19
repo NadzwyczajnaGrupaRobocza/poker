@@ -13,6 +13,7 @@ open class GameTestData {
     val player4 = Player("4")
     val startingChips = 1000
     val fourPlayersGame = Game(listOf(player1, player2, player3, player4), startingChips)
+    val twoPlayersGame = Game(listOf(player1, player2), startingChips)
 }
 
 class GameTest : GameTestData(){
@@ -142,5 +143,22 @@ class GameAfterFirstDealTest : GameTestData() {
     @Test
     fun `In second deal third player should be on big blind`() {
         assertThat(fourPlayersGame.deal().bigBlind, equalTo(player3.uuid))
+    }
+}
+
+class TwoPlayerGame : GameTestData() {
+    @Test
+    fun `First player should be dealer`() {
+        assertThat(twoPlayersGame.deal().dealer, equalTo(player2.uuid))
+    }
+
+    @Test
+    fun `First player should be on small blind`() {
+        assertThat(twoPlayersGame.deal().smallBlind, equalTo(player2.uuid))
+    }
+
+    @Test
+    fun `Second player should be on big blind`() {
+        assertThat(twoPlayersGame.deal().bigBlind, equalTo(player1.uuid))
     }
 }

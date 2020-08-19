@@ -1,11 +1,11 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game
 
-class Deal(val players : List<Player>) {
+class Deal(val players: List<Player>) {
     init {
-        assert(players.size > 2)
+        assert(players.size > 1)
     }
 
     val dealer = players.last().uuid
-    val smallBlind = players.first().uuid
-    val bigBlind = players[1].uuid
+    val smallBlind = if (players.size == 2) dealer else players.first().uuid
+    val bigBlind = if (players.size == 2) players.first().uuid else players[1].uuid
 }
