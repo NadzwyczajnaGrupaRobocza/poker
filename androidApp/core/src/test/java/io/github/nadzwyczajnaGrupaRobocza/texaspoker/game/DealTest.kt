@@ -23,7 +23,6 @@ class DealTest : DealTestData() {
 
 class TwoPlayerDealTest : DealTestData() {
     private val deal = Deal(listOf(player1, player2))
-    private val 
 
     @Test
     fun `First better should be player 2`() {
@@ -32,6 +31,9 @@ class TwoPlayerDealTest : DealTestData() {
 
     @Test
     fun `Second better should be player 1`() {
+        deal.move(DealMove(ChipsChange(0)))
 
+        assertThat(deal.nextBetter, equalTo(player1.uuid))
     }
+
 }

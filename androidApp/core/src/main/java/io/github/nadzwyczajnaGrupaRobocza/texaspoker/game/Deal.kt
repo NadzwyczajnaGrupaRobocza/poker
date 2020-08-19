@@ -12,6 +12,10 @@ class Deal(val players: List<DealPlayer>) {
         else -> ManyPlayersDeal(players)
     }
 
+    fun move(move: DealMove) {
+        bettingRound = bettingRound.inc()
+    }
+
     private val betterId: Int
         get() = bettingRound % players.size
     private var bettingRound = deal.initialBettingRound
