@@ -11,12 +11,15 @@ class Game(players: List<Player>, startingChips: Int) {
         return deal
     }
 
-    fun acceptDealResult(result: DealResult): String {
+    fun acceptDealResult(result: DealResult): String? {
         result.playersResults.forEach {
             players[it.uuid]?.chipsChange(it.chips)
         }
         val playersLeft = activePlayers
-        return playersLeft.first().uuid
+        return when (activePlayers.size) {
+            1 -> playersLeft.first().uuid
+            else -> null
+        }
     }
 
     val activePlayers: Set<Player>

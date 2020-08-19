@@ -32,6 +32,24 @@ open class GameTestData {
                 ),
             )
         )
+
+    val nonWiningDealResult =
+        DealResult(
+            listOf(
+                PlayerResult(
+                    player1.uuid, ChipsChange(1000),
+                ),
+                PlayerResult(
+                    player2.uuid, ChipsChange(-1000),
+                ),
+                PlayerResult(
+                    player3.uuid, ChipsChange(0),
+                ),
+                PlayerResult(
+                    player4.uuid, ChipsChange(0),
+                ),
+            )
+        )
 }
 
 class GameTest : GameTestData() {
@@ -100,25 +118,13 @@ class GameTest : GameTestData() {
     }
 
     @Test
+    fun `When applying non winning DealResult should return null`() {
+        assertThat(fourPlayersGame.acceptDealResult(nonWiningDealResult), equalTo(null))
+    }
+
+    @Test
     fun `When applying DealResult with player lost his chips should return three active players`() {
-        fourPlayersGame.acceptDealResult(
-            DealResult(
-                listOf(
-                    PlayerResult(
-                        player1.uuid, ChipsChange(1000),
-                    ),
-                    PlayerResult(
-                        player2.uuid, ChipsChange(-1000),
-                    ),
-                    PlayerResult(
-                        player3.uuid, ChipsChange(0),
-                    ),
-                    PlayerResult(
-                        player4.uuid, ChipsChange(0),
-                    ),
-                )
-            )
-        )
+        fourPlayersGame.acceptDealResult(nonWiningDealResult)
 
         assertThat(
             fourPlayersGame.deal().players.toSet(),
