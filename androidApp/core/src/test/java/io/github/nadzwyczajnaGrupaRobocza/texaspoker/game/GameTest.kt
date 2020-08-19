@@ -14,6 +14,24 @@ open class GameTestData {
     val startingChips = 1000
     val fourPlayersGame = Game(listOf(player1, player2, player3, player4), startingChips)
     val twoPlayersGame = Game(listOf(player1, player2), startingChips)
+
+    val winningDealResult =
+        DealResult(
+            listOf(
+                PlayerResult(
+                    player1.uuid, ChipsChange(3000),
+                ),
+                PlayerResult(
+                    player2.uuid, ChipsChange(-1000),
+                ),
+                PlayerResult(
+                    player3.uuid, ChipsChange(-1000),
+                ),
+                PlayerResult(
+                    player4.uuid, ChipsChange(-1000),
+                ),
+            )
+        )
 }
 
 class GameTest : GameTestData() {
@@ -124,26 +142,19 @@ class GameTest : GameTestData() {
     }
 
     @Test
-    fun `Shuold not deal when one player left`() {
-        fourPlayersGame.acceptDealResult(
-            DealResult(
-                listOf(
-                    PlayerResult(
-                        player1.uuid, ChipsChange(3000),
-                    ),
-                    PlayerResult(
-                        player2.uuid, ChipsChange(-1000),
-                    ),
-                    PlayerResult(
-                        player3.uuid, ChipsChange(-1000),
-                    ),
-                    PlayerResult(
-                        player4.uuid, ChipsChange(-1000),
-                    ),
-                )
-            )
-        )
+    fun `After winning deal result should return winner`() {
+        assertThat(fourPlayersGame.acceptDealResult(winningDealResult), equalTo(player1.uuid))
+    }
+}
 
+class GameWithWinner : GameTestData() {
+    @Before
+    fun makeWinner() {
+        fourPlayersGame.acceptDealResult(winningDealResult)
+    }
+
+    @Test
+    fun `Should not deal when one player left`() {
         assertThat({ fourPlayersGame.deal() }, throws(equalTo(InvalidPlayersNumber(1))))
     }
 }
