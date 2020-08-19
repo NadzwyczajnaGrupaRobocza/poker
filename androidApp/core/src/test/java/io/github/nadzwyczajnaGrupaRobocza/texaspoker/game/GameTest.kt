@@ -122,6 +122,30 @@ class GameTest : GameTestData() {
     fun `In first deal last player should be on big blind`() {
         assertThat(fourPlayersGame.deal().bigBlind, equalTo(player2.uuid))
     }
+
+    @Test
+    fun `Shuold not deal when one player left`() {
+        fourPlayersGame.acceptDealResult(
+            DealResult(
+                listOf(
+                    PlayerResult(
+                        player1.uuid, ChipsChange(3000),
+                    ),
+                    PlayerResult(
+                        player2.uuid, ChipsChange(-1000),
+                    ),
+                    PlayerResult(
+                        player3.uuid, ChipsChange(-1000),
+                    ),
+                    PlayerResult(
+                        player4.uuid, ChipsChange(-1000),
+                    ),
+                )
+            )
+        )
+
+        assertThat({ fourPlayersGame.deal() }, throws(equalTo(InvalidPlayersNumber(1))))
+    }
 }
 
 class GameAfterFirstDealTest : GameTestData() {

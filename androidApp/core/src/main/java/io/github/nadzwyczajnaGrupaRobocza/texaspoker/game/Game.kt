@@ -3,6 +3,8 @@ package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game
 class Game(players: List<Player>, startingChips: Int) {
     fun deal(): Deal {
         val playersToPlay = activePlayersInOrder
+        if (playersToPlay.size == 1)
+            throw InvalidPlayersNumber(1)
         val shift = dealsCount % playersToPlay.size
         val deal = Deal(playersToPlay.drop(shift) + playersToPlay.take(shift))
         dealsCount = dealsCount.inc()
