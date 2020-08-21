@@ -1,14 +1,13 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components
 
 import com.badlogic.ashley.core.Component
-import com.badlogic.gdx.graphics.g2d.Sprite
 import ktx.ashley.mapperFor
 
-class RenderComponent : Component {
+class EllipseRendererComponent : Component {
     companion object {
-        val mapper = mapperFor<RenderComponent>()
+        val mapper = mapperFor<EllipseRendererComponent>()
     }
 
-    val sprite = Sprite()
-    var z = 0
+    var width = 0F
+    var height = 0F
 }

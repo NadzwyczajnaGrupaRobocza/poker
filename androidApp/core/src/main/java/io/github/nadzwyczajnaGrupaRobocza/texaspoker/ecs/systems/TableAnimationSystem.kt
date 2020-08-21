@@ -10,7 +10,8 @@ import com.badlogic.gdx.utils.Array
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.assets.TextureAtlasAssets
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.assets.get
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.CommunityCardsComponent
-import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.RenderComponent
+import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.EllipseRendererComponent
+import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.SpriteRendererComponent
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.TransformComponent
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.screen.GameScreen
 import ktx.ashley.entity
@@ -22,6 +23,8 @@ import ktx.log.logger
 
 private val log = logger<GameScreen>()
 
+
+// TODO: Rethink if this should be here or not
 class TableAnimationSystem(
     assets: AssetManager,
     private val tableWidth: Float,
@@ -34,14 +37,18 @@ class TableAnimationSystem(
         private const val cardHeight = 152f
     }
 
+    private val centerOfTableX = tableWidth / 2F
+    private val centerOfTableY = tableHeight / 2F
+
     private var clickId = 0
+
     //private var cards = Array<Entity>(numberOfFrames)
     private var frames = Array<Entity>(numberOfFrames)
     private val backgroundRegion = assets[TextureAtlasAssets.Game].findRegion("background")
     private val frameRegion = assets[TextureAtlasAssets.Game].findRegion("frame")
     private val jHRegion = assets[TextureAtlasAssets.Game].findRegion("JH")
 
-    private var table : Entity? = null
+    private var table: Entity? = null
 
     override fun addedToEngine(engine: Engine?) {
         super.addedToEngine(engine)
@@ -51,6 +58,16 @@ class TableAnimationSystem(
                 with<CommunityCardsComponent> {
                     cards = Array(numberOfFrames)
                 }
+            }
+        }
+        engine?.entity {
+            with<TransformComponent> {
+                x = 0F
+                y = 0F
+            }
+            with<EllipseRendererComponent> {
+                width = tableWidth
+                height = tableHeight
             }
         }
 
@@ -64,27 +81,29 @@ class TableAnimationSystem(
 
             updateCards()
 
-            log.debug { "click: ${clickId}, frames: ${frames.size}, cards: ${table?.get(CommunityCardsComponent.mapper)?.cards?.size}" }
+            log.debug {
+                "click: ${clickId}, frames: ${frames.size}, cards: ${table?.get(
+                    CommunityCardsComponent.mapper
+                )?.cards?.size}"
+            }
         }
     }
 
     private fun updateCards() {
         table?.get(CommunityCardsComponent.mapper)?.let { communityCardsComponent ->
-            if(clickId == 0) {
-                for (card in communityCardsComponent.cards)
-                {
+            if (clickId == 0) {
+                for (card in communityCardsComponent.cards) {
                     engine.removeEntity(card)
                 }
                 communityCardsComponent.cards = Array(numberOfFrames)
-            }
-            else {
+            } else {
 
                 table?.get(CommunityCardsComponent.mapper)?.let { communityCardsComponent ->
                     frames[clickId - 1][TransformComponent.mapper]?.let { transform ->
-                        communityCardsComponent.cards.add (
+                        communityCardsComponent.cards.add(
                             createVisibleObject(
-                                transform.bounds.x,
-                                transform.bounds.y,
+                                transform.x,
+                                transform.y,
                                 cardWidth,
                                 cardHeight,
                                 jHRegion
@@ -99,15 +118,12 @@ class TableAnimationSystem(
     private fun createEmptyTable() {
         engine.entity {
             with<TransformComponent> {
-                bounds.set(
-                    0f,
-                    0f,
-                    tableWidth,
-                    tableHeight
-                )
+                x = 0F;
+                y = 0F
             }
-            with<RenderComponent> {
+            with<SpriteRendererComponent> {
                 sprite.setRegion(backgroundRegion)
+                sprite.setSize(tableWidth, tableHeight)
                 z = -1
             }
         }
@@ -116,24 +132,23 @@ class TableAnimationSystem(
     private fun createVisibleObject(
         pos_x: Float,
         pos_y: Float,
-        width: Float,
-        height: Float,
+        sprite_width: Float,
+        sprite_height: Float,
         region: TextureRegion,
         index: Int = 0
     ): Entity {
         return engine.entity {
-            with<TransformComponent> { bounds.set(pos_x, pos_y, width, height) }
-            with<RenderComponent> {
-                sprite.setRegion(
-                    region
-                )
+            with<TransformComponent> { x = pos_x; y = pos_y }
+            with<SpriteRendererComponent> {
+                sprite.setRegion(region)
+                sprite.setSize(sprite_width, sprite_height)
+                z = 0
             }
         }
     }
 
     private fun createCardFrames() {
-        val centerOfTableX = tableWidth / 2F
-        val centerOfTableY = tableHeight / 2F - cardHeight / 2F
+        var centerOfTableYWithCardOffset = centerOfTableY - cardHeight/2F
         val halfCardWidth = cardWidth / 2F
         var offset = halfCardWidth
 
@@ -142,8 +157,8 @@ class TableAnimationSystem(
             frames.add(
                 createVisibleObject(
                     centerOfTableX - halfCardWidth,
-                    centerOfTableY,
-                    cardWidth,
+                    centerOfTableYWithCardOffset,
+                            cardWidth,
                     cardHeight,
                     frameRegion
                 )
@@ -157,7 +172,7 @@ class TableAnimationSystem(
             frames.add(
                 createVisibleObject(
                     centerOfTableX - offset - halfCardWidth,
-                    centerOfTableY,
+                    centerOfTableYWithCardOffset,
                     cardWidth,
                     cardHeight,
                     frameRegion
@@ -166,7 +181,7 @@ class TableAnimationSystem(
             frames.add(
                 createVisibleObject(
                     centerOfTableX + offset - halfCardWidth,
-                    centerOfTableY,
+                    centerOfTableYWithCardOffset,
                     cardWidth,
                     cardHeight,
                     frameRegion
@@ -176,7 +191,7 @@ class TableAnimationSystem(
         }
 
         // Sort cards to be render from the left to right
-        frames.sortBy { it[TransformComponent.mapper]!!.bounds.x }
+        frames.sortBy { it[TransformComponent.mapper]!!.x }
     }
 
 }

@@ -1,7 +1,6 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components
 
 import com.badlogic.ashley.core.Component
-import com.badlogic.gdx.math.Rectangle
 import ktx.ashley.mapperFor
 
 class TransformComponent : Component {
@@ -9,5 +8,6 @@ class TransformComponent : Component {
         val mapper = mapperFor<TransformComponent>()
     }
 
-    val bounds = Rectangle()
+    var x = 0.0F
+    var y = 0.0F
 }

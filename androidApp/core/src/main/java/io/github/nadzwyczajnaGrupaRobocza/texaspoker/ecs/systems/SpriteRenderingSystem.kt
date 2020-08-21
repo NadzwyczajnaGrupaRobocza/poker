@@ -4,21 +4,21 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.SortedIteratingSystem
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
-import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.RenderComponent
+import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.SpriteRendererComponent
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.TransformComponent
 import ktx.ashley.allOf
 import ktx.ashley.get
 import ktx.graphics.use
 
-class RenderSystem(
+class SpriteRenderingSystem(
     private val batch: Batch,
     private val camera: OrthographicCamera
 ) : SortedIteratingSystem(
     allOf(
         TransformComponent::class,
-        RenderComponent::class
+        SpriteRendererComponent::class
     ).get(),
-    compareBy { entity: Entity -> entity[RenderComponent.mapper]?.z }) {
+    compareBy { entity: Entity -> entity[SpriteRendererComponent.mapper]?.z }) {
 
 
     override fun update(deltaTime: Float) {
@@ -32,10 +32,9 @@ class RenderSystem(
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
         entity[TransformComponent.mapper]?.let { transform ->
-            entity[RenderComponent.mapper]?.let { render ->
+            entity[SpriteRendererComponent.mapper]?.let { renderer2d ->
                 batch.draw(
-                    render.sprite, transform.bounds.x, transform.bounds.y,
-                    transform.bounds.width, transform.bounds.height
+                    renderer2d.sprite, transform.x, transform.y
                 )
             }
         }
