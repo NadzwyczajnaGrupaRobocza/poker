@@ -1,6 +1,6 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game
 
-import java.lang.Math.abs
+import kotlin.math.abs
 
 class Chips(initialAmount: Int) {
     fun change(change: ChipsChange) {
