@@ -22,6 +22,12 @@ class DealTest : DealTestData() {
     fun `First better should be player 3`() {
         assertThat(deal.nextBetter, equalTo(player3.uuid))
     }
+
+    @Test
+    fun `Blinds should be bet after Deal started`() {
+        assertThat(player1.chips.amount, equalTo(990))
+        assertThat(player2.chips.amount, equalTo(4975))
+    }
 }
 
 class TwoPlayerDealTest : DealTestData() {

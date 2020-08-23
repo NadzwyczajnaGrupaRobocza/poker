@@ -1,6 +1,6 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game
 
-class Deal(val players: List<DealPlayer>, blinds : Blinds) {
+class Deal(val players: List<DealPlayer>, blinds: Blinds) {
     private val deal = createDeal(players)
 
     init {
@@ -10,10 +10,6 @@ class Deal(val players: List<DealPlayer>, blinds : Blinds) {
     private fun createDeal(players: List<DealPlayer>) = when (players.size) {
         2 -> TwoPlayerDeal(players)
         else -> ManyPlayersDeal(players)
-    }
-
-    fun move(move: DealMove) {
-        bettingRound = bettingRound.inc()
     }
 
     private val betterId: Int
@@ -28,6 +24,16 @@ class Deal(val players: List<DealPlayer>, blinds : Blinds) {
         get() = deal.smallBlind
     val bigBlind: String
         get() = deal.bigBlind
+
+    init {
+        players.find { it.uuid == smallBlind }?.chips?.change(ChipsChange(-blinds.small))
+        players.find { it.uuid == bigBlind }?.chips?.change(ChipsChange(-blinds.big))
+    }
+
+    fun move(move: DealMove) {
+        bettingRound = bettingRound.inc()
+    }
+
 }
 
 private abstract class DealImpl(val players: List<DealPlayer>) {
