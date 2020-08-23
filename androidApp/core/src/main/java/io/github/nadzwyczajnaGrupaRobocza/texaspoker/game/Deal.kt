@@ -15,6 +15,7 @@ class Deal(val players: List<DealPlayer>, blinds: Blinds) {
     private val betterId: Int
         get() = bettingRound % players.size
     private var bettingRound = deal.initialBettingRound
+    private var internalPot = Chips(0)
 
     val nextBetter: String?
         get() = players[betterId].uuid
@@ -24,16 +25,22 @@ class Deal(val players: List<DealPlayer>, blinds: Blinds) {
         get() = deal.smallBlind
     val bigBlind: String
         get() = deal.bigBlind
+    val pot: Int
+        get() = internalPot.amount
 
     init {
-        players.find { it.uuid == smallBlind }?.chips?.change(ChipsChange(-blinds.small))
-        players.find { it.uuid == bigBlind }?.chips?.change(ChipsChange(-blinds.big))
+        players.find { it.uuid == smallBlind }?.let { getChipsFromPlayer(it, blinds.small) }
+        players.find { it.uuid == bigBlind }?.let { getChipsFromPlayer(it, blinds.big) }
     }
 
     fun move(move: DealMove) {
         bettingRound = bettingRound.inc()
     }
 
+    private fun getChipsFromPlayer(player: DealPlayer, amount: Int) {
+        player.chips.change(ChipsChange(-amount))
+        internalPot.change(ChipsChange(amount))
+    }
 }
 
 private abstract class DealImpl(val players: List<DealPlayer>) {

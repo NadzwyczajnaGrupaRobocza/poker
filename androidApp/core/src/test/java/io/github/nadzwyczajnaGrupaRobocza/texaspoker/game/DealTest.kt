@@ -28,6 +28,11 @@ class DealTest : DealTestData() {
         assertThat(player1.chips.amount, equalTo(990))
         assertThat(player2.chips.amount, equalTo(4975))
     }
+
+    @Test
+    fun `After Deal start pot should have big and small blinds`() {
+        assertThat(deal.pot, equalTo(smallBlind+bigBlind))
+    }
 }
 
 class TwoPlayerDealTest : DealTestData() {
