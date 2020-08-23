@@ -12,8 +12,10 @@ open class GameTestData {
     val player3 = Player("3")
     val player4 = Player("4")
     val startingChips = 1000
-    val fourPlayersGame = Game(listOf(player1, player2, player3, player4), startingChips)
-    val twoPlayersGame = Game(listOf(player1, player2), startingChips)
+    val blinds = Blinds(10)
+    val gameConfiguration = GameConfiguration(startingChips, blinds)
+    val fourPlayersGame = Game(listOf(player1, player2, player3, player4), gameConfiguration)
+    val twoPlayersGame = Game(listOf(player1, player2), gameConfiguration)
 
     val winningDealResult =
         DealResult(
@@ -61,20 +63,23 @@ class GameTest : GameTestData() {
 
     @Test
     fun `Game should not be constructed with no players`() {
-        assertThat({ Game(emptyList(), startingChips) }, throws(equalTo(InvalidPlayersNumber(0))))
+        assertThat(
+            { Game(emptyList(), gameConfiguration) },
+            throws(equalTo(InvalidPlayersNumber(0)))
+        )
     }
 
     @Test
     fun `Game should not be constructed with one player`() {
         assertThat(
-            { Game(listOf(player1), startingChips) },
+            { Game(listOf(player1), gameConfiguration) },
             throws(equalTo(InvalidPlayersNumber(1)))
         )
     }
 
     @Test
     fun `Game should be constructed with two players`() {
-        Game(listOf(player1, player2), startingChips)
+        Game(listOf(player1, player2), gameConfiguration)
     }
 
     @Test
@@ -91,7 +96,7 @@ class GameTest : GameTestData() {
                     player7,
                     player8,
                     player9
-                ), startingChips
+                ), gameConfiguration
             )
         }, throws(equalTo(InvalidPlayersNumber(9))))
     }
@@ -100,7 +105,7 @@ class GameTest : GameTestData() {
     fun `Game should be constructed with eight players`() {
         Game(
             listOf(player1, player2, player3, player4, player5, player6, player7, player8),
-            startingChips
+            gameConfiguration
         )
     }
 

@@ -1,12 +1,13 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game
 
-class Game(players: List<Player>, startingChips: Int) {
+class Game(players: List<Player>, private val gameConfiguration: GameConfiguration) {
     fun deal(): Deal {
         val playersToPlay = activePlayersInOrder
         if (playersToPlay.size == 1)
             throw InvalidPlayersNumber(1)
         val shift = dealsCount % playersToPlay.size
-        val deal = Deal((playersToPlay.drop(shift) + playersToPlay.take(shift)).toDealPlayer())
+        val deal =
+            Deal((playersToPlay.drop(shift) + playersToPlay.take(shift)).toDealPlayer(), gameConfiguration.blinds)
         dealsCount = dealsCount.inc()
         return deal
     }
@@ -28,7 +29,7 @@ class Game(players: List<Player>, startingChips: Int) {
     private val activePlayersInOrder: List<InternalPlayer>
         get() = players.filter { it.value.chips.amount > 0 }.values.toList()
 
-    private val players = players.toInternal(startingChips)
+    private val players = players.toInternal(gameConfiguration.startingChips)
     private var dealsCount = 0
 
     init {

@@ -1,6 +1,6 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game
 
-class Deal(val players: List<DealPlayer>) {
+class Deal(val players: List<DealPlayer>, blinds : Blinds) {
     private val deal = createDeal(players)
 
     init {
