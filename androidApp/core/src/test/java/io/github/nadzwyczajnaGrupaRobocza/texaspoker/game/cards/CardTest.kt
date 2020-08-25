@@ -13,7 +13,7 @@ class CardTest {
 
     @Test
     fun `Create Card`() {
-        val card = Card(Suit.Clubs, Rank.King)
+        Card(Suit.Clubs, Rank.King)
     }
 
     @Test

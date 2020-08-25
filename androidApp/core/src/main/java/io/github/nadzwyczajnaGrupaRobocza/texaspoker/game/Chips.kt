@@ -21,6 +21,27 @@ class Chips(initialAmount: Int) {
 
 }
 
-class ChipsChange(val change: Int)
+class ChipsChange(val change: Int) {
+    override fun toString(): String {
+        return "ChipsChange(change=$change)"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ChipsChange
+
+        if (change != other.change) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return change
+    }
+
+
+}
 
 class NotEnoughChips : Throwable()
