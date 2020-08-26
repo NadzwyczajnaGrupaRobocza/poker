@@ -168,32 +168,39 @@ fn join_session(session_id: String, user_id: String, db: State<'_, MutexServerDB
 
             return json!({"status" : "ok"});
         }
-        None => return json!({
-            "status" : "session not found!"
-        }),
+        None => {
+            return json!({
+                "status" : "session not found!"
+            })
+        }
     }
 }
 
 #[put("/session/<session_id>/broadcast", format = "json", data = "<msg>")]
-fn session_broadcast(session_id: String, msg : String, db: State<'_, MutexServerDB>) -> JsonValue {
+fn session_broadcast(session_id: String, msg: String, db: State<'_, MutexServerDB>) -> JsonValue {
     let session_id = db::SessionID::make(&session_id);
     let mut db = db.lock().unwrap();
-    let session_db = &db.session_db;
-    let mut users_db = &mut db.users_db;
 
-    match session_db.get(&session_id) {
-        Some(session) => {
-            for participant_id in session.participants.iter() {
-                match users_db.get_mut(&participant_id) {
-                    Some(user) => {
-                        user.message_queue.append(msg.clone())
-                    }
-                    None => print!("broadcast: user not found")
-                }
-            }
-            json!({"status" : "ok"})
-        },
-        None => json!({"status" : "session not found"})
+    // We need to narrow the scope of immutable reference to db.sessions_db
+    // to later be able to do a mutable borrow of users_db. This is absurd...
+    // Maybe db's could be separate instead of being locked by single mutex...
+    let participants = get_participants(&db.session_db, &session_id);
+
+    let users_db = &mut db.users_db;
+    for participant_id in participants.iter() {
+        match users_db.get_mut(&participant_id) {
+            Some(user) => user.message_queue.append(msg.clone()),
+            None => print!("broadcast: user not found"),
+        }
+    }
+    json!({"status": "ok"})
+}
+
+// TODO: the copying here should not be necessary
+fn get_participants(sessions_db: &SessionsDB, session_id: &db::SessionID) -> Vec<db::UserID> {
+    match sessions_db.get(session_id) {
+        Some(session) => session.participants.clone(),
+        None => Vec::<db::UserID>::new(),
     }
 }
 
