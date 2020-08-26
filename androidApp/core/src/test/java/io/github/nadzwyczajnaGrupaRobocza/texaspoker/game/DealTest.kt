@@ -49,7 +49,7 @@ class DealTest : DealTestData() {
     }
 
     @Test
-    fun `When some player raise and then all players call and check should move to next round`() {
+    fun `When some player raise and then all players call and check should move to next round and start with player after big blind`() {
         deal.move(DealMove.call(ChipsChange(bigBlind)))
         deal.move(DealMove.call(ChipsChange(bigBlind)))
 
