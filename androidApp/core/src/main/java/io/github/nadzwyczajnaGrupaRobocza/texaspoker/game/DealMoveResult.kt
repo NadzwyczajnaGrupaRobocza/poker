@@ -46,26 +46,31 @@ class IntermediateDealResult(val nextBetter: String) {
 
 }
 
-class NextRoundResult() {
+class NextRoundResult(val nextBetter: String) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
+
+        other as NextRoundResult
+
+        if (nextBetter != other.nextBetter) return false
+
         return true
     }
 
     override fun hashCode(): Int {
-        return javaClass.hashCode()
+        return nextBetter.hashCode()
     }
 
     override fun toString(): String {
-        return "NextRoundResult()"
+        return "NextRoundResult(nextBetter='$nextBetter')"
     }
 }
 
 class DealMoveResult(
     val intermediate: IntermediateDealResult? = null,
     val final: FinalDealResult? = null,
-    val nextRound : NextRoundResult? = null
+    val nextRound: NextRoundResult? = null
 ) {
     override fun toString(): String {
         return "DealMoveResult(intermediate=$intermediate, final=$final, nextRound=$nextRound)"

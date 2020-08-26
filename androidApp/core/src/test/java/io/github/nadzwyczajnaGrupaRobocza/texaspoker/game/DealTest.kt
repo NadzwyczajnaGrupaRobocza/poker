@@ -62,7 +62,7 @@ class TwoPlayerDealTest : DealTestData() {
     fun `When small blind player call and big blind checks should move to next round`() {
         deal.move(DealMove.call(ChipsChange(smallBlind - bigBlind)))
         assertThat(deal.move(DealMove.check()), equalTo(
-            DealMoveResult(nextRound = NextRoundResult())
+            DealMoveResult(nextRound = NextRoundResult(nextBetter = player2.uuid))
         ))
     }
 
@@ -81,5 +81,4 @@ class TwoPlayerDealTest : DealTestData() {
             )
         )
     }
-
 }

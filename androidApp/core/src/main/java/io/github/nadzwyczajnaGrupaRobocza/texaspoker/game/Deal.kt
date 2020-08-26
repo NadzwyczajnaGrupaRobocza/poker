@@ -48,7 +48,7 @@ class Deal(gamePlayers: List<DealPlayer>, blinds: Blinds) {
         val activePlayers = internalPlayers.filter { !it.folded }
         return when {
             activePlayers.size == 1 -> getResultWithWinner(activePlayers)
-            nextBetter == internalPlayers[lastRaiser].dealPlayer.uuid -> DealMoveResult(nextRound = NextRoundResult())
+            nextBetter == internalPlayers[lastRaiser].dealPlayer.uuid -> moveToNextRound()
             else -> DealMoveResult(intermediate = IntermediateDealResult(nextBetter!!))
         }
     }
@@ -73,6 +73,12 @@ class Deal(gamePlayers: List<DealPlayer>, blinds: Blinds) {
                     }).toMap()
             )
         )
+    }
+
+    private fun moveToNextRound(): DealMoveResult {
+        //lastRaiser = deal.playerAfterBigBlind
+        bettingRound = deal.playerAfterBigBlind
+        return DealMoveResult(nextRound = nextBetter?.let { NextRoundResult(nextBetter = it) })
     }
 
     private fun getChipsFromPlayer(player: InternalPlayer, amount: Int) {
