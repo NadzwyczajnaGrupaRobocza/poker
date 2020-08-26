@@ -33,6 +33,19 @@ class DealTest : DealTestData() {
     fun `After Deal start pot should have big and small blinds`() {
         assertThat(deal.pot, equalTo(smallBlind + bigBlind))
     }
+
+    @Test
+    fun `When all players call and check should move to next round`() {
+        deal.move(DealMove.call(ChipsChange(bigBlind)))
+        deal.move(DealMove.call(ChipsChange(bigBlind)))
+        deal.move(DealMove.call(ChipsChange(bigBlind)))
+        deal.move(DealMove.call(ChipsChange(bigBlind - smallBlind)))
+
+        assertThat(
+            deal.move(DealMove.check()),
+            equalTo(DealMoveResult(nextRound = NextRoundResult(nextBetter = player3.uuid)))
+        )
+    }
 }
 
 class TwoPlayerDealTest : DealTestData() {
@@ -61,9 +74,11 @@ class TwoPlayerDealTest : DealTestData() {
     @Test
     fun `When small blind player call and big blind checks should move to next round`() {
         deal.move(DealMove.call(ChipsChange(smallBlind - bigBlind)))
-        assertThat(deal.move(DealMove.check()), equalTo(
-            DealMoveResult(nextRound = NextRoundResult(nextBetter = player2.uuid))
-        ))
+        assertThat(
+            deal.move(DealMove.check()), equalTo(
+                DealMoveResult(nextRound = NextRoundResult(nextBetter = player2.uuid))
+            )
+        )
     }
 
     @Test

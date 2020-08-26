@@ -77,7 +77,7 @@ class Deal(gamePlayers: List<DealPlayer>, blinds: Blinds) {
 
     private fun moveToNextRound(): DealMoveResult {
         //lastRaiser = deal.playerAfterBigBlind
-        bettingRound = deal.playerAfterBigBlind
+        //bettingRound = deal.playerAfterBigBlind
         return DealMoveResult(nextRound = nextBetter?.let { NextRoundResult(nextBetter = it) })
     }
 
