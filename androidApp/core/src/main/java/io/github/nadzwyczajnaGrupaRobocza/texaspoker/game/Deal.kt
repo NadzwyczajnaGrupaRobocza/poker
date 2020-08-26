@@ -43,14 +43,42 @@ class Deal(gamePlayers: List<DealPlayer>, blinds: Blinds) {
         if (move.folded) {
             internalPlayers[betterPosition].folded = true
         }
-        //getChipsFromPlayer(internalPlayers[betterPosition], move.chipsChange.change)
+        val typeOfMove = calculateMoveType(move)
+        val currentBetter = betterPosition
         bettingRound = bettingRound.inc()
         val activePlayers = internalPlayers.filter { !it.folded }
         return when {
+            typeOfMove == MoveType.Raise -> moveWithRaise(currentBetter)
             activePlayers.size == 1 -> getResultWithWinner(activePlayers)
             nextBetter == internalPlayers[lastRaiser].dealPlayer.uuid -> moveToNextRound()
             else -> DealMoveResult(intermediate = IntermediateDealResult(nextBetter!!))
         }
+    }
+
+    private fun moveWithRaise(currentBetter: Int): DealMoveResult {
+        lastRaiser = currentBetter
+        return DealMoveResult(intermediate = IntermediateDealResult(nextBetter!!))
+    }
+
+    private fun calculateMoveType(move: DealMove): MoveType {
+        val moveChips = move.chipsChange.change
+        val currentPlayer = internalPlayers[betterPosition]
+        getChipsFromPlayer(currentPlayer, moveChips)
+        val currentPlayerBet = currentPlayer.chipsBet.amount
+        val lastRaiser = internalPlayers[lastRaiser]
+        val lastRaiserBet = lastRaiser.chipsBet.amount
+        return when {
+            currentPlayerBet != lastRaiserBet && moveChips == 0 -> throw InvalidMove("Should fold/call/raise when bet less then max bet")
+            currentPlayerBet == lastRaiserBet && moveChips == 0 -> MoveType.Check
+            currentPlayerBet == lastRaiserBet -> MoveType.Call
+            else -> MoveType.Raise
+        }
+    }
+
+    enum class MoveType {
+        Call,
+        Raise,
+        Check
     }
 
     private fun getResultWithWinner(activePlayers: List<InternalPlayer>): DealMoveResult {
@@ -77,7 +105,7 @@ class Deal(gamePlayers: List<DealPlayer>, blinds: Blinds) {
 
     private fun moveToNextRound(): DealMoveResult {
         //lastRaiser = deal.playerAfterBigBlind
-        //bettingRound = deal.playerAfterBigBlind
+        bettingRound = deal.playerAfterBigBlind
         return DealMoveResult(nextRound = nextBetter?.let { NextRoundResult(nextBetter = it) })
     }
 
@@ -117,3 +145,6 @@ private class ManyPlayersDeal(players: List<DealPlayer>) : DealImpl(players) {
     override val bigBlind = players[1].uuid
     override val playerAfterBigBlind = 2
 }
+
+class InvalidMove(s: String) : Throwable()
+
