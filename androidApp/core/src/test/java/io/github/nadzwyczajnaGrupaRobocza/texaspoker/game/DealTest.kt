@@ -21,7 +21,7 @@ class DealTest : DealTestData() {
 
     @Test
     fun `First better should be player 3`() {
-        assertThat(deal.nextBetter, equalTo(player3.uuid))
+        assertThat(deal.nextBetter(), equalTo(player3.uuid))
     }
 
     @Test
@@ -72,14 +72,14 @@ class TwoPlayerDealTest : DealTestData() {
 
     @Test
     fun `First better should be player 2`() {
-        assertThat(deal.nextBetter, equalTo(player2.uuid))
+        assertThat(deal.nextBetter(), equalTo(player2.uuid))
     }
 
     @Test
     fun `Second better should be player 1`() {
         deal.move(DealMove.call(ChipsChange(blindDiff)))
 
-        assertThat(deal.nextBetter, equalTo(player1.uuid))
+        assertThat(deal.nextBetter(), equalTo(player1.uuid))
     }
 
     @Test

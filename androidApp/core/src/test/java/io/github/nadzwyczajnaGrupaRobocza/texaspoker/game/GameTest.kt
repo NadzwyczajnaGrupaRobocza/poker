@@ -120,7 +120,7 @@ class GameTest : GameTestData() {
     @Test
     fun `When all players active Game should start Deal with all players`() {
         assertThat(
-            fourPlayersGame.deal().players.toSet().map { it.uuid },
+            fourPlayersGame.deal().players().toSet().map { it.uuid },
             equalTo(fourPlayersGame.activePlayers.map { it.uuid })
         )
     }
@@ -135,7 +135,7 @@ class GameTest : GameTestData() {
         fourPlayersGame.acceptDealResult(nonWiningDealResult)
 
         assertThat(
-            fourPlayersGame.deal().players.map { it.uuid }.toSet(),
+            fourPlayersGame.deal().players().map { it.uuid }.toSet(),
             equalTo(setOf(player1.uuid, player3.uuid, player4.uuid))
         )
     }
