@@ -8,7 +8,12 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
     private val dealConstants = createDeal(gamePlayers)
     private val internalPlayers = gamePlayers.toInternal()
     private val internalPot = Chips(0)
-    private var bettingRound = dealConstants.initialBettingRound
+    private val bettingStep =
+        BettingStep(
+            dealConstants.firstRoundBettingPlayerIndicator,
+            dealConstants.smallBlindPlayerIndicator,
+            gamePlayers.size,
+        )
     private var lastRaiser = dealConstants.playerAfterBigBlind
 
     private fun createDeal(players: List<DealPlayer>) = when (players.size) {
@@ -16,11 +21,8 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
         else -> ManyPlayersDeal(players)
     }
 
-    private val betterPosition: Int
-        get() = bettingRound % internalPlayers.size
-
     fun players() = internalPlayers.toDealPlayers()
-    fun nextBetter() = internalPlayers[betterPosition].dealPlayer.uuid
+    fun nextBetter() = bettingStep.getBetter(internalPlayers).dealPlayer.uuid
 
     val dealer: String
         get() = dealConstants.dealer
@@ -47,8 +49,8 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
         bet(move)
 
         val typeOfMove = calculateMoveType(move)
-        val currentBetter = betterPosition
-        bettingRound = bettingRound.inc()
+        val currentBetter = bettingStep.getBetterIndicator()
+        bettingStep.step()
         val activePlayers = internalPlayers.filter { !it.folded }
 
         return when {
@@ -61,7 +63,7 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
 
     private fun checkAndMarkFolded(move: DealMove) {
         if (move.folded) {
-            internalPlayers[betterPosition].folded = true
+            bettingStep.getBetter(internalPlayers).folded = true
         }
     }
 
@@ -72,7 +74,7 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
 
     private fun calculateMoveType(move: DealMove): MoveType {
         val moveChips = move.chipsChange.change
-        val currentPlayer = internalPlayers[betterPosition]
+        val currentPlayer = bettingStep.getBetter(internalPlayers)
         val currentPlayerBet = currentPlayer.chipsBet.amount
         val playerLastRaised = internalPlayers[lastRaiser]
         val lastRaiserBet = playerLastRaised.chipsBet.amount
@@ -88,7 +90,7 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
 
     private fun bet(move: DealMove) {
         val moveChips = move.chipsChange.change
-        val currentPlayer = internalPlayers[betterPosition]
+        val currentPlayer = bettingStep.getBetter(internalPlayers)
         getChipsFromPlayer(currentPlayer, moveChips)
     }
 
@@ -122,7 +124,7 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
 
     private fun moveToNextRound(): DealMoveResult {
         //lastRaiser = deal.playerAfterBigBlind
-        bettingRound = dealConstants.playerAfterBigBlind
+        bettingStep.nextRound()
         return DealMoveResult(nextRound = NextRoundResult(nextBetter = nextBetter()))
     }
 
@@ -142,26 +144,59 @@ private fun List<DealPlayer>.toInternal() = map { Deal.InternalPlayer(it) }
 private fun List<Deal.InternalPlayer>.toDealPlayers() = map { it.dealPlayer }
 
 private abstract class DealConstants(val players: List<DealPlayer>) {
-    abstract val initialBettingRound: Int
+    abstract val firstRoundBettingPlayerIndicator: Int
     val dealer = players.last().uuid
     abstract val smallBlind: String
+    abstract val smallBlindPlayerIndicator: Int
     abstract val bigBlind: String
     abstract val playerAfterBigBlind: Int
 }
 
 private class TwoPlayerDeal(players: List<DealPlayer>) : DealConstants(players) {
-    override val initialBettingRound = 1
+    override val firstRoundBettingPlayerIndicator = 1
     override val smallBlind = dealer
+    override val smallBlindPlayerIndicator = players.size - 1
     override val bigBlind = players.first().uuid
     override val playerAfterBigBlind = 1
 }
 
 private class ManyPlayersDeal(players: List<DealPlayer>) : DealConstants(players) {
-    override val initialBettingRound = 2
+    override val firstRoundBettingPlayerIndicator = 2
     override val smallBlind = players.first().uuid
+    override val smallBlindPlayerIndicator = 0
     override val bigBlind = players[1].uuid
     override val playerAfterBigBlind = 2
 }
 
+private class BettingStep(
+    firstRoundStartingPlayer: Int,
+    val otherRoundsStartingPlayer: Int,
+    val playersCount: Int
+) {
+    private class PlayerIndicator(var indicator: Int, val modulo: Int) {
+        operator fun plus(i: Int) = PlayerIndicator(indicator + i % modulo, modulo)
+        operator fun inc(): PlayerIndicator {
+            indicator = (indicator + 1) % modulo
+            return this
+        }
+    }
+
+    private var bettingPlayer =
+        PlayerIndicator(indicator = firstRoundStartingPlayer, modulo = playersCount)
+
+    fun nextRound() {
+        bettingPlayer =
+            PlayerIndicator(indicator = otherRoundsStartingPlayer, modulo = playersCount)
+    }
+
+    fun step() {
+        bettingPlayer++
+    }
+
+    fun getBetterIndicator() = bettingPlayer.indicator
+    fun getBetter(players: List<Deal.InternalPlayer>) = players[bettingPlayer.indicator]
+}
+
 class InvalidMove(s: String) : Throwable()
+
 

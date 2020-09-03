@@ -44,12 +44,12 @@ class DealTest : DealTestData() {
 
         assertThat(
             deal.move(DealMove.check()),
-            equalTo(DealMoveResult(nextRound = NextRoundResult(nextBetter = player3.uuid)))
+            equalTo(DealMoveResult(nextRound = NextRoundResult(nextBetter = player1.uuid)))
         )
     }
 
     @Test
-    fun `When some player raise and then all players call and check should move to next round and start with player after big blind`() {
+    fun `When some player raise and then all players call and check should move to next round and start with player after big dealer`() {
         deal.move(DealMove.call(ChipsChange(bigBlind)))
         deal.move(DealMove.call(ChipsChange(bigBlind)))
 
@@ -62,7 +62,7 @@ class DealTest : DealTestData() {
 
         assertThat(
             deal.move(DealMove.call(ChipsChange(raised - bigBlind))),
-            equalTo(DealMoveResult(nextRound = NextRoundResult(nextBetter = player3.uuid)))
+            equalTo(DealMoveResult(nextRound = NextRoundResult(nextBetter = player1.uuid)))
         )
     }
 }
