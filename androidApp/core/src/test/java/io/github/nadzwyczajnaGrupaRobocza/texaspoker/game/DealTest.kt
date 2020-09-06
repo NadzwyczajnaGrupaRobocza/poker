@@ -14,10 +14,13 @@ open class DealTestData {
 }
 
 class DealTest : DealTestData() {
+    private val bigBlindPlayer = player2
+    private val smallBlindPlayer = player1
     private val player3 = DealPlayer("3", 500)
     private val player4 = DealPlayer("4", 100)
     private val player5 = DealPlayer("5", 1000)
     private val deal = Deal(listOf(player1, player2, player3, player4, player5), blinds)
+    private val noChange = 0
 
     @Test
     fun `First better should be player 3`() {
@@ -63,6 +66,28 @@ class DealTest : DealTestData() {
         assertThat(
             deal.move(DealMove.call(ChipsChange(raised - bigBlind))),
             equalTo(DealMoveResult(nextRound = NextRoundResult(nextBetter = player1.uuid)))
+        )
+    }
+
+    @Test
+    fun `When all players folds big blind player should win`() {
+        deal.move(DealMove.fold())
+        deal.move(DealMove.fold())
+        deal.move(DealMove.fold())
+        assertThat(
+            deal.move(DealMove.fold()), equalTo(
+                DealMoveResult(
+                    final = FinalDealResult(
+                        winner = bigBlindPlayer.uuid, players = mapOf(
+                            Pair(player1.uuid, ChipsChange(-smallBlind)),
+                            Pair(player2.uuid, ChipsChange(smallBlind)),
+                            Pair(player3.uuid, ChipsChange(noChange)),
+                            Pair(player4.uuid, ChipsChange(noChange)),
+                            Pair(player5.uuid, ChipsChange(noChange)),
+                        )
+                    )
+                )
+            )
         )
     }
 }

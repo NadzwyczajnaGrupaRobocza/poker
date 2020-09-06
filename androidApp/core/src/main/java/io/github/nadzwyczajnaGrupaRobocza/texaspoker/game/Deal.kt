@@ -81,6 +81,7 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
 
 
         return when {
+            currentPlayer.folded -> MoveType.Fold
             currentPlayerBet != lastRaiserBet && moveChips == 0 -> throw InvalidMove("Should fold/call/raise when bet less then max bet")
             currentPlayerBet == lastRaiserBet && moveChips == 0 -> MoveType.Check
             currentPlayerBet == lastRaiserBet -> MoveType.Call
@@ -97,7 +98,8 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
     enum class MoveType {
         Call,
         Raise,
-        Check
+        Check,
+        Fold
     }
 
     private fun getResultWithWinner(activePlayers: List<InternalPlayer>): DealMoveResult {
@@ -197,6 +199,10 @@ private class BettingStep(
     fun getBetter(players: List<Deal.InternalPlayer>) = players[bettingPlayer.indicator]
 }
 
-class InvalidMove(s: String) : Throwable()
+class InvalidMove(private val why: String) : Throwable() {
+    override fun toString(): String {
+        return "InvalidMove: $why"
+    }
+}
 
 
