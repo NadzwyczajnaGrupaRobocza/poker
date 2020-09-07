@@ -48,7 +48,8 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
         checkAndMarkFolded(move)
         bet(move)
 
-        val typeOfMove = calculateMoveType(move)
+        val biggestBet = internalPlayers.maxOf { it.chipsBet.amount }
+        val typeOfMove = calculateMoveType(move, biggestBet)
         val currentBetter = bettingStep.getBetterIndicator()
         bettingStep.step()
         val activePlayers = internalPlayers.filter { it.notFolded() }
@@ -56,7 +57,7 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
         return when {
             typeOfMove == MoveType.Raise -> moveWithRaise(currentBetter)
             activePlayers.size == 1 -> getResultWithWinner(activePlayers)
-            nextBetter() == internalPlayers[lastRaiser].dealPlayer.uuid -> moveToNextRound()
+            internalPlayers.all {it.betInRound(biggestBet)  } -> moveToNextRound()
             else -> DealMoveResult(intermediate = IntermediateDealResult(nextBetter()))
         }
     }
@@ -73,12 +74,10 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
         return DealMoveResult(intermediate = IntermediateDealResult(nextBetter()))
     }
 
-    private fun calculateMoveType(move: DealMove): MoveType {
+    private fun calculateMoveType(move: DealMove, biggestBet: Int): MoveType {
         val moveChips = move.chipsChange.change
         val currentPlayer = bettingStep.getBetter()
         val currentPlayerBet = currentPlayer.chipsBet.amount
-        val biggestBet = internalPlayers.maxOf { it.chipsBet.amount }
-
 
         return when {
             currentPlayer.folded -> MoveType.Fold
@@ -93,6 +92,7 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
     private fun bet(move: DealMove) {
         val moveChips = move.chipsChange.change
         val currentPlayer = bettingStep.getBetter()
+        currentPlayer.betOnce = true
         getChipsFromPlayer(currentPlayer, moveChips)
     }
 
@@ -126,7 +126,7 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
     }
 
     private fun moveToNextRound(): DealMoveResult {
-        //lastRaiser = deal.playerAfterBigBlind
+        internalPlayers.forEach { it.betOnce = false }
         bettingStep.nextRound()
         return DealMoveResult(nextRound = NextRoundResult(nextBetter = nextBetter()))
     }
@@ -138,8 +138,11 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
     }
 
     class InternalPlayer(val dealPlayer: DealPlayer) {
+        var betOnce = false
         val chipsBet = Chips(0)
         var folded = false
+
+        fun betInRound(biggestBet: Int) = folded || (betOnce && chipsBet.amount == biggestBet)
     }
 }
 

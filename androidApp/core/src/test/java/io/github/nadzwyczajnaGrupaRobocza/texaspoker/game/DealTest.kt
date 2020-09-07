@@ -111,6 +111,35 @@ class DealTest : DealTestData() {
             )
         )
     }
+
+    @Test
+    fun `When two players fold in shold move to next round should`() {
+        deal.move(DealMove.fold())
+        deal.move(DealMove.call(ChipsChange(bigBlind)))
+        deal.move(DealMove.fold())
+        deal.move(DealMove.call(ChipsChange(blindDiff)))
+
+        assertThat(
+            deal.move(DealMove.check()),
+            equalTo(DealMoveResult(nextRound = NextRoundResult(smallBlindPlayer.uuid)))
+        )
+    }
+
+    @Test
+    fun `When two players fold in next round should only three players to bet`() {
+        deal.move(DealMove.fold())
+        deal.move(DealMove.call(ChipsChange(bigBlind)))
+        deal.move(DealMove.fold())
+        deal.move(DealMove.call(ChipsChange(blindDiff)))
+        deal.move(DealMove.check())
+
+        deal.move(DealMove.check())
+        deal.move(DealMove.check())
+        assertThat(
+            deal.move(DealMove.check()),
+            equalTo(DealMoveResult(nextRound = NextRoundResult(smallBlindPlayer.uuid)))
+        )
+    }
 }
 
 class TwoPlayerDealTest : DealTestData() {
