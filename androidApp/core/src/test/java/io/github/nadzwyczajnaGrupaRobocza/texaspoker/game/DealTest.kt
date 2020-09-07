@@ -2,6 +2,7 @@ package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.throws
 import org.junit.Test
 
 open class DealTestData {
@@ -74,6 +75,7 @@ class DealTest : DealTestData() {
         deal.move(DealMove.fold())
         deal.move(DealMove.fold())
         deal.move(DealMove.fold())
+
         assertThat(
             deal.move(DealMove.fold()), equalTo(
                 DealMoveResult(
@@ -87,6 +89,25 @@ class DealTest : DealTestData() {
                         )
                     )
                 )
+            )
+        )
+    }
+
+    @Test
+    fun `When call with less then already max bet should throw`() {
+        assertThat({ deal.move(DealMove.call(ChipsChange(blindDiff))) }, throws<InvalidMove>())
+    }
+
+    @Test
+    fun `When small blind player folds big blind player should start next round`() {
+        deal.move(DealMove.call(ChipsChange(bigBlind)))
+        deal.move(DealMove.call(ChipsChange(bigBlind)))
+        deal.move(DealMove.call(ChipsChange(bigBlind)))
+        deal.move(DealMove.fold())
+
+        assertThat(
+            deal.move(DealMove.check()), equalTo(
+                DealMoveResult(nextRound = NextRoundResult(bigBlindPlayer.uuid))
             )
         )
     }
