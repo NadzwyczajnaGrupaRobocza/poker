@@ -14,7 +14,6 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
             dealConstants.smallBlindPlayerIndicator,
             internalPlayers,
         )
-    private var lastRaiser = dealConstants.playerAfterBigBlind
 
     private fun createDeal(players: List<DealPlayer>) = when (players.size) {
         2 -> TwoPlayerDeal(players)
@@ -55,9 +54,9 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
         val activePlayers = internalPlayers.filter { it.notFolded() }
 
         return when {
-            typeOfMove == MoveType.Raise -> moveWithRaise(currentBetter)
+            typeOfMove == MoveType.Raise -> moveWithRaise()
             activePlayers.size == 1 -> getResultWithWinner(activePlayers)
-            internalPlayers.all {it.betInRound(biggestBet)  } -> moveToNextRound()
+            internalPlayers.all { it.betInRound(biggestBet) } -> moveToNextRound()
             else -> DealMoveResult(intermediate = IntermediateDealResult(nextBetter()))
         }
     }
@@ -69,8 +68,7 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
     }
 
 
-    private fun moveWithRaise(currentBetter: Int): DealMoveResult {
-        lastRaiser = currentBetter
+    private fun moveWithRaise(): DealMoveResult {
         return DealMoveResult(intermediate = IntermediateDealResult(nextBetter()))
     }
 
