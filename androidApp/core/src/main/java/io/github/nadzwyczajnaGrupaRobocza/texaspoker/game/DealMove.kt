@@ -9,5 +9,5 @@ class DealMove private constructor(
         fun check() = DealMove()
         fun call(chips: ChipsChange) = DealMove(chipsChange = chips)
         fun raise(chips: ChipsChange) = DealMove(chipsChange = chips)
-    }
+ t   }
 }
