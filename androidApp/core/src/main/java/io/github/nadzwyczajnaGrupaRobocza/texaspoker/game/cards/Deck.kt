@@ -6,7 +6,7 @@ class Deck {
 
     fun shuffledDeck() = shuffle(deck, emptyList())
 
-    private fun shuffle(deck: Set<Card>, cards: List<Card>): List<Card> = when {
+    private tailrec fun shuffle(deck: Set<Card>, cards: List<Card>): List<Card> = when {
         deck.isEmpty() -> cards
         else -> {
             val nextCard = deck.random()

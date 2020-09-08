@@ -5,7 +5,7 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
         assert(gamePlayers.size > 1)
     }
 
-    private val dealConstants = createDeal(gamePlayers)
+    private val dealConstants = createDealConstants(gamePlayers)
     private val internalPlayers = gamePlayers.toInternal()
     private val internalPot = Chips(0)
     private val bettingStep =
@@ -15,7 +15,7 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
             internalPlayers,
         )
 
-    private fun createDeal(players: List<DealPlayer>) = when (players.size) {
+    private fun createDealConstants(players: List<DealPlayer>) = when (players.size) {
         2 -> TwoPlayerDeal(players)
         else -> ManyPlayersDeal(players)
     }
@@ -66,7 +66,6 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
             bettingStep.getBetter().folded = true
         }
     }
-
 
     private fun moveWithRaise(): DealMoveResult {
         return DealMoveResult(intermediate = IntermediateDealResult(nextBetter()))
