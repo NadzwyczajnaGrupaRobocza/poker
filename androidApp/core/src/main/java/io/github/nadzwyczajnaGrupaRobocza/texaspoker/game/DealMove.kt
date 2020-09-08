@@ -8,6 +8,8 @@ class DealMove private constructor(
         fun fold() = DealMove(folded = true)
         fun check() = DealMove()
         fun call(chips: ChipsChange) = DealMove(chipsChange = chips)
+        fun call(chips: Int) = call(ChipsChange(chips))
         fun raise(chips: ChipsChange) = DealMove(chipsChange = chips)
+        fun raise(chips: Int) = raise(ChipsChange(chips))
     }
 }
