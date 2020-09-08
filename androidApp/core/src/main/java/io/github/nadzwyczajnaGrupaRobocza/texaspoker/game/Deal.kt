@@ -136,7 +136,9 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
         var folded = false
 
         fun betInRound(biggestBet: Int) =
-            folded || (betOnce && chipsBet.amount == biggestBet) || allInBet()
+            folded || equalToBiggestBet(biggestBet) || allInBet()
+
+        private fun equalToBiggestBet(biggestBet: Int) = betOnce && chipsBet.amount == biggestBet
 
         fun allInBet() = dealPlayer.chips.amount == 0 && chipsBet.amount > 0
     }
