@@ -135,7 +135,10 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
         val chipsBet = Chips(0)
         var folded = false
 
-        fun betInRound(biggestBet: Int) = folded || (betOnce && chipsBet.amount == biggestBet)
+        fun betInRound(biggestBet: Int) =
+            folded || (betOnce && chipsBet.amount == biggestBet) || allInBet()
+
+        fun allInBet() = dealPlayer.chips.amount == 0 && chipsBet.amount > 0
     }
 }
 
@@ -174,15 +177,19 @@ private class BettingStep(
     val players: List<Deal.InternalPlayer>
 ) {
     private class PlayerIndicator(var indicator: Int, val players: List<Deal.InternalPlayer>) {
-        private tailrec fun getNextNotFolded(ind: Int): Int =
-            if (players[ind].folded) getNextNotFolded(nextIndex(ind)) else ind
+        private tailrec fun getNextNotFoldedNorAllIn(ind: Int): Int =
+            if (players[ind].folded || players[ind].allInBet()) getNextNotFoldedNorAllIn(
+                nextIndex(
+                    ind
+                )
+            ) else ind
 
         fun restart(position: Int) {
-            indicator = getNextNotFolded(getIndex(position))
+            indicator = getNextNotFoldedNorAllIn(getIndex(position))
         }
 
         operator fun inc(): PlayerIndicator {
-            indicator = getNextNotFolded(nextIndex(indicator))
+            indicator = getNextNotFoldedNorAllIn(nextIndex(indicator))
             return this
         }
 

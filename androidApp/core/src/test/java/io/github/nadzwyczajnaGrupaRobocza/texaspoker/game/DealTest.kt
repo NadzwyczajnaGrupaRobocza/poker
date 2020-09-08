@@ -140,6 +140,27 @@ class DealTest : DealTestData() {
             equalTo(DealMoveResult(nextRound = NextRoundResult(smallBlindPlayer.uuid)))
         )
     }
+
+    @Test
+    fun `When multiple players raises should move to next round when all call`() {
+
+    }
+
+    @Test
+    fun `All in player should not bet but remain active`() {
+        val allIn = 100
+        deal.move(DealMove.fold())
+        deal.move(DealMove.raise(ChipsChange(allIn)))
+        deal.move(DealMove.fold())
+        deal.move(DealMove.call(ChipsChange(allIn - smallBlind)))
+        deal.move(DealMove.call(ChipsChange(allIn - bigBlind)))
+
+        deal.move(DealMove.check())
+        assertThat(
+            deal.move(DealMove.check()),
+            equalTo(DealMoveResult(nextRound = NextRoundResult(smallBlindPlayer.uuid)))
+        )
+    }
 }
 
 class TwoPlayerDealTest : DealTestData() {
