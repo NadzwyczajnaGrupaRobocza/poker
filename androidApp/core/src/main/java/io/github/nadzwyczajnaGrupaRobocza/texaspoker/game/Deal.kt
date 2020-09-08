@@ -108,16 +108,12 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
                 winner = winner.dealPlayer.uuid,
                 players =
                 (listOf(
-                    Pair(
-                        winner.dealPlayer.uuid,
-                        ChipsChange(internalPot.amount - winner.chipsBet.amount)
-                    )
+                    winner.dealPlayer.uuid to
+                            ChipsChange(internalPot.amount - winner.chipsBet.amount)
                 ) + internalPlayers.filter { it.dealPlayer.uuid != winner.dealPlayer.uuid }
                     .map {
-                        Pair(
-                            it.dealPlayer.uuid,
-                            ChipsChange(-it.chipsBet.amount)
-                        )
+                        it.dealPlayer.uuid to
+                                ChipsChange(-it.chipsBet.amount)
                     }).toMap()
             )
         )
@@ -144,6 +140,7 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
     }
 }
 
+private fun Deal.InternalPlayer.notFolded() = !folded
 private fun List<DealPlayer>.toInternal() = map { Deal.InternalPlayer(it) }
 private fun List<Deal.InternalPlayer>.toDealPlayers() = map { it.dealPlayer }
 
@@ -214,6 +211,4 @@ class InvalidMove(private val why: String) : Throwable() {
         return "InvalidMove: $why"
     }
 }
-
-fun Deal.InternalPlayer.notFolded() = !folded
 

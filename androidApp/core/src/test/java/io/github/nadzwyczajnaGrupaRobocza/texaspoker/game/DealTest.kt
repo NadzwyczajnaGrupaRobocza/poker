@@ -81,11 +81,11 @@ class DealTest : DealTestData() {
                 DealMoveResult(
                     final = FinalDealResult(
                         winner = bigBlindPlayer.uuid, players = mapOf(
-                            Pair(player1.uuid, ChipsChange(-smallBlind)),
-                            Pair(player2.uuid, ChipsChange(smallBlind)),
-                            Pair(player3.uuid, ChipsChange(noChange)),
-                            Pair(player4.uuid, ChipsChange(noChange)),
-                            Pair(player5.uuid, ChipsChange(noChange)),
+                            player1.uuid to ChipsChange(-smallBlind),
+                            player2.uuid to ChipsChange(smallBlind),
+                            player3.uuid to ChipsChange(noChange),
+                            player4.uuid to ChipsChange(noChange),
+                            player5.uuid to ChipsChange(noChange),
                         )
                     )
                 )
@@ -113,7 +113,7 @@ class DealTest : DealTestData() {
     }
 
     @Test
-    fun `When two players fold in shold move to next round should`() {
+    fun `When two players fold should move to next round`() {
         deal.move(DealMove.fold())
         deal.move(DealMove.call(ChipsChange(bigBlind)))
         deal.move(DealMove.fold())
@@ -182,8 +182,8 @@ class TwoPlayerDealTest : DealTestData() {
                 DealMoveResult(
                     final = FinalDealResult(
                         winner = player1.uuid, players = mapOf(
-                            Pair(player1.uuid, ChipsChange(smallBlind)),
-                            Pair(player2.uuid, ChipsChange(-smallBlind))
+                            player1.uuid to ChipsChange(smallBlind),
+                            player2.uuid to ChipsChange(-smallBlind)
                         )
                     )
                 )
