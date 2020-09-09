@@ -9,8 +9,22 @@ pub mod db {
     impl UserID {
         pub fn new(id: &String) -> UserID {
             UserID {
-                user_id: id.clone(),
+                user_id: id.to_string(),
             }
+        }
+    }
+
+    #[derive(Serialize, Deserialize, Default, Clone)]
+    pub struct MessageQueue {
+        data: Vec<String>,
+    }
+
+    impl MessageQueue {
+        pub fn new() -> MessageQueue {
+            MessageQueue { data: vec![] }
+        }
+        pub fn append(&mut self, msg: String) {
+            self.data.push(msg)
         }
     }
 
@@ -18,7 +32,7 @@ pub mod db {
     pub struct UserData {
         pub known_peers: KnownPeers,
         pub active_sessions: Vec<SessionID>,
-        pub message_queue: Vec<String>,
+        pub message_queue: MessageQueue,
     }
 
     impl UserData {
@@ -26,12 +40,12 @@ pub mod db {
             UserData {
                 known_peers: KnownPeers::new(),
                 active_sessions: vec![],
-                message_queue: vec![],
+                message_queue: MessageQueue::new(),
             }
         }
     }
 
-    #[derive(Serialize, Deserialize, Default)]
+    #[derive(Serialize, Deserialize, Default, Debug)]
     pub struct KnownPeers {
         pub peers: Vec<String>,
     }
@@ -56,6 +70,11 @@ pub mod db {
                 session_id: format!("{}", id.simple()),
             }
         }
+        pub fn make(id: &str) -> SessionID {
+            SessionID {
+                session_id: id.to_string(),
+            }
+        }
     }
 
     // TODO: remove pub on members here - there's an invariant to preserve with this one
@@ -66,9 +85,10 @@ pub mod db {
         pub confirmed_participants: Vec<UserID>,
     }
 
+    #[derive(Clone)]
     pub struct SessionData {
         pub readable_name: String,
-        participants: Vec<UserID>,
+        pub participants: Vec<UserID>,
     }
 
     #[derive(Serialize, Deserialize)]

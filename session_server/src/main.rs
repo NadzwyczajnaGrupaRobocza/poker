@@ -10,7 +10,6 @@ use std::collections::HashMap;
 use std::sync::Mutex;
 
 use rocket_contrib::json::{Json, JsonValue};
-use uuid::Uuid;
 
 pub use session_server::db_types::db;
 
@@ -49,13 +48,13 @@ fn update_known_peers(
     db: State<'_, MutexServerDB>,
 ) -> JsonValue {
     let mut db = db.lock().unwrap();
-    println!("updated peers for {} to {:?}", id, peers.0.peers);
+    let peers = peers.into_inner();
+    println!("updated peers for {} to {:?}", id, peers);
     let users_entry = db
         .users_db
         .entry(db::UserID::new(&id))
         .or_insert_with(db::UserData::new);
-    let peers = peers.into_inner();
-    users_entry.known_peers.peers = peers.peers;
+    users_entry.known_peers = peers;
 
     json!({ "status": "ok" })
 }
@@ -107,8 +106,8 @@ fn create_session(req: Json<db::CreateSessionReq>, db: State<'_, MutexServerDB>)
 
         match serde_json::to_string(&join_req) {
             Ok(json_str) => match db.users_db.get_mut(&participant) {
-                Some(user_data) => user_data.message_queue.push(json_str),
-                None => print!("error"), // cause we all love meaningful errors
+                Some(user_data) => user_data.message_queue.append(json_str),
+                None => println!("error"), // cause we all love meaningful errors
             },
             Err(_) => println!("error"),
         }
@@ -118,12 +117,107 @@ fn create_session(req: Json<db::CreateSessionReq>, db: State<'_, MutexServerDB>)
            "session_id": session_id })
 }
 
+#[get("/user/<id>/queue")]
+fn get_messages_for(id: String, db: State<'_, MutexServerDB>) -> JsonValue {
+    let mut db = db.lock().unwrap();
+    match db.users_db.get_mut(&db::UserID::new(&id)) {
+        Some(user_data) => {
+            // TODO: figure out how to do a swap here
+            let current_message_queue = user_data.message_queue.clone();
+            user_data.message_queue = db::MessageQueue::new();
+            match serde_json::to_value(current_message_queue) {
+                Ok(json_value) => JsonValue::from(json_value),
+                Err(_) => json!({"status": "failed to serialize"}),
+            }
+        }
+        None => json!({
+            "status": "user not found",
+        }),
+    }
+}
+
+#[put("/user/<user_id>/join/<session_id>")]
+fn join_session(session_id: String, user_id: String, db: State<'_, MutexServerDB>) -> JsonValue {
+    let session_id = db::SessionID::make(&session_id);
+    let user_id = db::UserID::new(&user_id);
+    let mut db = db.lock().unwrap();
+
+    match db.pending_session_db.get_mut(&session_id) {
+        Some(session_data) => {
+            if !session_data.unconfirmed_participants.contains(&user_id) {
+                return json!({"status" : "user not in the session!"});
+            }
+            session_data
+                .unconfirmed_participants
+                .retain(|element| element != &user_id);
+
+            session_data.confirmed_participants.push(user_id);
+
+            if session_data.unconfirmed_participants.is_empty() {
+                match db.pending_session_db.remove(&session_id) {
+                    Some(session_data) => {
+                        let confirmed_session_data = db::SessionData {
+                            readable_name: session_data.readable_name,
+                            participants: session_data.confirmed_participants,
+                        };
+                        db.session_db.insert(session_id, confirmed_session_data);
+                    }
+                    None => return json!({"status":"internal error"}),
+                }
+            }
+
+            return json!({"status" : "ok"});
+        }
+        None => {
+            return json!({
+                "status" : "session not found!"
+            })
+        }
+    }
+}
+
+#[put("/session/<session_id>/broadcast", format = "json", data = "<msg>")]
+fn session_broadcast(session_id: String, msg: String, db: State<'_, MutexServerDB>) -> JsonValue {
+    let session_id = db::SessionID::make(&session_id);
+    let mut db = db.lock().unwrap();
+
+    // We need to narrow the scope of immutable reference to db.sessions_db
+    // to later be able to do a mutable borrow of users_db. This is absurd...
+    // Maybe db's could be separate instead of being locked by single mutex...
+    let participants = get_participants(&db.session_db, &session_id);
+
+    let users_db = &mut db.users_db;
+    for participant_id in participants.iter() {
+        match users_db.get_mut(&participant_id) {
+            Some(user) => user.message_queue.append(msg.clone()),
+            None => print!("broadcast: user not found"),
+        }
+    }
+    json!({"status": "ok"})
+}
+
+// TODO: the copying here should not be necessary
+fn get_participants(sessions_db: &SessionsDB, session_id: &db::SessionID) -> Vec<db::UserID> {
+    match sessions_db.get(session_id) {
+        Some(session) => session.participants.clone(),
+        None => Vec::<db::UserID>::new(),
+    }
+}
+
 fn main() {
     println!("rocket launch?");
     rocket::ignite()
         .mount(
             "/",
-            routes![index, get_known_peers, update_known_peers, create_session],
+            routes![
+                index,
+                get_known_peers,
+                update_known_peers,
+                create_session,
+                get_messages_for,
+                join_session,
+                session_broadcast,
+            ],
         )
         .manage(Mutex::new(ServerDB::new()))
         .launch();
