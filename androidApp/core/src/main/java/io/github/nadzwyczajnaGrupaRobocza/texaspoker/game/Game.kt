@@ -12,7 +12,7 @@ class Game(players: List<Player>, private val gameConfiguration: GameConfigurati
         return deal
     }
 
-    fun acceptDealResult(result: DealResult): String? {
+    fun acceptDealResult(result: DealResult): PlayerId? {
         result.playersResults.forEach {
             players[it.uuid]?.chipsChange(it.chips)
         }

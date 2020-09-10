@@ -23,11 +23,11 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
     fun players() = internalPlayers.toDealPlayers()
     fun nextBetter() = bettingStep.getBetter().dealPlayer.uuid
 
-    val dealer: String
+    val dealer: PlayerId
         get() = dealConstants.dealer
-    val smallBlind: String
+    val smallBlind: PlayerId
         get() = dealConstants.smallBlind
-    val bigBlind: String
+    val bigBlind: PlayerId
         get() = dealConstants.bigBlind
     val pot: Int
         get() = internalPot.amount
@@ -49,7 +49,7 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
 
         val biggestBet = internalPlayers.maxOf { it.chipsBet.amount }
         val typeOfMove = calculateMoveType(move, biggestBet)
-        val currentBetter = bettingStep.getBetterIndicator()
+        bettingStep.getBetterIndicator()
         bettingStep.step()
         val activePlayers = internalPlayers.filter { it.notFolded() }
 
@@ -151,9 +151,9 @@ private fun List<Deal.InternalPlayer>.toDealPlayers() = map { it.dealPlayer }
 private abstract class DealConstants(val players: List<DealPlayer>) {
     abstract val firstRoundBettingPlayerIndicator: Int
     val dealer = players.last().uuid
-    abstract val smallBlind: String
+    abstract val smallBlind: PlayerId
     abstract val smallBlindPlayerIndicator: Int
-    abstract val bigBlind: String
+    abstract val bigBlind: PlayerId
     abstract val playerAfterBigBlind: Int
 }
 

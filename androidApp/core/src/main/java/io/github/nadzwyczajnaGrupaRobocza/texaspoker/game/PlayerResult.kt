@@ -1,3 +1,3 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game
 
-class PlayerResult(val uuid: String, val chips: ChipsChange)
+class PlayerResult(val uuid: PlayerId, val chips: ChipsChange)
