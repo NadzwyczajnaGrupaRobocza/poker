@@ -7,10 +7,14 @@ import org.junit.Before
 import org.junit.Test
 
 open class GameTestData {
-    val player1 = Player("1")
-    val player2 = Player("2")
-    val player3 = Player("3")
-    val player4 = Player("4")
+    private val player1Id = PlayerId("1")
+    private val player2Id = PlayerId("2")
+    private val player3Id = PlayerId("3")
+    private val player4Id = PlayerId("4")
+    val player1 = Player(player1Id)
+    val player2 = Player(player2Id)
+    val player3 = Player(player3Id)
+    val player4 = Player(player4Id)
     val startingChips = 1000
     val blinds = Blinds(10)
     val gameConfiguration = GameConfiguration(startingChips, blinds)
@@ -55,11 +59,16 @@ open class GameTestData {
 }
 
 class GameTest : GameTestData() {
-    private val player5 = Player("5")
-    private val player6 = Player("6")
-    private val player7 = Player("7")
-    private val player8 = Player("8")
-    private val player9 = Player("9")
+    private val player5Id = PlayerId("5")
+    private val player6Id = PlayerId("6")
+    private val player7Id = PlayerId("7")
+    private val player8Id = PlayerId("8")
+    private val player9Id = PlayerId("9")
+    private val player5 = Player(player5Id)
+    private val player6 = Player(player6Id)
+    private val player7 = Player(player7Id)
+    private val player8 = Player(player8Id)
+    private val player9 = Player(player9Id)
 
     @Test
     fun `Game should not be constructed with no players`() {

@@ -1,6 +1,6 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game
 
-class FinalDealResult(val winner: String, val players: Map<String, ChipsChange>) {
+class FinalDealResult(val winner: PlayerId, val players: Map<PlayerId, ChipsChange>) {
     override fun toString(): String {
         return "FinalDealResult(winner='$winner', players=$players)"
     }
@@ -24,7 +24,7 @@ class FinalDealResult(val winner: String, val players: Map<String, ChipsChange>)
     }
 }
 
-class IntermediateDealResult(val nextBetter: String) {
+class IntermediateDealResult(val nextBetter: PlayerId) {
     override fun toString(): String {
         return "IntermediateDealResult(nextBetter='$nextBetter')"
     }
@@ -46,7 +46,7 @@ class IntermediateDealResult(val nextBetter: String) {
 
 }
 
-class NextRoundResult(val nextBetter: String) {
+class NextRoundResult(val nextBetter: PlayerId) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
