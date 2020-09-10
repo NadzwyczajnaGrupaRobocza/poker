@@ -82,9 +82,11 @@ class TableAnimationSystem(
             updateCards()
 
             log.debug {
-                "click: ${clickId}, frames: ${frames.size}, cards: ${table?.get(
-                    CommunityCardsComponent.mapper
-                )?.cards?.size}"
+                "click: ${clickId}, frames: ${frames.size}, cards: ${
+                    table?.get(
+                        CommunityCardsComponent.mapper
+                    )?.cards?.size
+                }"
             }
         }
     }
@@ -148,7 +150,7 @@ class TableAnimationSystem(
     }
 
     private fun createCardFrames() {
-        var centerOfTableYWithCardOffset = centerOfTableY - cardHeight/2F
+        var centerOfTableYWithCardOffset = centerOfTableY - cardHeight / 2F
         val halfCardWidth = cardWidth / 2F
         var offset = halfCardWidth
 
@@ -158,7 +160,7 @@ class TableAnimationSystem(
                 createVisibleObject(
                     centerOfTableX - halfCardWidth,
                     centerOfTableYWithCardOffset,
-                            cardWidth,
+                    cardWidth,
                     cardHeight,
                     frameRegion
                 )
