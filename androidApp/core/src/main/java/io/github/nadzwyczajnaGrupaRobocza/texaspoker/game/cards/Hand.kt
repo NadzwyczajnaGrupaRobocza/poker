@@ -130,7 +130,7 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
     }
 
     private fun calculateMaxCardsInOneSuit(cardsBySuite: Map<Suit, List<Card>>): Int? {
-        return cardsBySuite.maxBy { it.value.size }?.value?.size
+        return cardsBySuite.maxByOrNull { it.value.size }?.value?.size
     }
 
     private fun calculateMultipleRanks(cardsByRank: Map<Rank, List<Card>>): Triple<List<List<Card>>, List<List<Card>>, List<List<Card>>> {
@@ -198,7 +198,7 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
         straightCards: List<Card>
     ): Straight? {
         val suiteCount = suites.groupBy { it }
-        val maxSuitEntry = suiteCount.maxBy { it.value.size }
+        val maxSuitEntry = suiteCount.maxByOrNull { it.value.size }
         val maxSuiteCount = maxSuitEntry?.value?.size ?: 0
         val maxSuit = maxSuitEntry?.key
         return when {

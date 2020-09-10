@@ -49,7 +49,7 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
 
         val biggestBet = internalPlayers.maxOf { it.chipsBet.amount }
         val typeOfMove = calculateMoveType(move, biggestBet)
-        val currentBetter = bettingStep.getBetterIndicator()
+        bettingStep.getBetterIndicator()
         bettingStep.step()
         val activePlayers = internalPlayers.filter { it.notFolded() }
 
