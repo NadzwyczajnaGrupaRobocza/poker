@@ -1,3 +1,3 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game
 
-class GameConfiguration(val startingChips: Int, val blinds: Blinds)
+data class GameConfiguration(val startingChips: Int, val blinds: Blinds)
