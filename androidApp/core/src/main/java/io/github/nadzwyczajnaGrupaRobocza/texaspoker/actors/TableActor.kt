@@ -19,15 +19,19 @@ class TableActor(
     private val backgroundRegion = assets[TextureAtlasAssets.Game].findRegion("background")
 
     init {
+        drawTable()
+    }
+
+    private fun drawTable() {
         engine?.entity {
             with<TransformComponent> {
                 x = 0F;
-                y = 0F
+                y = 0F;
+                z = -1F;
             }
             with<SpriteRendererComponent> {
                 sprite.setRegion(backgroundRegion)
                 sprite.setSize(tableWidth, tableHeight)
-                z = -1
             }
         }
     }

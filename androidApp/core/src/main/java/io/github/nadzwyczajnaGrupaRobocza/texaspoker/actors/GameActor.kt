@@ -25,11 +25,11 @@ abstract class GameActor(
         index: Int = 0
     ): Entity? {
         return engine?.entity {
-            with<TransformComponent> { x = pos_x; y = pos_y }
+            with<TransformComponent> { x = pos_x; y = pos_y; z = 0F}
             with<SpriteRendererComponent> {
                 sprite.setRegion(region)
                 sprite.setSize(sprite_width, sprite_height)
-                z = 0
+                sprite.setPosition(pos_x, pos_y)
             }
         }
     }
