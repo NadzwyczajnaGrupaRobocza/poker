@@ -27,8 +27,8 @@ import kotlin.math.sin
 class PlayersRingActor(
     assets: AssetManager,
     engine: Engine?,
-    private val tableWidth: Float,
-    private val tableHeight: Float
+    tableWidth: Float,
+    tableHeight: Float
 ) : GameActor(engine), KtxInputAdapter {
 
     private val circleR = 100F
@@ -101,7 +101,8 @@ class PlayersRingActor(
     ): Entity? {
         return engine?.entity {
             with<TransformComponent> {
-                x = pos_x - width_r / 2 //FIXME: something is wrong with the size and position, pc vs android
+                x =
+                    pos_x - width_r / 2
                 y = pos_y - height_r / 2
                 z = 1F
             }
@@ -131,16 +132,20 @@ class PlayersRingActor(
 
     private fun nextAnimation(amount: Int) {
         playerCount += amount
-        if (abs(playerCount) > maxPlayer) {
+
+        if (playerCount < 0) {
+            playerCount = maxPlayer
+        } else if (playerCount > maxPlayer) {
             playerCount = 0
         }
+
         log.debug { "scrolled: $amount playerCount: $playerCount" }
 
         for (icon in icons) {
             engine?.removeEntity(icon)
         }
-        icons = Array(abs(maxPlayer))
+        icons = Array(maxPlayer)
 
-        drawPlayersIcons(abs(playerCount))
+        drawPlayersIcons(playerCount)
     }
 }

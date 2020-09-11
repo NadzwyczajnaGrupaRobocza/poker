@@ -10,7 +10,6 @@ import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.SpriteRender
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.TransformComponent
 import ktx.ashley.allOf
 import ktx.ashley.get
-import ktx.ashley.oneOf
 import ktx.graphics.use
 
 class RenderingSystem(
@@ -45,13 +44,14 @@ class RenderingSystem(
                 }
             }
         }
-
+        renderer.projectionMatrix = batch.projectionMatrix;
         renderer.use(ShapeRenderer.ShapeType.Line) { renderer ->
             entity[TransformComponent.mapper]?.let { transform ->
-            entity[EllipseRendererComponent.mapper]?.let {ellipse ->
+                entity[EllipseRendererComponent.mapper]?.let {ellipse ->
                     renderer.ellipse(transform.x, transform.y, ellipse.width, ellipse.height)
                 }
             }
         }
+
     }
 }
