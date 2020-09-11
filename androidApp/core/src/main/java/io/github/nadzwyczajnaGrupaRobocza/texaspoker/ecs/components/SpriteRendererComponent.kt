@@ -10,5 +10,4 @@ class SpriteRendererComponent : Component {
     }
 
     val sprite = Sprite()
-    var z = 0
 }
