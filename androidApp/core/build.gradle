@@ -20,3 +20,9 @@ dependencies {
     testImplementation 'junit:junit:4.13'
     testImplementation "com.natpryce:hamkrest:1.7.0.3"
 }
+
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ["-Xinline-classes"]
+    }
+}
