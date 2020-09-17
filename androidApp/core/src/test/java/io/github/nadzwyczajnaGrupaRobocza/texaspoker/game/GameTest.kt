@@ -204,6 +204,9 @@ class GameAfterFirstDealTest : GameTestData() {
     }
 }
 
+
+//TODO: Bet all in when all chips are not enough for max bet
+
 class TwoPlayerGame : GameTestData() {
     @Test
     fun `First player should be dealer`() {

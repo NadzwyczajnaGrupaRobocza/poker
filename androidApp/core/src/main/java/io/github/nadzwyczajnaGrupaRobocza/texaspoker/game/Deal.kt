@@ -15,10 +15,8 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
             internalPlayers,
         )
 
-    private fun createDealConstants(players: List<DealPlayer>) = when (players.size) {
-        2 -> TwoPlayerDeal(players)
-        else -> ManyPlayersDeal(players)
-    }
+    private fun createDealConstants(players: List<DealPlayer>) =
+        if (players.size == 2) TwoPlayerDeal(players) else ManyPlayersDeal(players)
 
     fun players() = internalPlayers.toDealPlayers()
     fun nextBetter() = bettingStep.getBetter().dealPlayer.uuid
