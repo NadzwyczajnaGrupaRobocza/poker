@@ -193,6 +193,25 @@ class DealTest : DealTestData() {
             equalTo(DealMoveResult(intermediate = IntermediateDealResult(nextBetter = player5Id)))
         )
     }
+
+    @Test
+    fun `All in player with less bet then remaining active`() {
+        val allIn = 100
+        val bet = 150
+
+        deal.move(DealMove.raise(bet))
+        deal.move(DealMove.raise(allIn))
+        deal.move(DealMove.fold())
+        deal.move(DealMove.call(ChipsChange(bet - smallBlind)))
+        deal.move(DealMove.call(ChipsChange(bet - bigBlind)))
+
+        deal.move(DealMove.check())
+        deal.move(DealMove.check())
+        assertThat(
+            deal.move(DealMove.check()),
+            equalTo(DealMoveResult(nextRound = NextRoundResult(smallBlindPlayer.uuid)))
+        )
+    }
 }
 
 class TwoPlayerDealTest : DealTestData() {
