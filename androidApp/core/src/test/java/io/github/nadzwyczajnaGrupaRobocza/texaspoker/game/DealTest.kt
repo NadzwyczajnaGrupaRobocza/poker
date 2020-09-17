@@ -181,6 +181,18 @@ class DealTest : DealTestData() {
             equalTo(DealMoveResult(nextRound = NextRoundResult(smallBlindPlayer.uuid)))
         )
     }
+
+    @Test
+    fun `All in player bet when max bet is bigger then it's chips`() {
+        val maxBet = 200
+        val allIn = 100
+
+        deal.move(DealMove.raise(chips = maxBet))
+        assertThat(
+            deal.move(DealMove.call(chips = allIn)),
+            equalTo(DealMoveResult(intermediate = IntermediateDealResult(nextBetter = player5Id)))
+        )
+    }
 }
 
 class TwoPlayerDealTest : DealTestData() {

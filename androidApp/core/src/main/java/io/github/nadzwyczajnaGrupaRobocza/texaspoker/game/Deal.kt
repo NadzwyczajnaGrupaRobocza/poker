@@ -76,7 +76,9 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
 
         return when {
             currentPlayer.folded -> MoveType.Fold
-            currentPlayerBet < biggestBet -> throw InvalidMove("To call player need to equal biggestBet ($biggestBet). Current bet $currentPlayerBet")
+            currentPlayerBet < biggestBet && currentPlayer.dealPlayer.chips.amount != 0 -> throw InvalidMove(
+                "To call player need to equal biggestBet ($biggestBet). Current bet $currentPlayerBet"
+            )
             currentPlayerBet != biggestBet && moveChips == 0 -> throw InvalidMove("Should fold/call/raise when bet ($currentPlayerBet) less then max bet ($biggestBet)")
             currentPlayerBet == biggestBet && moveChips == 0 -> MoveType.Check
             currentPlayerBet == biggestBet -> MoveType.Call
