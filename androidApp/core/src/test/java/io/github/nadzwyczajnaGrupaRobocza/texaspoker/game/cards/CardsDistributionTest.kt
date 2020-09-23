@@ -45,4 +45,8 @@ class CardsDistributionTest {
         assertThat(distribution.turnCommunityCards.turn, equalTo(deck[11]))
     }
 
+    @Test
+    fun `should distribute river`() {
+        assertThat(distribution.riverCommunityCards.river, equalTo(deck[12]))
+    }
 }

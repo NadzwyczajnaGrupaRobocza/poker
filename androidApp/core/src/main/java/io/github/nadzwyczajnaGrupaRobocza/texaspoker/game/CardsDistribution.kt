@@ -12,6 +12,7 @@ class CardsDistribution private constructor(
     val playersCards: List<PlayerWithCards>,
     val flopCommunityCards: FlopCommunityCards,
     val turnCommunityCards: TurnCommunityCards,
+    val riverCommunityCards: RiverCommunityCards,
 ) {
 
     companion object {
@@ -23,7 +24,9 @@ class CardsDistribution private constructor(
                 noCommunityCards.flop(flopCards.first, flopCards.second, flopCards.third)
             val (turnCard, cardsLeftAfterTurn) = takeCard(cardsLeftAfterFlop)
             val turnCommunityCards = flopCommunityCards.turn(turnCard)
-            return CardsDistribution(playersCards, flopCommunityCards, turnCommunityCards)
+            val (riverCard, _) = takeCard(cardsLeftAfterTurn)
+            val riverCommunityCards = turnCommunityCards.river(riverCard)
+            return CardsDistribution(playersCards, flopCommunityCards, turnCommunityCards, riverCommunityCards)
         }
 
         private fun dealCardsAmongPlayers(
