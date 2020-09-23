@@ -1,9 +1,6 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game
 
-import io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards.Card
-import io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards.Deck
-import io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards.FlopCommunityCards
-import io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards.NoCommunityCards
+import io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards.*
 
 data class PlayerWithCards(val id: PlayerId, val cards: List<Card>) {
     init {
@@ -13,7 +10,8 @@ data class PlayerWithCards(val id: PlayerId, val cards: List<Card>) {
 
 class CardsDistribution private constructor(
     val playersCards: List<PlayerWithCards>,
-    val flopCommunityCards: FlopCommunityCards
+    val flopCommunityCards: FlopCommunityCards,
+    val turnCommunityCards: TurnCommunityCards,
 ) {
 
     companion object {
@@ -23,7 +21,9 @@ class CardsDistribution private constructor(
             val (flopCards, cardsLeftAfterFlop) = takeFlopCards(cardsLeft)
             val flopCommunityCards =
                 noCommunityCards.flop(flopCards.first, flopCards.second, flopCards.third)
-            return CardsDistribution(playersCards, flopCommunityCards)
+            val (turnCard, cardsLeftAfterTurn) = takeCard(cardsLeftAfterFlop)
+            val turnCommunityCards = flopCommunityCards.turn(turnCard)
+            return CardsDistribution(playersCards, flopCommunityCards, turnCommunityCards)
         }
 
         private fun dealCardsAmongPlayers(
@@ -42,6 +42,9 @@ class CardsDistribution private constructor(
 
         private fun takeFlopCards(deck: Deck) =
             Pair(Triple(deck[0], deck[1], deck[2]), deck.drop(3))
+
+        private fun takeCard(deck: Deck) =
+            Pair(deck.first(), deck.drop(1))
     }
 }
 

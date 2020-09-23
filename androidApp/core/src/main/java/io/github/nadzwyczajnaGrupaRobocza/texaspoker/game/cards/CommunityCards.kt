@@ -23,14 +23,14 @@ class FlopCommunityCards internal constructor(flop1: Card, flop2: Card, flop3: C
     fun turn(turn: Card) = TurnCommunityCards(this, turn)
 }
 
-class TurnCommunityCards(flop: FlopCommunityCards, turn: Card) : CommunityCards {
+class TurnCommunityCards(flop: FlopCommunityCards, val turn: Card) : CommunityCards {
     override val size = 4
     override val cards = flop.cards + turn
 
     fun river(river: Card) = RiverCommunityCards(this, river)
 }
 
-class RiverCommunityCards(turn: TurnCommunityCards, river: Card) : CommunityCards {
+class RiverCommunityCards(turn: TurnCommunityCards, val river: Card) : CommunityCards {
     override val size = 5
     override val cards = turn.cards + river
 }

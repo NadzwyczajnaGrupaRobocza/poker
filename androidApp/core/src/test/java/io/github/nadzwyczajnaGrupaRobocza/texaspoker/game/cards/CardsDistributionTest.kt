@@ -33,10 +33,16 @@ class CardsDistributionTest {
     }
 
     @Test
-    fun `should distribute flop` () {
-        assertThat(distribution.flopCommunityCards.cards, equalTo(listOf(deck[8], deck[9], deck[10])))
+    fun `should distribute flop`() {
+        assertThat(
+            distribution.flopCommunityCards.cards,
+            equalTo(listOf(deck[8], deck[9], deck[10]))
+        )
     }
 
-    //@Test
+    @Test
+    fun `should distribute turn`() {
+        assertThat(distribution.turnCommunityCards.turn, equalTo(deck[11]))
+    }
 
 }
