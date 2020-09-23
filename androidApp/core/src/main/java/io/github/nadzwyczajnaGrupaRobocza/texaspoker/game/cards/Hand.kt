@@ -3,7 +3,7 @@ package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards
 import java.lang.Integer.max
 
 class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
-    val cards = river.cards + pocketCards.card1 + pocketCards.card2
+    val cards = (river.cards + pocketCards.card1 + pocketCards.card2).toSet()
 
     private data class InternalHand(
         val type: HandType,

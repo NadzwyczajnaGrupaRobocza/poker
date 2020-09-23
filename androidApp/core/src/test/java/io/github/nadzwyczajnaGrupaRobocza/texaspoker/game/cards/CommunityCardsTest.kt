@@ -46,7 +46,7 @@ class FlopCommunityCardsTest {
 
     @Test
     fun `Flop should return flop cards`() {
-        assertThat(flop.cards, equalTo(setOf(flop1, flop2, flop3)))
+        assertThat(flop.cards, equalTo(listOf(flop1, flop2, flop3)))
     }
 }
 
@@ -61,7 +61,7 @@ class TurnCommunityCardsTest {
 
     @Test
     fun `Turn should return flop and turn cards`() {
-        assertThat(turn.cards, equalTo(setOf(flop1, flop2, flop3, turnCard)))
+        assertThat(turn.cards, equalTo(listOf(flop1, flop2, flop3, turnCard)))
     }
 }
 
@@ -69,6 +69,6 @@ class RiverCommunityCardsTest {
 
     @Test
     fun `River should return all cards`() {
-        assertThat(river.cards, equalTo(setOf(flop1, flop2, flop3, turnCard, riverCard)))
+        assertThat(river.cards, equalTo(listOf(flop1, flop2, flop3, turnCard, riverCard)))
     }
 }

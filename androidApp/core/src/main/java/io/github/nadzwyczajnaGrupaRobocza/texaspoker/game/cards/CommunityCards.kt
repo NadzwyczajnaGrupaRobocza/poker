@@ -2,23 +2,23 @@ package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards
 
 interface CommunityCards {
     val size: Int
-    val cards: Set<Card>
+    val cards: List<Card>
 }
 
 class NoCommunityCards : CommunityCards {
     override val size
         get() = cards.size
     override val cards
-        get() = emptySet<Card>()
+        get() = emptyList<Card>()
 
     fun flop(flop1: Card, flop2: Card, flop3: Card) =
-        FlopCommunityCards(this, flop1, flop2, flop3)
+        FlopCommunityCards(flop1, flop2, flop3)
 }
 
-class FlopCommunityCards(communityCards: NoCommunityCards, flop1: Card, flop2: Card, flop3: Card) :
+class FlopCommunityCards internal constructor(flop1: Card, flop2: Card, flop3: Card) :
     CommunityCards {
     override val size = 3
-    override val cards = setOf(flop1, flop2, flop3)
+    override val cards = listOf(flop1, flop2, flop3)
 
     fun turn(turn: Card) = TurnCommunityCards(this, turn)
 }
