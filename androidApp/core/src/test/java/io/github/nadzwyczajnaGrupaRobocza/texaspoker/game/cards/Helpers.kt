@@ -15,7 +15,6 @@ fun createRiver(
     RiverCommunityCards(
         TurnCommunityCards(
             FlopCommunityCards(
-                NoCommunityCards(),
                 flop1,
                 flop2,
                 flop3

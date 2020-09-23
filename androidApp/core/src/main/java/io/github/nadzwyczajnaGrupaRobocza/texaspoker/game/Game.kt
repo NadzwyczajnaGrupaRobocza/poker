@@ -1,7 +1,10 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game
 
+import io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards.DealWithCards
+import io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards.Decks
+
 class Game(players: List<Player>, private val gameConfiguration: GameConfiguration) {
-    fun deal(): Deal {
+    fun deal(): DealWithCards {
         val playersToPlay = activePlayersInOrder
         if (playersToPlay.size == 1)
             throw InvalidPlayersNumber(1)
@@ -9,7 +12,7 @@ class Game(players: List<Player>, private val gameConfiguration: GameConfigurati
         val deal =
             Deal((playersToPlay.drop(shift) + playersToPlay.take(shift)).toDealPlayer(), gameConfiguration.blinds)
         dealsCount = dealsCount.inc()
-        return deal
+        return DealWithCards(deal, Decks.shuffledDeck())
     }
 
     fun acceptDealResult(result: DealResult): PlayerId? {

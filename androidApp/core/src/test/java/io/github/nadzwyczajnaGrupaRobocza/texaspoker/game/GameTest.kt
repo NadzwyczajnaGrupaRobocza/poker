@@ -56,6 +56,11 @@ open class GameTestData {
                 ),
             )
         )
+
+    fun getDeal(game : Game) :Deal{
+        val (deal, _) = game.deal()
+        return deal
+    }
 }
 
 class GameTest : GameTestData() {
@@ -128,8 +133,9 @@ class GameTest : GameTestData() {
 
     @Test
     fun `When all players active Game should start Deal with all players`() {
+        val deal = getDeal(fourPlayersGame)
         assertThat(
-            fourPlayersGame.deal().players().toSet().map { it.uuid },
+            deal.players().toSet().map { it.uuid },
             equalTo(fourPlayersGame.activePlayers.map { it.uuid })
         )
     }
@@ -142,26 +148,30 @@ class GameTest : GameTestData() {
     @Test
     fun `When applying DealResult with player lost his chips should return three active players`() {
         fourPlayersGame.acceptDealResult(nonWiningDealResult)
+        val deal = getDeal(fourPlayersGame)
 
         assertThat(
-            fourPlayersGame.deal().players().map { it.uuid }.toSet(),
+            deal.players().map { it.uuid }.toSet(),
             equalTo(setOf(player1.uuid, player3.uuid, player4.uuid))
         )
     }
 
     @Test
     fun `In first deal last player should be dealer`() {
-        assertThat(fourPlayersGame.deal().dealer, equalTo(player4.uuid))
+        val deal = getDeal(fourPlayersGame)
+        assertThat(deal.dealer, equalTo(player4.uuid))
     }
 
     @Test
     fun `In first deal first player should be on small blind`() {
-        assertThat(fourPlayersGame.deal().smallBlind, equalTo(player1.uuid))
+        val deal = getDeal(fourPlayersGame)
+        assertThat(deal.smallBlind, equalTo(player1.uuid))
     }
 
     @Test
     fun `In first deal last player should be on big blind`() {
-        assertThat(fourPlayersGame.deal().bigBlind, equalTo(player2.uuid))
+        val deal = getDeal(fourPlayersGame)
+        assertThat(deal.bigBlind, equalTo(player2.uuid))
     }
 
     @Test
@@ -178,7 +188,7 @@ class GameWithWinner : GameTestData() {
 
     @Test
     fun `Should not deal when one player left`() {
-        assertThat({ fourPlayersGame.deal() }, throws(equalTo(InvalidPlayersNumber(1))))
+        assertThat({ getDeal(fourPlayersGame) }, throws(equalTo(InvalidPlayersNumber(1))))
     }
 }
 
@@ -190,34 +200,40 @@ class GameAfterFirstDealTest : GameTestData() {
 
     @Test
     fun `In second deal first player should be dealer`() {
-        assertThat(fourPlayersGame.deal().dealer, equalTo(player1.uuid))
+        val deal = getDeal(fourPlayersGame)
+        assertThat(deal.dealer, equalTo(player1.uuid))
     }
 
     @Test
     fun `In second deal second player should be on small blind`() {
-        assertThat(fourPlayersGame.deal().smallBlind, equalTo(player2.uuid))
+        val deal = getDeal(fourPlayersGame)
+        assertThat(deal.smallBlind, equalTo(player2.uuid))
     }
 
     @Test
     fun `In second deal third player should be on big blind`() {
-        assertThat(fourPlayersGame.deal().bigBlind, equalTo(player3.uuid))
+        val deal = getDeal(fourPlayersGame)
+        assertThat(deal.bigBlind, equalTo(player3.uuid))
     }
 }
 
 class TwoPlayerGame : GameTestData() {
     @Test
     fun `First player should be dealer`() {
-        assertThat(twoPlayersGame.deal().dealer, equalTo(player2.uuid))
+        val deal = getDeal(twoPlayersGame)
+        assertThat(deal.dealer, equalTo(player2.uuid))
     }
 
     @Test
     fun `First player should be on small blind`() {
-        assertThat(twoPlayersGame.deal().smallBlind, equalTo(player2.uuid))
+        val deal = getDeal(twoPlayersGame)
+        assertThat(deal.smallBlind, equalTo(player2.uuid))
     }
 
     @Test
     fun `Second player should be on big blind`() {
-        assertThat(twoPlayersGame.deal().bigBlind, equalTo(player1.uuid))
+        val deal = getDeal(twoPlayersGame)
+        assertThat(deal.bigBlind, equalTo(player1.uuid))
     }
 }
 
@@ -229,17 +245,20 @@ class TwoPlayerGameSecondDeal : GameTestData() {
 
     @Test
     fun `Second player should be dealer`() {
-        assertThat(twoPlayersGame.deal().dealer, equalTo(player1.uuid))
+        val deal = getDeal(twoPlayersGame)
+        assertThat(deal.dealer, equalTo(player1.uuid))
     }
 
     @Test
     fun `Second player should be on small blind`() {
-        assertThat(twoPlayersGame.deal().smallBlind, equalTo(player1.uuid))
+        val deal = getDeal(twoPlayersGame)
+        assertThat(deal.smallBlind, equalTo(player1.uuid))
     }
 
     @Test
     fun `Third player should be on big blind`() {
-        assertThat(twoPlayersGame.deal().bigBlind, equalTo(player2.uuid))
+        val deal = getDeal(twoPlayersGame)
+        assertThat(deal.bigBlind, equalTo(player2.uuid))
     }
 }
 
@@ -252,17 +271,20 @@ class TwoPlayerGameThirdDeal : GameTestData() {
 
     @Test
     fun `First player should be dealer`() {
-        assertThat(twoPlayersGame.deal().dealer, equalTo(player2.uuid))
+        val deal = getDeal(twoPlayersGame)
+        assertThat(deal.dealer, equalTo(player2.uuid))
     }
 
     @Test
     fun `First player should be on small blind`() {
-        assertThat(twoPlayersGame.deal().smallBlind, equalTo(player2.uuid))
+        val deal = getDeal(twoPlayersGame)
+        assertThat(deal.smallBlind, equalTo(player2.uuid))
     }
 
     @Test
     fun `Second player should be on big blind`() {
-        assertThat(twoPlayersGame.deal().bigBlind, equalTo(player1.uuid))
+        val deal = getDeal(twoPlayersGame)
+        assertThat(deal.bigBlind, equalTo(player1.uuid))
     }
 }
 
