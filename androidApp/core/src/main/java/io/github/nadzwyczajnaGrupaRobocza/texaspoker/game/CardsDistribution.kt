@@ -19,14 +19,19 @@ class CardsDistribution private constructor(
         fun createCardsDistribution(deck: Deck, players: List<PlayerId>): CardsDistribution {
             val (playersCards, cardsLeft) = dealCardsAmongPlayers(deck, players)
             val noCommunityCards = NoCommunityCards()
-            val (flopCards, cardsLeftAfterFlop) = takeFlopCards(cardsLeft)
+            val (flopCards, cardsLeftAfterFlop) = takeFlopCards(burnCard(cardsLeft))
             val flopCommunityCards =
                 noCommunityCards.flop(flopCards.first, flopCards.second, flopCards.third)
-            val (turnCard, cardsLeftAfterTurn) = takeCard(cardsLeftAfterFlop)
+            val (turnCard, cardsLeftAfterTurn) = takeCard(burnCard(cardsLeftAfterFlop))
             val turnCommunityCards = flopCommunityCards.turn(turnCard)
-            val (riverCard, _) = takeCard(cardsLeftAfterTurn)
+            val (riverCard, _) = takeCard(burnCard(cardsLeftAfterTurn))
             val riverCommunityCards = turnCommunityCards.river(riverCard)
-            return CardsDistribution(playersCards, flopCommunityCards, turnCommunityCards, riverCommunityCards)
+            return CardsDistribution(
+                playersCards,
+                flopCommunityCards,
+                turnCommunityCards,
+                riverCommunityCards
+            )
         }
 
         private fun dealCardsAmongPlayers(
@@ -48,6 +53,9 @@ class CardsDistribution private constructor(
 
         private fun takeCard(deck: Deck) =
             Pair(deck.first(), deck.drop(1))
+
+        private fun burnCard(deck: Deck) =
+            deck.drop(1)
     }
 }
 
