@@ -43,7 +43,7 @@ class CardsDistribution private constructor(
             return Pair(players.mapIndexed { index, player ->
                 PlayerWithCards(
                     player,
-                    deck.slice(index..(index + playersSize) step playersSize)
+                    deck.slice(index..index + playersSize step playersSize)
                 )
             }, deck.drop(playersSize * cardsPerPlayer))
         }
