@@ -15,6 +15,8 @@ dependencies {
     implementation "io.github.libktx:ktx-collections:$ktxVersion"
     implementation "io.github.libktx:ktx-graphics:$ktxVersion"
     implementation "io.github.libktx:ktx-inject:$ktxVersion"
+    implementation "io.github.libktx:ktx-scene2d:$ktxVersion"
+    implementation "io.github.libktx:ktx-style:$ktxVersion"
     implementation "io.github.libktx:ktx-log:$ktxVersion"
 
     testImplementation 'junit:junit:4.13'

@@ -15,11 +15,12 @@ import ktx.log.debug
 import ktx.log.logger
 
 class CommunityCardsActor(
+    game_state: GameState,
     assets: AssetManager,
     engine: Engine?,
     tableWidth: Float,
     tableHeight: Float
-) : GameActor(engine) {
+) : GameActor(engine, game_state) {
 
     companion object {
 

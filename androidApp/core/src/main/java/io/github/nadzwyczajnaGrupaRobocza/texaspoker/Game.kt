@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.screen.GameScreen
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.screen.LoadingScreen
 import ktx.app.KtxGame
@@ -28,7 +30,8 @@ class Game : KtxGame<KtxScreen>() {
             bindSingleton(BitmapFont())
             bindSingleton(AssetManager())
             bindSingleton(OrthographicCamera().apply {
-                setToOrtho(false, 1200f, 800f) })
+                setToOrtho(false, 1200f, 800f)
+            })
             bindSingleton(PooledEngine())
             bindSingleton(ShapeRenderer())
 
@@ -43,6 +46,7 @@ class Game : KtxGame<KtxScreen>() {
             )
             addScreen(
                 GameScreen(
+                    inject(),
                     inject(),
                     inject(),
                     inject(),

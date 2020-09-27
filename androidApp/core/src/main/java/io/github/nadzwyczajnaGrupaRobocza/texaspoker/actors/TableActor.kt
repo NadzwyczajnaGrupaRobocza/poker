@@ -11,11 +11,12 @@ import ktx.ashley.entity
 import ktx.ashley.with
 
 class TableActor(
+    game_state: GameState,
     assets: AssetManager,
     engine: Engine?,
     private val tableWidth: Float,
     private val tableHeight: Float
-) : GameActor(engine) {
+) : GameActor(engine, game_state) {
     private val backgroundRegion = assets[TextureAtlasAssets.Game].findRegion("background")
 
     init {

@@ -48,6 +48,7 @@ class RenderingSystem(
         renderer.use(ShapeRenderer.ShapeType.Line) { renderer ->
             entity[TransformComponent.mapper]?.let { transform ->
                 entity[EllipseRendererComponent.mapper]?.let {ellipse ->
+                    renderer.color = ellipse.color
                     renderer.ellipse(transform.x, transform.y, ellipse.width, ellipse.height)
                 }
             }

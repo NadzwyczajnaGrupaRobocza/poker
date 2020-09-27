@@ -9,8 +9,13 @@ import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.TransformCom
 import ktx.ashley.entity
 import ktx.ashley.with
 
+class GameState {
+    var current_player_id = 0
+}
+
 abstract class GameActor(
     protected val engine: Engine?,
+    protected val game_state: GameState
 ) {
 
     open fun update(delta: Float) {
