@@ -5,20 +5,19 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.IsEqual.equalTo
 import org.junit.Test
 
-class DeckTest {
+class DecksTest {
     @Test
     fun `Deck should have 52 cards`() {
-        assertThat(Deck().deck.size, equalTo(52))
+        assertThat(Decks.ordededDeck.size, equalTo(52))
     }
 
     @Test
     fun `Shuffled Deck should have 52 cards`() {
-        assertThat(Deck().shuffledDeck().size, equalTo(52))
+        assertThat(Decks.shuffledDeck().size, equalTo(52))
     }
 
     @Test
     fun `Two shuffled decks should not be equal - Warning, this may fail with probability 1 to 52!`() {
-        val deck = Deck()
-        assertThat(deck.shuffledDeck(), not(equalTo(deck.shuffledDeck())))
+        assertThat(Decks.shuffledDeck(), not(equalTo(Decks.shuffledDeck())))
     }
 }

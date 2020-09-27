@@ -15,10 +15,8 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
             internalPlayers,
         )
 
-    private fun createDealConstants(players: List<DealPlayer>) = when (players.size) {
-        2 -> TwoPlayerDeal(players)
-        else -> ManyPlayersDeal(players)
-    }
+    private fun createDealConstants(players: List<DealPlayer>) =
+        if (players.size == 2) TwoPlayerDeal(players) else ManyPlayersDeal(players)
 
     fun players() = internalPlayers.toDealPlayers()
     fun nextBetter() = bettingStep.getBetter().dealPlayer.uuid
@@ -78,7 +76,9 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
 
         return when {
             currentPlayer.folded -> MoveType.Fold
-            currentPlayerBet < biggestBet -> throw InvalidMove("To call player need to equal biggestBet ($biggestBet). Current bet $currentPlayerBet")
+            currentPlayerBet < biggestBet && currentPlayer.dealPlayer.chips.amount != 0 -> throw InvalidMove(
+                "To call player need to equal biggestBet ($biggestBet). Current bet $currentPlayerBet"
+            )
             currentPlayerBet != biggestBet && moveChips == 0 -> throw InvalidMove("Should fold/call/raise when bet ($currentPlayerBet) less then max bet ($biggestBet)")
             currentPlayerBet == biggestBet && moveChips == 0 -> MoveType.Check
             currentPlayerBet == biggestBet -> MoveType.Call
