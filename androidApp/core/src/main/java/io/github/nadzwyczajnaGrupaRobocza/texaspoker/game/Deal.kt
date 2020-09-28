@@ -17,7 +17,7 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
         checkAndMarkFolded(move)
         bet(move)
 
-        val biggestBet = internalPlayers.maxOf { it.chipsBet.amount }
+        val biggestBet = internalPlayers.maxOf { it.dealPlayer.chipsBet.amount }
         val typeOfMove = calculateMoveType(move, biggestBet)
         bettingStep.getBetterIndicator()
         bettingStep.step()
@@ -69,7 +69,7 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
     private fun calculateMoveType(move: DealMove, biggestBet: Int): MoveType {
         val moveChips = move.chipsChange.change
         val currentPlayer = bettingStep.getBetter()
-        val currentPlayerBet = currentPlayer.chipsBet.amount
+        val currentPlayerBet = currentPlayer.dealPlayer.chipsBet.amount
 
         return when {
             currentPlayer.folded -> MoveType.Fold
@@ -105,11 +105,11 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
                 players =
                 (listOf(
                     winner.dealPlayer.uuid to
-                            ChipsChange(internalPot.amount - winner.chipsBet.amount)
+                            ChipsChange(internalPot.amount - winner.dealPlayer.chipsBet.amount)
                 ) + internalPlayers.filter { it.dealPlayer.uuid != winner.dealPlayer.uuid }
                     .map {
                         it.dealPlayer.uuid to
-                                ChipsChange(-it.chipsBet.amount)
+                                ChipsChange(-it.dealPlayer.chipsBet.amount)
                     }).toMap()
             )
         )
@@ -123,21 +123,21 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
 
     private fun getChipsFromPlayer(player: InternalPlayer, amount: Int) {
         player.dealPlayer.chips.change(ChipsChange(-amount))
-        player.chipsBet.change(ChipsChange(amount))
+        player.dealPlayer.chipsBet.change(ChipsChange(amount))
         internalPot.change(ChipsChange(amount))
     }
 
     private class InternalPlayer(val dealPlayer: DealPlayer) {
         var betOnce = false
-        val chipsBet = Chips(0)
         var folded = false
 
         fun betInRound(biggestBet: Int) =
             folded || equalToBiggestBet(biggestBet) || allInBet()
 
-        private fun equalToBiggestBet(biggestBet: Int) = betOnce && chipsBet.amount == biggestBet
+        private fun equalToBiggestBet(biggestBet: Int) =
+            betOnce && dealPlayer.chipsBet.amount == biggestBet
 
-        fun allInBet() = dealPlayer.chips.amount == 0 && chipsBet.amount > 0
+        fun allInBet() = dealPlayer.chips.amount == 0 && dealPlayer.chipsBet.amount > 0
     }
 
     private class BettingStep(

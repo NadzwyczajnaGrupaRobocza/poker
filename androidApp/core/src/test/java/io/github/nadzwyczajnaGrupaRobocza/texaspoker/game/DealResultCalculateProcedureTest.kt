@@ -4,15 +4,27 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.Test
 
-class DealResultCalculateProcedureTest : DealTestData() {
-    private val lostChips1 = ChipsChange(-20)
-    private val lostChips2 = ChipsChange(-80)
-    private val wonChips1 = ChipsChange(120)
+class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
+    private val lostChips1Amount = -20
+    private val lostChips1 = ChipsChange(lostChips1Amount)
+    private val lostChips2Amount = -80
+    private val lostChips2 = ChipsChange(lostChips2Amount)
+    private val wonChipsAmount = 120
+    private val wonChips1 = ChipsChange(wonChipsAmount)
     private val noChipsChange = ChipsChange(0)
+    private val initialChips = 100
 
     @Test
     fun `When one player left after round should return this player as winner`() {
-        assertThat(DealResultCalculateProcedure(dealWithCards()), equalTo(DealResult(listOf(
+        val dealPlayers = listOf(
+            DealPlayer(player1Id, initialChips, lostChips1Amount),
+            DealPlayer(player2Id, initialChips, wonChipsAmount),
+            DealPlayer(player3Id, initialChips, lostChips2Amount),
+            DealPlayer(player4Id, initialChips, lostChips1Amount),
+            DealPlayer(player5Id, initialChips),
+        )
+
+        assertThat(DealResultCalculateProcedure(dealPlayers), equalTo(DealResult(listOf(
             PlayerResult(player1Id, lostChips1),
             PlayerResult(player2Id, wonChips1),
             PlayerResult(player3Id, lostChips2),

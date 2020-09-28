@@ -22,7 +22,16 @@ open class DealTestData {
     internal val blindDiff = bigBlind - smallBlind
     internal val blinds = Blinds(smallBlind, bigBlind)
 
+}
+
+open class FivePlayersDealTestData : DealTestData() {
     internal val fivePlayerDeal = Deal(listOf(player1, player2, player3, player4, player5), blinds)
     internal fun dealWithCards(deck: Deck = Decks.shuffledDeck()) =
         DealWithCards(fivePlayerDeal, deck)
+}
+
+open class TwoPlayersDealTestData : DealTestData() {
+    internal val twoPlayersDeal = Deal(listOf(player1, player2), blinds)
+    internal fun dealWithCards(deck: Deck = Decks.shuffledDeck()) =
+        DealWithCards(twoPlayersDeal, deck)
 }

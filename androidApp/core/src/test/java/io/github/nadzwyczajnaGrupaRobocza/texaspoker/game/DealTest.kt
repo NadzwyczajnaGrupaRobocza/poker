@@ -6,7 +6,7 @@ import com.natpryce.hamkrest.throws
 import org.junit.Test
 
 
-class DealTest : DealTestData() {
+class DealTest : FivePlayersDealTestData() {
     private val bigBlindPlayer = player2
     private val smallBlindPlayer = player1
     private val noChange = 0
@@ -200,43 +200,41 @@ class DealTest : DealTestData() {
     }
 }
 
-class TwoPlayerDealTest : DealTestData() {
-    private val deal = Deal(listOf(player1, player2), blinds)
-
+class TwoPlayerDealTest : TwoPlayersDealTestData() {
     @Test
     fun `First better should be player 2`() {
-        assertThat(deal.nextBetter(), equalTo(player2.uuid))
+        assertThat(twoPlayersDeal.nextBetter(), equalTo(player2.uuid))
     }
 
     @Test
     fun `Second better should be player 1`() {
-        deal.move(DealMove.call(ChipsChange(blindDiff)))
+        twoPlayersDeal.move(DealMove.call(ChipsChange(blindDiff)))
 
-        assertThat(deal.nextBetter(), equalTo(player1.uuid))
+        assertThat(twoPlayersDeal.nextBetter(), equalTo(player1.uuid))
     }
 
     @Test
     fun `When small blind player call result should be next better`() {
         assertThat(
-            deal.move(DealMove.call(ChipsChange(blindDiff))),
+            twoPlayersDeal.move(DealMove.call(ChipsChange(blindDiff))),
             equalTo(DealMoveResult(intermediate = IntermediateDealResult(nextBetter = player1.uuid)))
         )
     }
 
     @Test
     fun `When small blind player call and big blind checks should move to next round`() {
-        deal.move(DealMove.call(ChipsChange(blindDiff)))
+        twoPlayersDeal.move(DealMove.call(ChipsChange(blindDiff)))
         assertThat(
-            deal.move(DealMove.check()), equalTo(
+            twoPlayersDeal.move(DealMove.check()), equalTo(
                 DealMoveResult(nextRound = NextRoundResult(nextBetter = player2.uuid))
             )
         )
     }
 
     @Test
-    fun `When small blind player fold big bilind player should win`() {
+    fun `When small blind player fold big blind player should win`() {
         assertThat(
-            deal.move(DealMove.fold()), equalTo(
+            twoPlayersDeal.move(DealMove.fold()), equalTo(
                 DealMoveResult(
                     final = FinalDealResult(
                         winner = player1.uuid, players = mapOf(
