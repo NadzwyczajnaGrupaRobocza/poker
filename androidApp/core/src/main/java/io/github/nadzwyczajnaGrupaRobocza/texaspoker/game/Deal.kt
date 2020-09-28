@@ -1,23 +1,6 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game
 
 class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
-    init {
-        assert(gamePlayers.size > 1)
-    }
-
-    private val dealConstants = createDealConstants(gamePlayers)
-    private val internalPlayers = gamePlayers.toInternal()
-    private val internalPot = Chips(0)
-    private val bettingStep =
-        BettingStep(
-            dealConstants.firstRoundBettingPlayerIndicator,
-            dealConstants.smallBlindPlayerIndicator,
-            internalPlayers,
-        )
-
-    private fun createDealConstants(players: List<DealPlayer>) =
-        if (players.size == 2) TwoPlayerDeal(players) else ManyPlayersDeal(players)
-
     fun players() = internalPlayers.toDealPlayers()
     fun nextBetter() = bettingStep.getBetter().dealPlayer.uuid
 
@@ -29,17 +12,6 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
         get() = dealConstants.bigBlind
     val pot: Int
         get() = internalPot.amount
-
-    init {
-        betBlinds()
-    }
-
-    private fun betBlinds() {
-        internalPlayers.find { it.dealPlayer.uuid == smallBlind }
-            ?.let { getChipsFromPlayer(it, blinds.small) }
-        internalPlayers.find { it.dealPlayer.uuid == bigBlind }
-            ?.let { getChipsFromPlayer(it, blinds.big) }
-    }
 
     fun move(move: DealMove): DealMoveResult {
         checkAndMarkFolded(move)
@@ -57,6 +29,31 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
             internalPlayers.all { it.betInRound(biggestBet) } -> moveToNextRound()
             else -> DealMoveResult(intermediate = IntermediateDealResult(nextBetter()))
         }
+    }
+
+    private val dealConstants = createDealConstants(gamePlayers)
+    private val internalPlayers = gamePlayers.toInternal()
+    private val internalPot = Chips(0)
+    private val bettingStep =
+        BettingStep(
+            dealConstants.firstRoundBettingPlayerIndicator,
+            dealConstants.smallBlindPlayerIndicator,
+            internalPlayers,
+        )
+
+    private fun createDealConstants(players: List<DealPlayer>) =
+        if (players.size == 2) TwoPlayerDeal(players) else ManyPlayersDeal(players)
+
+    init {
+        assert(gamePlayers.size > 1)
+        betBlinds()
+    }
+
+    private fun betBlinds() {
+        internalPlayers.find { it.dealPlayer.uuid == smallBlind }
+            ?.let { getChipsFromPlayer(it, blinds.small) }
+        internalPlayers.find { it.dealPlayer.uuid == bigBlind }
+            ?.let { getChipsFromPlayer(it, blinds.big) }
     }
 
     private fun checkAndMarkFolded(move: DealMove) {
@@ -93,7 +90,7 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
         getChipsFromPlayer(currentPlayer, moveChips)
     }
 
-    enum class MoveType {
+    private enum class MoveType {
         Call,
         Raise,
         Check,
@@ -130,7 +127,7 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
         internalPot.change(ChipsChange(amount))
     }
 
-    class InternalPlayer(val dealPlayer: DealPlayer) {
+    private class InternalPlayer(val dealPlayer: DealPlayer) {
         var betOnce = false
         val chipsBet = Chips(0)
         var folded = false
@@ -142,11 +139,54 @@ class Deal(gamePlayers: List<DealPlayer>, private val blinds: Blinds) {
 
         fun allInBet() = dealPlayer.chips.amount == 0 && chipsBet.amount > 0
     }
+
+    private class BettingStep(
+        firstRoundStartingPlayer: Int,
+        val otherRoundsStartingPlayer: Int,
+        val players: List<Deal.InternalPlayer>
+    ) {
+        private class PlayerIndicator(var indicator: Int, val players: List<Deal.InternalPlayer>) {
+            private tailrec fun getNextNotFoldedNorAllIn(ind: Int): Int =
+                if (players[ind].folded || players[ind].allInBet()) getNextNotFoldedNorAllIn(
+                    nextIndex(
+                        ind
+                    )
+                ) else ind
+
+            fun restart(position: Int) {
+                indicator = getNextNotFoldedNorAllIn(getIndex(position))
+            }
+
+            operator fun inc(): PlayerIndicator {
+                indicator = getNextNotFoldedNorAllIn(nextIndex(indicator))
+                return this
+            }
+
+            private fun nextIndex(indicator: Int) = getIndex(indicator + 1)
+            private fun getIndex(i: Int) = i % players.size
+        }
+
+        private var bettingPlayer =
+            PlayerIndicator(indicator = firstRoundStartingPlayer, players = players)
+
+        fun nextRound() {
+            bettingPlayer.restart(otherRoundsStartingPlayer)
+        }
+
+        fun step() {
+            bettingPlayer++
+        }
+
+        fun getBetterIndicator() = bettingPlayer.indicator
+        fun getBetter() = players[bettingPlayer.indicator]
+    }
+
+
+    private fun Deal.InternalPlayer.notFolded() = !folded
+    private fun List<DealPlayer>.toInternal() = map { Deal.InternalPlayer(it) }
+    private fun List<Deal.InternalPlayer>.toDealPlayers() = map { it.dealPlayer }
 }
 
-private fun Deal.InternalPlayer.notFolded() = !folded
-private fun List<DealPlayer>.toInternal() = map { Deal.InternalPlayer(it) }
-private fun List<Deal.InternalPlayer>.toDealPlayers() = map { it.dealPlayer }
 
 private abstract class DealConstants(val players: List<DealPlayer>) {
     abstract val firstRoundBettingPlayerIndicator: Int
@@ -171,47 +211,6 @@ private class ManyPlayersDeal(players: List<DealPlayer>) : DealConstants(players
     override val smallBlindPlayerIndicator = 0
     override val bigBlind = players[1].uuid
     override val playerAfterBigBlind = 2
-}
-
-private class BettingStep(
-    firstRoundStartingPlayer: Int,
-    val otherRoundsStartingPlayer: Int,
-    val players: List<Deal.InternalPlayer>
-) {
-    private class PlayerIndicator(var indicator: Int, val players: List<Deal.InternalPlayer>) {
-        private tailrec fun getNextNotFoldedNorAllIn(ind: Int): Int =
-            if (players[ind].folded || players[ind].allInBet()) getNextNotFoldedNorAllIn(
-                nextIndex(
-                    ind
-                )
-            ) else ind
-
-        fun restart(position: Int) {
-            indicator = getNextNotFoldedNorAllIn(getIndex(position))
-        }
-
-        operator fun inc(): PlayerIndicator {
-            indicator = getNextNotFoldedNorAllIn(nextIndex(indicator))
-            return this
-        }
-
-        private fun nextIndex(indicator: Int) = getIndex(indicator + 1)
-        private fun getIndex(i: Int) = i % players.size
-    }
-
-    private var bettingPlayer =
-        PlayerIndicator(indicator = firstRoundStartingPlayer, players = players)
-
-    fun nextRound() {
-        bettingPlayer.restart(otherRoundsStartingPlayer)
-    }
-
-    fun step() {
-        bettingPlayer++
-    }
-
-    fun getBetterIndicator() = bettingPlayer.indicator
-    fun getBetter() = players[bettingPlayer.indicator]
 }
 
 class InvalidMove(private val why: String) : Throwable() {
