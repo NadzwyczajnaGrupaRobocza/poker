@@ -5,32 +5,15 @@ import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.throws
 import org.junit.Test
 
-open class DealTestData {
-    private val player1Id = PlayerId("1")
-    private val player2Id = PlayerId("2")
-    val player1 = DealPlayer(player1Id, 1000)
-    val player2 = DealPlayer(player2Id, 5000)
-    val smallBlind = 10
-    val bigBlind = 25
-    val blindDiff = bigBlind - smallBlind
-    val blinds = Blinds(smallBlind, bigBlind)
-}
 
 class DealTest : DealTestData() {
     private val bigBlindPlayer = player2
     private val smallBlindPlayer = player1
-    private val player3Id = PlayerId("3")
-    private val player4Id = PlayerId("4")
-    private val player5Id = PlayerId("5")
-    private val player3 = DealPlayer(player3Id, 500)
-    private val player4 = DealPlayer(player4Id, 100)
-    private val player5 = DealPlayer(player5Id, 1000)
-    private val deal = Deal(listOf(player1, player2, player3, player4, player5), blinds)
     private val noChange = 0
 
     @Test
     fun `First better should be player 3`() {
-        assertThat(deal.nextBetter(), equalTo(player3.uuid))
+        assertThat(fivePlayerDeal.nextBetter(), equalTo(player3.uuid))
     }
 
     @Test
@@ -41,48 +24,48 @@ class DealTest : DealTestData() {
 
     @Test
     fun `After Deal start pot should have big and small blinds`() {
-        assertThat(deal.pot, equalTo(smallBlind + bigBlind))
+        assertThat(fivePlayerDeal.pot, equalTo(smallBlind + bigBlind))
     }
 
     @Test
     fun `When all players call and check should move to next round`() {
-        deal.move(DealMove.call(ChipsChange(bigBlind)))
-        deal.move(DealMove.call(ChipsChange(bigBlind)))
-        deal.move(DealMove.call(ChipsChange(bigBlind)))
-        deal.move(DealMove.call(ChipsChange(blindDiff)))
+        fivePlayerDeal.move(DealMove.call(ChipsChange(bigBlind)))
+        fivePlayerDeal.move(DealMove.call(ChipsChange(bigBlind)))
+        fivePlayerDeal.move(DealMove.call(ChipsChange(bigBlind)))
+        fivePlayerDeal.move(DealMove.call(ChipsChange(blindDiff)))
 
         assertThat(
-            deal.move(DealMove.check()),
+            fivePlayerDeal.move(DealMove.check()),
             equalTo(DealMoveResult(nextRound = NextRoundResult(nextBetter = player1.uuid)))
         )
     }
 
     @Test
     fun `When some player raise and then all players call and check should move to next round and start with player after big dealer`() {
-        deal.move(DealMove.call(ChipsChange(bigBlind)))
-        deal.move(DealMove.call(ChipsChange(bigBlind)))
+        fivePlayerDeal.move(DealMove.call(ChipsChange(bigBlind)))
+        fivePlayerDeal.move(DealMove.call(ChipsChange(bigBlind)))
 
         val raised = 2 * bigBlind
-        deal.move(DealMove.raise(ChipsChange(raised))) //player5
+        fivePlayerDeal.move(DealMove.raise(ChipsChange(raised))) //player5
 
-        deal.move(DealMove.call(ChipsChange(raised - smallBlind)))
-        deal.move(DealMove.call(ChipsChange(raised - bigBlind)))
-        deal.move(DealMove.call(ChipsChange(raised - bigBlind)))
+        fivePlayerDeal.move(DealMove.call(ChipsChange(raised - smallBlind)))
+        fivePlayerDeal.move(DealMove.call(ChipsChange(raised - bigBlind)))
+        fivePlayerDeal.move(DealMove.call(ChipsChange(raised - bigBlind)))
 
         assertThat(
-            deal.move(DealMove.call(ChipsChange(raised - bigBlind))),
+            fivePlayerDeal.move(DealMove.call(ChipsChange(raised - bigBlind))),
             equalTo(DealMoveResult(nextRound = NextRoundResult(nextBetter = player1.uuid)))
         )
     }
 
     @Test
     fun `When all players folds big blind player should win`() {
-        deal.move(DealMove.fold())
-        deal.move(DealMove.fold())
-        deal.move(DealMove.fold())
+        fivePlayerDeal.move(DealMove.fold())
+        fivePlayerDeal.move(DealMove.fold())
+        fivePlayerDeal.move(DealMove.fold())
 
         assertThat(
-            deal.move(DealMove.fold()), equalTo(
+            fivePlayerDeal.move(DealMove.fold()), equalTo(
                 DealMoveResult(
                     final = FinalDealResult(
                         winner = bigBlindPlayer.uuid, players = mapOf(
@@ -100,18 +83,21 @@ class DealTest : DealTestData() {
 
     @Test
     fun `When call with less then already max bet should throw`() {
-        assertThat({ deal.move(DealMove.call(ChipsChange(blindDiff))) }, throws<InvalidMove>())
+        assertThat(
+            { fivePlayerDeal.move(DealMove.call(ChipsChange(blindDiff))) },
+            throws<InvalidMove>()
+        )
     }
 
     @Test
     fun `When small blind player folds big blind player should start next round`() {
-        deal.move(DealMove.call(ChipsChange(bigBlind)))
-        deal.move(DealMove.call(ChipsChange(bigBlind)))
-        deal.move(DealMove.call(ChipsChange(bigBlind)))
-        deal.move(DealMove.fold())
+        fivePlayerDeal.move(DealMove.call(ChipsChange(bigBlind)))
+        fivePlayerDeal.move(DealMove.call(ChipsChange(bigBlind)))
+        fivePlayerDeal.move(DealMove.call(ChipsChange(bigBlind)))
+        fivePlayerDeal.move(DealMove.fold())
 
         assertThat(
-            deal.move(DealMove.check()), equalTo(
+            fivePlayerDeal.move(DealMove.check()), equalTo(
                 DealMoveResult(nextRound = NextRoundResult(bigBlindPlayer.uuid))
             )
         )
@@ -119,29 +105,29 @@ class DealTest : DealTestData() {
 
     @Test
     fun `When two players fold should move to next round`() {
-        deal.move(DealMove.fold())
-        deal.move(DealMove.call(ChipsChange(bigBlind)))
-        deal.move(DealMove.fold())
-        deal.move(DealMove.call(ChipsChange(blindDiff)))
+        fivePlayerDeal.move(DealMove.fold())
+        fivePlayerDeal.move(DealMove.call(ChipsChange(bigBlind)))
+        fivePlayerDeal.move(DealMove.fold())
+        fivePlayerDeal.move(DealMove.call(ChipsChange(blindDiff)))
 
         assertThat(
-            deal.move(DealMove.check()),
+            fivePlayerDeal.move(DealMove.check()),
             equalTo(DealMoveResult(nextRound = NextRoundResult(smallBlindPlayer.uuid)))
         )
     }
 
     @Test
     fun `When two players fold in next round should only three players to bet`() {
-        deal.move(DealMove.fold())
-        deal.move(DealMove.call(ChipsChange(bigBlind)))
-        deal.move(DealMove.fold())
-        deal.move(DealMove.call(ChipsChange(blindDiff)))
-        deal.move(DealMove.check())
+        fivePlayerDeal.move(DealMove.fold())
+        fivePlayerDeal.move(DealMove.call(ChipsChange(bigBlind)))
+        fivePlayerDeal.move(DealMove.fold())
+        fivePlayerDeal.move(DealMove.call(ChipsChange(blindDiff)))
+        fivePlayerDeal.move(DealMove.check())
 
-        deal.move(DealMove.check())
-        deal.move(DealMove.check())
+        fivePlayerDeal.move(DealMove.check())
+        fivePlayerDeal.move(DealMove.check())
         assertThat(
-            deal.move(DealMove.check()),
+            fivePlayerDeal.move(DealMove.check()),
             equalTo(DealMoveResult(nextRound = NextRoundResult(smallBlindPlayer.uuid)))
         )
     }
@@ -152,15 +138,15 @@ class DealTest : DealTestData() {
         val raise2 = 50
         val raise3 = 80
 
-        deal.move(DealMove.raise(raise1))
-        deal.move(DealMove.raise(raise2))
-        deal.move(DealMove.raise(raise3))
-        deal.move(DealMove.call(raise3 - smallBlind))
-        deal.move(DealMove.call(raise3 - bigBlind))
-        deal.move(DealMove.Companion.call(raise3 - raise1))
+        fivePlayerDeal.move(DealMove.raise(raise1))
+        fivePlayerDeal.move(DealMove.raise(raise2))
+        fivePlayerDeal.move(DealMove.raise(raise3))
+        fivePlayerDeal.move(DealMove.call(raise3 - smallBlind))
+        fivePlayerDeal.move(DealMove.call(raise3 - bigBlind))
+        fivePlayerDeal.move(DealMove.Companion.call(raise3 - raise1))
 
         assertThat(
-            deal.move(DealMove.Companion.call(raise3 - raise2)),
+            fivePlayerDeal.move(DealMove.Companion.call(raise3 - raise2)),
             equalTo(DealMoveResult(nextRound = NextRoundResult(smallBlindPlayer.uuid)))
         )
     }
@@ -169,15 +155,15 @@ class DealTest : DealTestData() {
     fun `All in player should not bet but remain active`() {
         val allIn = 100
 
-        deal.move(DealMove.fold())
-        deal.move(DealMove.raise(ChipsChange(allIn)))
-        deal.move(DealMove.fold())
-        deal.move(DealMove.call(ChipsChange(allIn - smallBlind)))
-        deal.move(DealMove.call(ChipsChange(allIn - bigBlind)))
+        fivePlayerDeal.move(DealMove.fold())
+        fivePlayerDeal.move(DealMove.raise(ChipsChange(allIn)))
+        fivePlayerDeal.move(DealMove.fold())
+        fivePlayerDeal.move(DealMove.call(ChipsChange(allIn - smallBlind)))
+        fivePlayerDeal.move(DealMove.call(ChipsChange(allIn - bigBlind)))
 
-        deal.move(DealMove.check())
+        fivePlayerDeal.move(DealMove.check())
         assertThat(
-            deal.move(DealMove.check()),
+            fivePlayerDeal.move(DealMove.check()),
             equalTo(DealMoveResult(nextRound = NextRoundResult(smallBlindPlayer.uuid)))
         )
     }
@@ -187,9 +173,9 @@ class DealTest : DealTestData() {
         val maxBet = 200
         val allIn = 100
 
-        deal.move(DealMove.raise(chips = maxBet))
+        fivePlayerDeal.move(DealMove.raise(chips = maxBet))
         assertThat(
-            deal.move(DealMove.call(chips = allIn)),
+            fivePlayerDeal.move(DealMove.call(chips = allIn)),
             equalTo(DealMoveResult(intermediate = IntermediateDealResult(nextBetter = player5Id)))
         )
     }
@@ -199,16 +185,16 @@ class DealTest : DealTestData() {
         val allIn = 100
         val bet = 150
 
-        deal.move(DealMove.raise(bet))
-        deal.move(DealMove.raise(allIn))
-        deal.move(DealMove.fold())
-        deal.move(DealMove.call(ChipsChange(bet - smallBlind)))
-        deal.move(DealMove.call(ChipsChange(bet - bigBlind)))
+        fivePlayerDeal.move(DealMove.raise(bet))
+        fivePlayerDeal.move(DealMove.raise(allIn))
+        fivePlayerDeal.move(DealMove.fold())
+        fivePlayerDeal.move(DealMove.call(ChipsChange(bet - smallBlind)))
+        fivePlayerDeal.move(DealMove.call(ChipsChange(bet - bigBlind)))
 
-        deal.move(DealMove.check())
-        deal.move(DealMove.check())
+        fivePlayerDeal.move(DealMove.check())
+        fivePlayerDeal.move(DealMove.check())
         assertThat(
-            deal.move(DealMove.check()),
+            fivePlayerDeal.move(DealMove.check()),
             equalTo(DealMoveResult(nextRound = NextRoundResult(smallBlindPlayer.uuid)))
         )
     }
