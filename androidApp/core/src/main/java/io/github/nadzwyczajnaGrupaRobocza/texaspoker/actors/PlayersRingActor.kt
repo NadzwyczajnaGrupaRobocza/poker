@@ -52,8 +52,6 @@ class PlayersRingActor(
     init {
         drawPlayersRing()
         drawPlayersIcons(playerCount)
-
-        Gdx.input.inputProcessor = this
     }
 
     private fun drawPlayersRing() {
@@ -136,15 +134,7 @@ class PlayersRingActor(
         }
     }
 
-    override fun scrolled(amount: Int): Boolean {
-        nextAnimation(amount)
-        return true
-    }
-
     override fun update(delta: Float) {
-        if (Gdx.input.justTouched()) {
-            nextAnimation(1)
-        }
 
         if (current_player_id != game_state.current_player_id) {
             assert(game_state.current_player_id < playerCount)
@@ -152,6 +142,7 @@ class PlayersRingActor(
             current_player_id = game_state.current_player_id
             redrawPlayerIcons()
         }
+
     }
 
     private fun redrawPlayerIcons() {
