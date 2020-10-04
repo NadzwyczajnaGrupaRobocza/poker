@@ -5,10 +5,10 @@ import com.natpryce.hamkrest.equalTo
 import org.junit.Test
 
 class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
-    private val lostChips1Amount = -20
-    private val lostChips1 = ChipsChange(lostChips1Amount)
-    private val lostChips2Amount = -80
-    private val lostChips2 = ChipsChange(lostChips2Amount)
+    private val lostChips1Amount = 20
+    private val lostChips1 = ChipsChange(-lostChips1Amount)
+    private val lostChips2Amount = 80
+    private val lostChips2 = ChipsChange(-lostChips2Amount)
     private val wonChipsAmount = 120
     private val wonChips1 = ChipsChange(wonChipsAmount)
     private val noChipsChange = ChipsChange(0)
@@ -24,13 +24,24 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
             DealPlayer(player5Id, initialChips),
         )
 
-        assertThat(DealResultCalculateProcedure(dealPlayers), equalTo(DealResult(listOf(
-            PlayerResult(player1Id, lostChips1),
-            PlayerResult(player2Id, wonChips1),
-            PlayerResult(player3Id, lostChips2),
-            PlayerResult(player4Id, lostChips1),
-            PlayerResult(player5Id, noChipsChange),
-        ))))
+        assertThat(
+            DealResultCalculateProcedure(dealPlayers).dealResult(
+                FinalDealResult(
+                    winner = player2Id,
+                    players = emptyMap()
+                )
+            ), equalTo(
+                DealResult(
+                    listOf(
+                        PlayerResult(player1Id, lostChips1),
+                        PlayerResult(player2Id, wonChips1),
+                        PlayerResult(player3Id, lostChips2),
+                        PlayerResult(player4Id, lostChips1),
+                        PlayerResult(player5Id, noChipsChange),
+                    )
+                )
+            )
+        )
     }
 }
 
