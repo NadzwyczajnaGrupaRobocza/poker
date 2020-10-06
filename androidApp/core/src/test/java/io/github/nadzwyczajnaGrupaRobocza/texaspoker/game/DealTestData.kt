@@ -10,6 +10,7 @@ open class DealTestData {
     internal val player3Id = PlayerId("3")
     internal val player4Id = PlayerId("4")
     internal val player5Id = PlayerId("5")
+    internal val playersIds = listOf(player1Id, player2Id, player3Id, player4Id, player5Id)
 
     internal val player1 = DealPlayer(player1Id, 1000)
     internal val player2 = DealPlayer(player2Id, 5000)
