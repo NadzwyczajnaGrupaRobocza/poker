@@ -7,10 +7,10 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.Skin
+import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.systems.MyShapeRenderer
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.screen.GameScreen
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.screen.LoadingScreen
+import ktx.actors.stage
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
 import ktx.inject.Context
@@ -23,37 +23,29 @@ private val log = logger<Game>()
 class Game : KtxGame<KtxScreen>() {
     private val context = Context()
 
+    class InGameResolution {
+        companion object {
+            const val width: Float = 1140F
+            const val height: Float = 540F
+        }
+    }
+
     override fun create() {
         context.register {
             bindSingleton(this@Game)
+            bindSingleton(PooledEngine())
+            bindSingleton(MyShapeRenderer())
             bindSingleton<Batch>(SpriteBatch())
             bindSingleton(BitmapFont())
             bindSingleton(AssetManager())
             bindSingleton(OrthographicCamera().apply {
-                setToOrtho(false, 1200f, 800f)
+                setToOrtho(false, InGameResolution.width, InGameResolution.height)
             })
-            bindSingleton(PooledEngine())
-            bindSingleton(ShapeRenderer())
+            bindSingleton(stage(inject()))
+            bindSingleton(GameState())
 
-            addScreen(
-                LoadingScreen(
-                    inject(),
-                    inject(),
-                    inject(),
-                    inject(),
-                    inject()
-                )
-            )
-            addScreen(
-                GameScreen(
-                    inject(),
-                    inject(),
-                    inject(),
-                    inject(),
-                    inject(),
-                    inject()
-                )
-            )
+            addScreen(LoadingScreen(this))
+            addScreen(GameScreen(this))
         }
         setScreen<LoadingScreen>()
         super.create()

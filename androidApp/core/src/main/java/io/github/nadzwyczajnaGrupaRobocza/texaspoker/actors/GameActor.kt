@@ -1,22 +1,20 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.actors
 
-import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
-import com.badlogic.gdx.Gdx
+import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.graphics.g2d.TextureRegion
+import io.github.nadzwyczajnaGrupaRobocza.texaspoker.GameState
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.SpriteRendererComponent
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.TransformComponent
 import ktx.ashley.entity
 import ktx.ashley.with
-
-class GameState {
-    var current_player_id = 0
-}
+import ktx.inject.Context
 
 abstract class GameActor(
-    protected val engine: Engine?,
-    protected val game_state: GameState
+    object_pool : Context,
 ) {
+    protected val engine: PooledEngine = object_pool.inject()
+    protected  val game_state: GameState = object_pool.inject()
 
     open fun update(delta: Float) {
     }
@@ -29,7 +27,7 @@ abstract class GameActor(
         region: TextureRegion,
         index: Int = 0
     ): Entity? {
-        return engine?.entity {
+        return engine.entity {
             with<TransformComponent> { x = pos_x; y = pos_y; z = 0F}
             with<SpriteRendererComponent> {
                 sprite.setRegion(region)

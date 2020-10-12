@@ -9,14 +9,14 @@ import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.SpriteRender
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.TransformComponent
 import ktx.ashley.entity
 import ktx.ashley.with
+import ktx.inject.Context
 
 class TableActor(
-    game_state: GameState,
+    object_pool: Context,
     assets: AssetManager,
-    engine: Engine?,
     private val tableWidth: Float,
     private val tableHeight: Float
-) : GameActor(engine, game_state) {
+) : GameActor(object_pool) {
     private val backgroundRegion = assets[TextureAtlasAssets.Game].findRegion("background")
 
     init {

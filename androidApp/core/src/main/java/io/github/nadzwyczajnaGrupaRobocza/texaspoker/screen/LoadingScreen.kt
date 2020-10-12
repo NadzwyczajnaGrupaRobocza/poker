@@ -10,12 +10,15 @@ import io.github.nadzwyczajnaGrupaRobocza.texaspoker.assets.TextureAtlasAssets
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.assets.load
 import ktx.app.KtxScreen
 import ktx.graphics.use
+import ktx.inject.Context
 
-class LoadingScreen(private val game: Game,
-                    private val batch: Batch,
-                    private val font: BitmapFont,
-                    private val assets: AssetManager,
-                    private val camera: OrthographicCamera) : KtxScreen {
+class LoadingScreen(object_pool: Context) : KtxScreen {
+
+    private val game: Game = object_pool.inject()
+    private val batch: Batch = object_pool.inject()
+    private val font: BitmapFont = object_pool.inject()
+    private val assets: AssetManager = object_pool.inject()
+    private val camera: OrthographicCamera = object_pool.inject()
 
     override fun resize(width: Int, height: Int) {
         camera.update();

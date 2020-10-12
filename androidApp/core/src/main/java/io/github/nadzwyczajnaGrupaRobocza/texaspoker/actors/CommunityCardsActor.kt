@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Array
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.assets.TextureAtlasAssets
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.assets.get
@@ -11,16 +12,15 @@ import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.TransformCom
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.screen.GameScreen
 import ktx.ashley.get
 import ktx.collections.sortBy
+import ktx.inject.Context
 import ktx.log.debug
 import ktx.log.logger
 
 class CommunityCardsActor(
-    game_state: GameState,
+    object_pool: Context,
     assets: AssetManager,
-    engine: Engine?,
-    tableWidth: Float,
-    tableHeight: Float
-) : GameActor(engine, game_state) {
+    private val center_of_scene: Vector2
+) : GameActor(object_pool) {
 
     companion object {
 
@@ -30,8 +30,6 @@ class CommunityCardsActor(
     }
 
     private val log = logger<GameScreen>()
-    private val centerOfTableX = tableWidth / 2F
-    private val centerOfTableY = tableHeight / 2F
     private val frameRegion = assets[TextureAtlasAssets.Game].findRegion("frame")
     private val jHRegion = assets[TextureAtlasAssets.Game].findRegion("JH")
 
@@ -92,7 +90,7 @@ class CommunityCardsActor(
     }
 
     private fun createCardFrames() {
-        var centerOfTableYWithCardOffset = centerOfTableY - cardHeight / 2F
+        var centerOfTableYWithCardOffset = center_of_scene.y - cardHeight / 2F
         val halfCardWidth = cardWidth / 2F
         var offset = halfCardWidth
 
@@ -100,7 +98,7 @@ class CommunityCardsActor(
         if (numberOfFrames % 2 == 1) {
             frames.add(
                 createVisibleObject(
-                    centerOfTableX - halfCardWidth,
+                    center_of_scene.x - halfCardWidth,
                     centerOfTableYWithCardOffset,
                     cardWidth,
                     cardHeight,
@@ -115,7 +113,7 @@ class CommunityCardsActor(
         for (frameId in 1..halfOfCards) {
             frames.add(
                 createVisibleObject(
-                    centerOfTableX - offset - halfCardWidth,
+                    center_of_scene.x - offset - halfCardWidth,
                     centerOfTableYWithCardOffset,
                     cardWidth,
                     cardHeight,
@@ -124,7 +122,7 @@ class CommunityCardsActor(
             )
             frames.add(
                 createVisibleObject(
-                    centerOfTableX + offset - halfCardWidth,
+                    center_of_scene.x + offset - halfCardWidth,
                     centerOfTableYWithCardOffset,
                     cardWidth,
                     cardHeight,

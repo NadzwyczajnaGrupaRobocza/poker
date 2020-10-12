@@ -1,46 +1,48 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.actors
 
-import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
-import com.badlogic.gdx.Game
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Array
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.assets.TextureAtlasAssets
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.assets.get
+import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.ArcRendererComponent
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.EllipseRendererComponent
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.SpriteRendererComponent
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.TransformComponent
+import io.github.nadzwyczajnaGrupaRobocza.texaspoker.math.Math.Companion.radian
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.screen.GameScreen
 import ktx.app.KtxInputAdapter
 import ktx.ashley.entity
-import ktx.ashley.get
 import ktx.ashley.with
+import ktx.inject.Context
 import ktx.log.debug
 import ktx.log.logger
 import kotlin.math.cos
 import kotlin.math.sin
 
 class PlayersRingActor(
-    game_state: GameState,
+    object_pool: Context,
     assets: AssetManager,
-    engine: Engine?,
     tableWidth: Float,
-    tableHeight: Float
-) : GameActor(engine, game_state), KtxInputAdapter {
+    tableHeight: Float,
+    center_of_scene: Vector2
+) : GameActor(object_pool), KtxInputAdapter {
 
-    private val circleR = 100F
-    private val ellipseOffset = 300F
-    private val ellipseWidth = tableWidth - ellipseOffset
+    private val circleR = 80F
+    private val ellipseOffsetX = 280F
+    private val ellipseOffsetY = 200F
+    private val ellipseWidth = tableWidth - ellipseOffsetX
     private val ellipseWidthR = ellipseWidth / 2
-    private val ellipseHeight = tableHeight - ellipseOffset
+    private val ellipseHeight = tableHeight - ellipseOffsetY
     private val ellipseHeightR = ellipseHeight / 2
-    private val ellipsePosX = tableWidth / 2
-    private val ellipsePosY = tableHeight / 2
+    private val ellipsePosX = center_of_scene.x
+    private val ellipsePosY = center_of_scene.y
 
     private val playerIconTextureName = assets[TextureAtlasAssets.Game].findRegion("playerIcon")
+    private val tableTexture = assets[TextureAtlasAssets.Game].findRegion("background")
     private val log = logger<GameScreen>()
 
     private var playerCount = 10
@@ -49,40 +51,52 @@ class PlayersRingActor(
     private var icons = Array<Entity?>(0)
     private var current_player_id = 0
 
+    private var defaultLineWidth = 3f
+    private var selectedPlayerLineWidth = 17f
+
     init {
-        drawPlayersRing()
+        drawTableBorder()
         drawPlayersIcons(playerCount)
     }
 
-    private fun drawPlayersRing() {
+    private fun drawTableBorder() {
+/*
         addElipseEntity(
             ellipsePosX,
             ellipsePosY,
             ellipseWidth,
             ellipseHeight
         )
-
-    }
-
-    private fun degree(rad: Double): Double {
-        return rad * 180 / Math.PI
-    }
-
-    private fun radian(degree: Double): Double {
-        return degree / 180 * Math.PI
+*/
+        addArcEntity(
+            ellipsePosX,
+            ellipsePosY,
+            ellipseWidth,
+            ellipseHeight,
+        )
     }
 
     private fun getPlayerIconLineColor(playerId: Int): Color {
         return if (game_state.current_player_id == playerId)
-            Color.BLUE
+            Color.VIOLET
         else Color.WHITE
     }
 
     private fun getPlayerIconR(playerId: Int): Float {
         val offset = 10
+        return circleR
         return if (game_state.current_player_id == playerId)
             circleR + offset
-        else circleR - offset
+        else circleR
+    }
+
+    private fun getPlayerIconLineWidth(playerId: Int): Float {
+/*
+        if (game_state.current_player_id == playerId) {
+            return selectedPlayerLineWidth
+        }
+*/
+        return defaultLineWidth
     }
 
     private fun drawPlayersIcons(playerCount: Int) {
@@ -99,11 +113,63 @@ class PlayersRingActor(
                     playerCircleR,
                     playerCircleR,
                     line_color = getPlayerIconLineColor(playerId),
+                    line_width = getPlayerIconLineWidth(playerId),
                     playerIconTextureName
                 )
             )
         }
 
+    }
+
+    private fun addArcEntity(
+        pos_x: Float,
+        pos_y: Float,
+        width_r: Float,
+        height_r: Float,
+        line_color: Color = Color.WHITE,
+        line_width: Float = 3f,
+        textureRegion: TextureRegion? = null
+    ) {
+        engine?.entity {
+            with<TransformComponent> {
+                x = pos_x - 300F
+                y = pos_y
+                z = 1F
+            }
+            with<ArcRendererComponent> {
+                radius = 200F
+                start = 90F
+                degrees = 180F
+                color = line_color
+                lineWidth = line_width
+            }
+            textureRegion?.let { textureRegion ->
+                with<SpriteRendererComponent> {
+                    sprite.setRegion(textureRegion)
+                    sprite.setSize(width_r, height_r)
+                }
+            }
+        }
+        engine?.entity {
+            with<TransformComponent> {
+                x = pos_x + 300F
+                y = pos_y
+                z = 1F
+            }
+            with<ArcRendererComponent> {
+                radius = 200F
+                start = -90F
+                degrees = 180F
+                color = line_color
+                lineWidth = line_width
+            }
+            textureRegion?.let { textureRegion ->
+                with<SpriteRendererComponent> {
+                    sprite.setRegion(textureRegion)
+                    sprite.setSize(width_r, height_r)
+                }
+            }
+        }
     }
 
     private fun addElipseEntity(
@@ -112,6 +178,7 @@ class PlayersRingActor(
         width_r: Float,
         height_r: Float,
         line_color: Color = Color.WHITE,
+        line_width: Float = 3f,
         textureRegion: TextureRegion? = null
     ): Entity? {
         return engine?.entity {
@@ -124,6 +191,7 @@ class PlayersRingActor(
                 width = width_r
                 height = height_r
                 color = line_color
+                lineWidth = line_width
             }
             textureRegion?.let { textureRegion ->
                 with<SpriteRendererComponent> {
@@ -139,7 +207,7 @@ class PlayersRingActor(
         if (current_player_id != game_state.current_player_id) {
             assert(game_state.current_player_id < playerCount)
 
-            current_player_id = game_state.current_player_id
+            //current_player_id = game_state.current_player_id
             redrawPlayerIcons()
         }
 
