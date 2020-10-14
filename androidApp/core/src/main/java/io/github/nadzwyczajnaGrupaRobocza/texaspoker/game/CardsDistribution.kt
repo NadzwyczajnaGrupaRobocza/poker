@@ -2,11 +2,7 @@ package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game
 
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards.*
 
-data class PlayerWithCards(val id: PlayerId, val cards: List<Card>) {
-    init {
-        assert(cards.size == 2)
-    }
-}
+data class PlayerWithCards(val id: PlayerId, val cards: PocketCards)
 
 class CardsDistribution private constructor(
     val playersCards: List<PlayerWithCards>,
@@ -41,9 +37,9 @@ class CardsDistribution private constructor(
             val playersSize = players.size
             val cardsPerPlayer = 2
             return Pair(players.mapIndexed { index, player ->
+                val playerCards = deck.slice(index..index + playersSize step playersSize)
                 PlayerWithCards(
-                    player,
-                    deck.slice(index..index + playersSize step playersSize)
+                    player, PocketCards(playerCards.first(), playerCards.last())
                 )
             }, deck.drop(playersSize * cardsPerPlayer))
         }

@@ -18,10 +18,10 @@ class CardsDistributionTest {
 
     @Test
     fun `should distribute cards among players`() {
-        val player1Cards = listOf(deck[0], deck[players.size])
-        val player2Cards = listOf(deck[1], deck[players.size + 1])
-        val player3Cards = listOf(deck[2], deck[players.size + 2])
-        val player4Cards = listOf(deck[3], deck[players.size + 3])
+        val player1Cards = PocketCards(deck[0], deck[players.size])
+        val player2Cards = PocketCards(deck[1], deck[players.size + 1])
+        val player3Cards = PocketCards(deck[2], deck[players.size + 2])
+        val player4Cards = PocketCards(deck[3], deck[players.size + 3])
         val playersCards = listOf(
             PlayerWithCards(player1Id, player1Cards),
             PlayerWithCards(player2Id, player2Cards),

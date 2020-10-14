@@ -1,21 +1,31 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game
 
+import io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards.Hand
+
 class DealResultCalculateProcedure(val players: List<DealPlayer>) {
     fun dealResult(finalDealResult: FinalDealResult): DealResult {
-        val pot = players.map { it.chipsBet.amount }.sum()
+        return DealResult(finalDealResult.players.map { PlayerResult(it.key, it.value) })
+    }
+
+    fun dealResult(dealResult: NextRoundResult, cardDistribution: CardsDistribution): DealResult {
+        val maxBet = players.map { it.chipsBet.amount }.maxOrNull()
+        val maxBetters = players.filter { it.chipsBet.amount == maxBet }.map { it.uuid }
+        val maxBettersCards = cardDistribution.playersCards.filter { it.id in maxBetters }
+        val bestCard = maxBettersCards.maxByOrNull {
+            Hand(
+                river = cardDistribution.riverCommunityCards,
+                pocketCards = it.cards
+            )
+        }?.id
+        val pot = players.sumBy { it.chipsBet.amount }
         return DealResult(players.map {
             PlayerResult(
                 it.uuid,
-                getChipsChange(it, finalDealResult.winner, pot)
+                ChipsChange(
+                    (if (it.uuid == bestCard) pot else 0) - it.chipsBet.amount
+                )
             )
         })
     }
-
-    private fun getChipsChange(player: DealPlayer, winner: PlayerId, pot: Int) = ChipsChange(
-        when (player.uuid) {
-            winner -> pot - player.chipsBet.amount
-            else -> -player.chipsBet.amount
-        }
-    )
 
 }

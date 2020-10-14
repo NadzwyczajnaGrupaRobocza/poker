@@ -10,7 +10,10 @@ class Game(players: List<Player>, private val gameConfiguration: GameConfigurati
             throw InvalidPlayersNumber(1)
         val shift = dealsCount % playersToPlay.size
         val deal =
-            Deal((playersToPlay.drop(shift) + playersToPlay.take(shift)).toDealPlayer(), gameConfiguration.blinds)
+            Deal(
+                (playersToPlay.drop(shift) + playersToPlay.take(shift)).toDealPlayer(),
+                gameConfiguration.blinds
+            )
         dealsCount = dealsCount.inc()
         return DealWithCards(deal, Decks.shuffledDeck())
     }

@@ -10,16 +10,20 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
     private val lostChips1 = ChipsChange(-lostChips1Amount)
     private val lostChips2Amount = 80
     private val lostChips2 = ChipsChange(-lostChips2Amount)
+    private val maxBetChipsAmount = 200
+    private val maxBetChipsLost = ChipsChange(-maxBetChipsAmount)
+    private val showdownChipsWon =
+        ChipsChange(maxBetChipsAmount + lostChips1Amount + lostChips2Amount)
     private val wonChipsAmount = 120
     private val wonChips1 = ChipsChange(wonChipsAmount)
     private val noChipsChange = ChipsChange(0)
-    private val initialChips = 100
+    private val initialChips = 1000
 
     @Test
     fun `When one player left after round should return this player as winner`() {
         val dealPlayers = listOf(
             DealPlayer(player1Id, initialChips, lostChips1Amount),
-            DealPlayer(player2Id, initialChips, wonChipsAmount),
+            DealPlayer(player2Id, initialChips, maxBetChipsAmount),
             DealPlayer(player3Id, initialChips, lostChips2Amount),
             DealPlayer(player4Id, initialChips, lostChips1Amount),
             DealPlayer(player5Id, initialChips),
@@ -29,7 +33,13 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
             DealResultCalculateProcedure(dealPlayers).dealResult(
                 FinalDealResult(
                     winner = player2Id,
-                    players = emptyMap()
+                    players = mapOf(
+                        player1Id to lostChips1,
+                        player2Id to wonChips1,
+                        player3Id to lostChips2,
+                        player4Id to lostChips1,
+                        player5Id to noChipsChange,
+                    )
                 )
             ), equalTo(
                 DealResult(
@@ -69,6 +79,29 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
                 playersIds
             )
 
+        val dealResult = NextRoundResult(player1Id)
+
+        val dealPlayers = listOf(
+            DealPlayer(player1Id, initialChips, maxBetChipsAmount),
+            DealPlayer(player2Id, initialChips, maxBetChipsAmount),
+            DealPlayer(player3Id, initialChips, lostChips2Amount),
+            DealPlayer(player4Id, initialChips, lostChips1Amount),
+            DealPlayer(player5Id, initialChips),
+        )
+
+        assertThat(
+            DealResultCalculateProcedure(dealPlayers).dealResult(dealResult, cardDistribution), equalTo(
+                DealResult(
+                    listOf(
+                        PlayerResult(player1Id, showdownChipsWon),
+                        PlayerResult(player2Id, maxBetChipsLost),
+                        PlayerResult(player3Id, lostChips2),
+                        PlayerResult(player4Id, lostChips1),
+                        PlayerResult(player5Id, noChipsChange),
+                    )
+                )
+            )
+        )
 
     }
 }
