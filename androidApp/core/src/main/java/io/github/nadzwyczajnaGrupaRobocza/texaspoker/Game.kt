@@ -36,7 +36,9 @@ class Game : KtxGame<KtxScreen>() {
             bindSingleton(PooledEngine())
             bindSingleton(MyShapeRenderer())
             bindSingleton<Batch>(SpriteBatch())
-            bindSingleton(BitmapFont())
+            bindSingleton(BitmapFont().apply {
+                data.scale(1.05F)
+            })
             bindSingleton(AssetManager())
             bindSingleton(OrthographicCamera().apply {
                 setToOrtho(false, InGameResolution.width, InGameResolution.height)

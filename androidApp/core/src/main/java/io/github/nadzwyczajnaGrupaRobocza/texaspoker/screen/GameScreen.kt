@@ -24,8 +24,8 @@ class GameScreen(private val object_pool: Context) : KtxScreen {
     private var actors = arrayListOf<GameActor?>()
 
     override fun show() {
-        createGameScene()
         setupEntityComponentSystems()
+        createGameScene()
     }
 
     override fun render(delta: Float) {

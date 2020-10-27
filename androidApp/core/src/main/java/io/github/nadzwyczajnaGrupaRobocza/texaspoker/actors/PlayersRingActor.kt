@@ -8,11 +8,8 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Array
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.assets.TextureAtlasAssets
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.assets.get
-import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.ArcRendererComponent
-import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.EllipseRendererComponent
-import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.SpriteRendererComponent
-import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.TransformComponent
-import io.github.nadzwyczajnaGrupaRobocza.texaspoker.math.Math.Companion.radian
+import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.*
+import io.github.nadzwyczajnaGrupaRobocza.texaspoker.math.radian
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.screen.GameScreen
 import ktx.app.KtxInputAdapter
 import ktx.ashley.entity
@@ -107,7 +104,7 @@ class PlayersRingActor(
             val alpha = radian(playerId * alphaStep).toFloat()
             val playerCircleR = getPlayerIconR(playerId)
             icons.add(
-                addElipseEntity(
+                addElipseEntityWithUi(
                     ellipseWidthR * cos(alpha) + ellipsePosX,
                     ellipseHeightR * sin(alpha) + ellipsePosY,
                     playerCircleR,
@@ -171,7 +168,43 @@ class PlayersRingActor(
             }
         }
     }
-
+    private fun addElipseEntityWithUi(
+        pos_x: Float,
+        pos_y: Float,
+        width_r: Float,
+        height_r: Float,
+        line_color: Color = Color.WHITE,
+        line_width: Float = 3f,
+        textureRegion: TextureRegion? = null
+    ): Entity? {
+        return engine?.entity {
+            with<TransformComponent> {
+                x = pos_x - width_r / 2
+                y = pos_y - height_r / 2
+                z = 1F
+            }
+            with<EllipseRendererComponent> {
+                width = width_r
+                height = height_r
+                color = line_color
+                lineWidth = line_width
+            }
+            textureRegion?.let { textureRegion ->
+                with<SpriteRendererComponent> {
+                    sprite.setRegion(textureRegion)
+                    sprite.setSize(width_r, height_r)
+                }
+            }
+            with<UILabelComponent> {
+                height = 40F
+                width = 125F
+                offsetX = 0F
+                offsetY = -height
+                texts["name"] = "Kevin"
+                texts["Coin"] = "100$"
+            }
+        }
+    }
     private fun addElipseEntity(
         pos_x: Float,
         pos_y: Float,

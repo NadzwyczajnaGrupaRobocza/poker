@@ -1,10 +1,13 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.systems
 
-import com.badlogic.ashley.core.EntitySystem
+import com.badlogic.ashley.core.Entity
+import com.badlogic.ashley.systems.SortedIteratingSystem
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Button
@@ -14,10 +17,15 @@ import io.github.nadzwyczajnaGrupaRobocza.texaspoker.GameState
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.actors.GameActor
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.assets.TextureAtlasAssets
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.assets.get
+import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.TransformComponent
+import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.UILabelComponent
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.screen.GameScreen
 import ktx.actors.onClick
 import ktx.actors.plus
 import ktx.actors.plusAssign
+import ktx.actors.setPosition
+import ktx.ashley.allOf
+import ktx.ashley.get
 import ktx.inject.Context
 import ktx.log.logger
 import ktx.scene2d.*
@@ -26,11 +34,14 @@ import ktx.style.label
 import ktx.style.skin
 import ktx.style.textButton
 
-class UISystem(object_pool: Context) : EntitySystem() {
+class UISystem(object_pool: Context) : SortedIteratingSystem(
+    allOf(TransformComponent::class, UILabelComponent::class).get(),
+    compareBy { entity: Entity -> entity[TransformComponent.mapper]?.z }) {
 
     private val game_font: BitmapFont = object_pool.inject()
     private val assets: AssetManager = object_pool.inject()
     private val stage: Stage = object_pool.inject()
+    private val camera: OrthographicCamera = object_pool.inject()
     private val log = logger<GameScreen>()
 
     // All classes that depends on textures cannot be created at construction time
@@ -41,7 +52,6 @@ class UISystem(object_pool: Context) : EntitySystem() {
     private lateinit var gameStateLabel: Label
 
     private var max_players_id = 9
-
 
     init {
         Scene2DSkin.defaultSkin = skin { s ->
@@ -67,32 +77,70 @@ class UISystem(object_pool: Context) : EntitySystem() {
         Gdx.input.inputProcessor = stage
 
         stage.actors {
+/*
             table {
                 gameStateLabel = label("Current player")
-                setFillParent(true)
-                align(Align.top)
-                pack()
+                background("square_button")
+                //setFillParent(true)
+                align(Align.center)
+                setPosition(200, 100)
+                this.width = 200F
+                this.height = 100F
+                //pack()
             }
-            table {
-
-                touchButton = textButton("Fold") {
-                    onClick {
-                    }
-                }
+*/
+/*
+            table { table ->
+                table.width = 100F
+                table.height = 100F
+                table.setPosition(200F, 10F)
                 touchButton = textButton("Check") {
                     onClick {
                     }
+                    //setFillParent(true)
                 }
-                touchButton = textButton("Raise") {
+            }
+*/
+
+            table { table ->
+                table.width = 200F
+                table.height = 100F
+                table.setPosition(0F, 10F)
+                align(Align.left)
+                touchButton = textButton("Check") {
                     onClick {
                     }
+
+                    setFillParent(true)
                 }
-                setFillParent(true)
-                align(Align.bottom)
-                pack()
+            }
+            table { table ->
+                table.width = 200F
+                table.height = 100F
+                table.setPosition(Gdx.graphics.width-200F, 10F)
+                align(Align.left)
+                touchButton = textButton("Rise") {
+                    onClick {
+                    }
+
+                    setFillParent(true)
+                }
+            }
+            table { table ->
+                table.width = 200F
+                table.height = 100F
+                table.setPosition(Gdx.graphics.width/2-100F, 10F)
+                align(Align.left)
+                touchButton = textButton("Fold") {
+                    onClick {
+                    }
+
+                   setFillParent(true)
+                }
             }
         }
 
+/*
         gameStateLabel += Actions.forever(
             Actions.sequence(
                 Actions.fadeIn(0.5f) + Actions.fadeOut(
@@ -100,17 +148,51 @@ class UISystem(object_pool: Context) : EntitySystem() {
                 )
             )
         )
+*/
 //        stage.isDebugAll = true
     }
 
-
     override fun update(deltaTime: Float) {
-        gameStateLabel.setText("Current player: ${game_state.current_player_id}")
+        super.update(deltaTime)
+
+//        gameStateLabel.setText("Current player: ${game_state.current_player_id}")
 
         stage.run {
             act()
             draw()
         }
+    }
 
+    override fun entityAdded(entity: Entity) {
+        super.entityAdded(entity)
+
+        entity[TransformComponent.mapper]?.let { transform ->
+            entity[UILabelComponent.mapper]?.let { ui ->
+                stage.addActor(table {
+                    background(ui.imageName)
+                    //setFillParent(true)
+                    align(Align.center)
+
+                    var pos =
+                        Vector3(transform.x + ui.offsetX, transform.y + ui.offsetY, transform.z)
+
+                    camera.project(pos)
+                    var widthAndHeight = Vector3(ui.width, ui.height, 0F)
+                    camera.project(widthAndHeight)
+                    setPosition(pos.x, pos.y)
+                    this.width = widthAndHeight.x
+                    this.height = widthAndHeight.y
+
+                    for ((key, value) in ui.texts) {
+                        label("$key: $value")
+                        row()
+                    }
+                })
+            }
+        }
+    }
+
+    override fun processEntity(entity: Entity, deltaTime: Float) {
+        //
     }
 }
