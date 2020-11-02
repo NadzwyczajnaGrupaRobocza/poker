@@ -11,9 +11,58 @@ class DealResultCalculateProcedure(val players: List<DealPlayer>) {
         nextRoundDealResult: NextRoundResult,
         cardDistribution: CardsDistribution
     ): DealResult {
+        val maxBettersWithCards = getMaxBettersWithCards(cardDistribution)
+        val bestPlayers = getBestPlayers(maxBettersWithCards).map { it.id }
+        val (splitPot, potDifferences) = getPot(bestPlayers)
+        val bestPlayersWithLeftoverChips =
+            getPlayersWithLeftoverChips(potDifferences, nextRoundDealResult, bestPlayers)
+
+        return DealResult(players.map {
+            PlayerResult(
+                it.uuid,
+                getChipsChange(it, bestPlayersWithLeftoverChips, splitPot, bestPlayers)
+            )
+        })
+    }
+
+    private fun getChipsChange(
+        it: DealPlayer,
+        bestPlayersWithLeftoverChips: List<PlayerId>,
+        splitPot: Int,
+        bestPlayers: List<PlayerId>
+    ) =
+        ChipsChange(
+            getWonChips(
+                it,
+                bestPlayersWithLeftoverChips,
+                splitPot,
+                bestPlayers
+            ) - it.chipsBet.amount
+        )
+
+    private fun getWonChips(
+        it: DealPlayer,
+        bestPlayersWithLeftoverChips: List<PlayerId>,
+        splitPot: Int,
+        bestPlayers: List<PlayerId>
+    ) =
+        when (it.uuid) {
+            in bestPlayersWithLeftoverChips -> splitPot + 1
+            in bestPlayers -> splitPot
+            else -> 0
+        }
+
+    private fun getPot(bestPlayers: List<PlayerId>): Pair<Int, Int> {
+        val pot = players.sumBy { it.chipsBet.amount }
+        val splitPot = pot / bestPlayers.size
+        val potDifferences = pot - splitPot * bestPlayers.size
+        return Pair(splitPot, potDifferences)
+    }
+
+    private fun getMaxBettersWithCards(cardDistribution: CardsDistribution): List<PlayerWithHand> {
         val maxBet = players.map { it.chipsBet.amount }.maxOrNull()
         val maxBetters = players.filter { it.chipsBet.amount == maxBet }.map { it.uuid }
-        val maxBettersWithCards = cardDistribution.playersCards.filter { it.id in maxBetters }.map {
+        return cardDistribution.playersCards.filter { it.id in maxBetters }.map {
             PlayerWithHand(
                 id = it.id, hand =
                 Hand(
@@ -22,25 +71,6 @@ class DealResultCalculateProcedure(val players: List<DealPlayer>) {
                 )
             )
         }.sortedByDescending { it.hand }
-        val pot = players.sumBy { it.chipsBet.amount }
-        val bestPlayers = getBestPlayers(maxBettersWithCards).map { it.id }
-        val splitPot = pot / bestPlayers.size
-        val potDifferences = pot - splitPot * bestPlayers.size
-        val bestPlayersWithLeftoverChips =
-            getPlayersWithLeftoverChips(potDifferences, nextRoundDealResult, bestPlayers)
-
-        return DealResult(players.map {
-            PlayerResult(
-                it.uuid,
-                ChipsChange(
-                    when (it.uuid) {
-                        in bestPlayersWithLeftoverChips -> splitPot + 1
-                        in bestPlayers -> splitPot
-                        else -> 0
-                    } - it.chipsBet.amount
-                )
-            )
-        })
     }
 
     private fun getPlayersWithLeftoverChips(
