@@ -1,5 +1,7 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards
 
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import org.junit.Test
 
 class FullCompareTest {
@@ -117,5 +119,30 @@ class FullCompareTest {
             lhs,
             rhs
         )
+    }
+
+    @Test
+    fun `Fulls should be equal`() {
+        val lhs = createHand(
+            clubsFive,
+            heartsFive,
+            clubsQueen,
+            diamondsQueen,
+            spadesQueen,
+            spadesAce,
+            diamondsKing
+        )
+        val rhs = createHand(
+            diamondsFive,
+            spadesFive,
+            clubsQueen,
+            diamondsQueen,
+            spadesQueen,
+            spadesAce,
+            diamondsKing
+        )
+
+        assertHandsEqual(lhs, rhs)
+        assertThat(lhs == rhs, equalTo(true))
     }
 }

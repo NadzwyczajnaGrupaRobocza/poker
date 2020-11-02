@@ -13,6 +13,11 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) : Comparable<Ha
             else -> compareFirstImportantCardsThenKickers(this, other)
         }
 
+    override fun equals(other: Any?): Boolean = when (other) {
+        is Hand -> compareTo(other) == 0
+        else -> false
+    }
+
     private data class InternalHand(
         val type: HandType,
         val handTypeCards: List<Card>,

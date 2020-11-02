@@ -79,8 +79,6 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
                 playersIds
             )
 
-        val dealResult = NextRoundResult(player1Id)
-
         val dealPlayers = listOf(
             DealPlayer(player1Id, initialChips, maxBetChipsAmount),
             DealPlayer(player2Id, initialChips, maxBetChipsAmount),
@@ -90,7 +88,7 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
         )
 
         assertThat(
-            DealResultCalculateProcedure(dealPlayers).dealResult(dealResult, cardDistribution), equalTo(
+            DealResultCalculateProcedure(dealPlayers).dealResult(cardDistribution), equalTo(
                 DealResult(
                     listOf(
                         PlayerResult(player1Id, showdownChipsWon),
@@ -104,5 +102,53 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
         )
 
     }
-}
 
+    @Test
+    fun `When multiple players left given equal hands should split win`() {
+        val firstPlayerCard1 = heartsFive
+        val firstPlayerCard2 = diamondsFive
+        val secondPlayerCard1 = heartsThree
+        val secondPlayerCard2 = diamondsThree
+        val thirdPlayerCard1 = diamondsKing
+        val thirdPlayerCard2 = spadesEight
+        val fourthPlayerCard1 = spadesFive
+        val fourthPlayerCard2 = clubsFive
+        val fifthPlayerCard1 = clubsKing
+        val fifthPlayerCard2 = clubsNine
+        val burn1 = spadesKing
+        val flopCards = listOf(diamondsQueen, clubsFour, heartsSeven)
+        val burn2 = spadesAce
+        val turn = spadesQueen
+        val burn3 = diamondsAce
+        val river = clubsQueen
+        val cardDistribution =
+            CardsDistribution.createCardsDistribution(
+                listOf(firstPlayerCard1) + secondPlayerCard1 + thirdPlayerCard1 + fourthPlayerCard1 + fifthPlayerCard1 + firstPlayerCard2 + secondPlayerCard2 + thirdPlayerCard2 + fourthPlayerCard2 + fifthPlayerCard2 + burn1 + flopCards + burn2 + turn + burn3 + river,
+                playersIds
+            )
+
+        val dealPlayers = listOf(
+            DealPlayer(player1Id, initialChips, maxBetChipsAmount),
+            DealPlayer(player2Id, initialChips, maxBetChipsAmount),
+            DealPlayer(player3Id, initialChips, lostChips2Amount),
+            DealPlayer(player4Id, initialChips, maxBetChipsAmount),
+            DealPlayer(player5Id, initialChips),
+        )
+
+        val splitChipsWon = ChipsChange((maxBetChipsAmount + lostChips2Amount) / 2)
+        assertThat(
+            DealResultCalculateProcedure(dealPlayers).dealResult(cardDistribution), equalTo(
+                DealResult(
+                    listOf(
+                        PlayerResult(player1Id, splitChipsWon),
+                        PlayerResult(player2Id, maxBetChipsLost),
+                        PlayerResult(player3Id, lostChips2),
+                        PlayerResult(player4Id, splitChipsWon),
+                        PlayerResult(player5Id, noChipsChange),
+                    )
+                )
+            )
+        )
+
+    }
+}
