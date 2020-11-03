@@ -37,6 +37,7 @@ class PokerPlayerActor(
     }
 
     private var playerIconWithNameAndCoins = createPlayerIcon()
+    private var playerStake = createPlayerStake()
 
     private fun createPlayerIcon(): Entity {
         return engine.entity {
@@ -62,23 +63,28 @@ class PokerPlayerActor(
                 width = 125F
                 offsetX = 0F
                 offsetY = -height
-                texts["name"] = "Kevin"
-                texts["Coin"] = "100$"
+                texts["name: "] = "Kevin"
+                texts["Coin: "] = "100$"
             }
         }
     }
 
+    private fun createPlayerStake(): Entity {
+        var width = 40F
+        var height = 20F
+        return addUiEntity(pos_x + width, pos_y,
+            width, height, 0F, 0F)
+    }
 
     private fun addUiEntity(
         pos_x: Float,
         pos_y: Float,
         ui_width: Float,
         ui_height: Float,
-        line_color: Color = Color.WHITE,
-        line_width: Float = 3f,
-        textureRegion: TextureRegion? = null
-    ): Entity? {
-        return engine?.entity {
+        ui_offsetX: Float,
+        ui_offsetY: Float
+    ): Entity {
+        return engine.entity {
             with<TransformComponent> {
                 x = pos_x
                 y = pos_y
@@ -87,8 +93,9 @@ class PokerPlayerActor(
             with<UILabelComponent> {
                 height = ui_height
                 width = ui_width
-                offsetX = 0F
-                offsetY = 0F
+                offsetX = ui_offsetX
+                offsetY = ui_offsetY
+                texts[""] = "0$"
             }
         }
     }
@@ -172,6 +179,7 @@ class PlayersRingActor(
         }
 
     }
+
     override fun update(delta: Float) {
 
         if (current_player_id != game_state.current_player_id) {

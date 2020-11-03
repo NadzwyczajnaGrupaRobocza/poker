@@ -184,7 +184,7 @@ class UISystem(object_pool: Context) : SortedIteratingSystem(
                     this.height = widthAndHeight.y
 
                     for ((key, value) in ui.texts) {
-                        label("$key: $value")
+                        label("$key$value")
                         row()
                     }
                 })
