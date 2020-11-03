@@ -11,7 +11,7 @@ import ktx.ashley.with
 import ktx.inject.Context
 
 abstract class GameActor(
-    object_pool : Context,
+    protected val object_pool : Context,
 ) {
     protected val engine: PooledEngine = object_pool.inject()
     protected  val game_state: GameState = object_pool.inject()

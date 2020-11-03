@@ -46,12 +46,14 @@ class GameScreen(private val object_pool: Context) : KtxScreen {
         }
         val centerOfScene = Vector2(
             camera.viewportWidth / 2f,
-            camera.viewportHeight / 2f + 30f)
+            camera.viewportHeight / 2f + 30f
+        )
 
         actors.add(
             TableActor(
                 object_pool,
                 assets,
+                centerOfScene,
                 camera.viewportWidth,
                 camera.viewportHeight
             )

@@ -32,14 +32,15 @@ class MyShapeRenderer : ShapeRenderer() {
         degrees: Float,
         segments: Int
     ) {
+        var segments2 = segments * 2
         require(segments > 0) { "segments must be > 0." }
         val colorBits: Float = color.toFloatBits()
-        val theta = 2 * MathUtils.PI * (degrees / 360.0f) / segments
+        val theta = 2 * MathUtils.PI * (degrees / 360.0f) / segments2
         val cos = MathUtils.cos(theta)
         val sin = MathUtils.sin(theta)
         var cx = radius * MathUtils.cos(start * MathUtils.degreesToRadians)
         var cy = radius * MathUtils.sin(start * MathUtils.degreesToRadians)
-        for (i in 0 until segments) {
+        for (i in 0 until segments2) {
             renderer.color(colorBits)
             renderer.vertex(x + cx, y + cy, 0f)
             val temp = cx

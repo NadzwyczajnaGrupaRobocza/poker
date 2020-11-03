@@ -20,6 +20,80 @@ import ktx.log.logger
 import kotlin.math.cos
 import kotlin.math.sin
 
+class PokerPlayerActor(
+    object_pool: Context,
+    private val pos_x: Float,
+    private val pos_y: Float,
+    private val width_r: Float,
+    private val height_r: Float,
+    private val line_color: Color = Color.WHITE,
+    private val line_width: Float = 3f,
+    private val textureRegion: TextureRegion? = null
+) : GameActor(object_pool) {
+
+    fun reCreate() {
+        engine?.removeEntity(playerIconWithNameAndCoins)
+        playerIconWithNameAndCoins = createPlayerIcon()
+    }
+
+    private var playerIconWithNameAndCoins = createPlayerIcon()
+
+    private fun createPlayerIcon(): Entity {
+        return engine.entity {
+            with<TransformComponent> {
+                x = pos_x - width_r / 2
+                y = pos_y - height_r / 2
+                z = 1F
+            }
+            with<EllipseRendererComponent> {
+                width = width_r
+                height = height_r
+                color = line_color
+                lineWidth = line_width
+            }
+            textureRegion?.let { textureRegion ->
+                with<SpriteRendererComponent> {
+                    sprite.setRegion(textureRegion)
+                    sprite.setSize(width_r, height_r)
+                }
+            }
+            with<UILabelComponent> {
+                height = 40F
+                width = 125F
+                offsetX = 0F
+                offsetY = -height
+                texts["name"] = "Kevin"
+                texts["Coin"] = "100$"
+            }
+        }
+    }
+
+
+    private fun addUiEntity(
+        pos_x: Float,
+        pos_y: Float,
+        ui_width: Float,
+        ui_height: Float,
+        line_color: Color = Color.WHITE,
+        line_width: Float = 3f,
+        textureRegion: TextureRegion? = null
+    ): Entity? {
+        return engine?.entity {
+            with<TransformComponent> {
+                x = pos_x
+                y = pos_y
+                z = 1F
+            }
+            with<UILabelComponent> {
+                height = ui_height
+                width = ui_width
+                offsetX = 0F
+                offsetY = 0F
+            }
+        }
+    }
+}
+
 class PlayersRingActor(
     object_pool: Context,
     assets: AssetManager,
@@ -28,9 +102,9 @@ class PlayersRingActor(
     center_of_scene: Vector2
 ) : GameActor(object_pool), KtxInputAdapter {
 
-    private val circleR = 80F
-    private val ellipseOffsetX = 280F
-    private val ellipseOffsetY = 200F
+    private val circleR = 55F
+    private val ellipseOffsetX = 200F
+    private val ellipseOffsetY = 180F
     private val ellipseWidth = tableWidth - ellipseOffsetX
     private val ellipseWidthR = ellipseWidth / 2
     private val ellipseHeight = tableHeight - ellipseOffsetY
@@ -39,38 +113,18 @@ class PlayersRingActor(
     private val ellipsePosY = center_of_scene.y
 
     private val playerIconTextureName = assets[TextureAtlasAssets.Game].findRegion("playerIcon")
-    private val tableTexture = assets[TextureAtlasAssets.Game].findRegion("background")
     private val log = logger<GameScreen>()
 
     private var playerCount = 10
     private var maxPlayer = 10
 
-    private var icons = Array<Entity?>(0)
+    private var icons = Array<PokerPlayerActor?>(0)
     private var current_player_id = 0
 
     private var defaultLineWidth = 3f
-    private var selectedPlayerLineWidth = 17f
 
     init {
-        drawTableBorder()
         drawPlayersIcons(playerCount)
-    }
-
-    private fun drawTableBorder() {
-/*
-        addElipseEntity(
-            ellipsePosX,
-            ellipsePosY,
-            ellipseWidth,
-            ellipseHeight
-        )
-*/
-        addArcEntity(
-            ellipsePosX,
-            ellipsePosY,
-            ellipseWidth,
-            ellipseHeight,
-        )
     }
 
     private fun getPlayerIconLineColor(playerId: Int): Color {
@@ -104,7 +158,8 @@ class PlayersRingActor(
             val alpha = radian(playerId * alphaStep).toFloat()
             val playerCircleR = getPlayerIconR(playerId)
             icons.add(
-                addElipseEntityWithUi(
+                PokerPlayerActor(
+                    object_pool,
                     ellipseWidthR * cos(alpha) + ellipsePosX,
                     ellipseHeightR * sin(alpha) + ellipsePosY,
                     playerCircleR,
@@ -117,124 +172,6 @@ class PlayersRingActor(
         }
 
     }
-
-    private fun addArcEntity(
-        pos_x: Float,
-        pos_y: Float,
-        width_r: Float,
-        height_r: Float,
-        line_color: Color = Color.WHITE,
-        line_width: Float = 3f,
-        textureRegion: TextureRegion? = null
-    ) {
-        engine?.entity {
-            with<TransformComponent> {
-                x = pos_x - 300F
-                y = pos_y
-                z = 1F
-            }
-            with<ArcRendererComponent> {
-                radius = 200F
-                start = 90F
-                degrees = 180F
-                color = line_color
-                lineWidth = line_width
-            }
-            textureRegion?.let { textureRegion ->
-                with<SpriteRendererComponent> {
-                    sprite.setRegion(textureRegion)
-                    sprite.setSize(width_r, height_r)
-                }
-            }
-        }
-        engine?.entity {
-            with<TransformComponent> {
-                x = pos_x + 300F
-                y = pos_y
-                z = 1F
-            }
-            with<ArcRendererComponent> {
-                radius = 200F
-                start = -90F
-                degrees = 180F
-                color = line_color
-                lineWidth = line_width
-            }
-            textureRegion?.let { textureRegion ->
-                with<SpriteRendererComponent> {
-                    sprite.setRegion(textureRegion)
-                    sprite.setSize(width_r, height_r)
-                }
-            }
-        }
-    }
-    private fun addElipseEntityWithUi(
-        pos_x: Float,
-        pos_y: Float,
-        width_r: Float,
-        height_r: Float,
-        line_color: Color = Color.WHITE,
-        line_width: Float = 3f,
-        textureRegion: TextureRegion? = null
-    ): Entity? {
-        return engine?.entity {
-            with<TransformComponent> {
-                x = pos_x - width_r / 2
-                y = pos_y - height_r / 2
-                z = 1F
-            }
-            with<EllipseRendererComponent> {
-                width = width_r
-                height = height_r
-                color = line_color
-                lineWidth = line_width
-            }
-            textureRegion?.let { textureRegion ->
-                with<SpriteRendererComponent> {
-                    sprite.setRegion(textureRegion)
-                    sprite.setSize(width_r, height_r)
-                }
-            }
-            with<UILabelComponent> {
-                height = 40F
-                width = 125F
-                offsetX = 0F
-                offsetY = -height
-                texts["name"] = "Kevin"
-                texts["Coin"] = "100$"
-            }
-        }
-    }
-    private fun addElipseEntity(
-        pos_x: Float,
-        pos_y: Float,
-        width_r: Float,
-        height_r: Float,
-        line_color: Color = Color.WHITE,
-        line_width: Float = 3f,
-        textureRegion: TextureRegion? = null
-    ): Entity? {
-        return engine?.entity {
-            with<TransformComponent> {
-                x = pos_x - width_r / 2
-                y = pos_y - height_r / 2
-                z = 1F
-            }
-            with<EllipseRendererComponent> {
-                width = width_r
-                height = height_r
-                color = line_color
-                lineWidth = line_width
-            }
-            textureRegion?.let { textureRegion ->
-                with<SpriteRendererComponent> {
-                    sprite.setRegion(textureRegion)
-                    sprite.setSize(width_r, height_r)
-                }
-            }
-        }
-    }
-
     override fun update(delta: Float) {
 
         if (current_player_id != game_state.current_player_id) {
@@ -248,11 +185,8 @@ class PlayersRingActor(
 
     private fun redrawPlayerIcons() {
         for (icon in icons) {
-            engine?.removeEntity(icon)
+            icon?.reCreate()
         }
-        icons = Array(maxPlayer)
-
-        drawPlayersIcons(playerCount)
     }
 
     private fun nextAnimation(amount: Int) {

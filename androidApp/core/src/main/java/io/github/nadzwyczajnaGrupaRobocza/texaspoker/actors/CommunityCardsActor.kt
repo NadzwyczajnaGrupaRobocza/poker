@@ -25,8 +25,8 @@ class CommunityCardsActor(
     companion object {
 
         private const val numberOfFrames = 5
-        private const val cardWidth = 80f
-        private const val cardHeight = 122f
+        private const val cardWidth = 60f
+        private const val cardHeight = 91.5f
     }
 
     private val log = logger<GameScreen>()
