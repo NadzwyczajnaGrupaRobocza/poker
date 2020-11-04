@@ -9,9 +9,12 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.ui.Skin
+import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.utils.Align
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.GameState
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.actors.GameActor
@@ -20,19 +23,13 @@ import io.github.nadzwyczajnaGrupaRobocza.texaspoker.assets.get
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.TransformComponent
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.UILabelComponent
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.screen.GameScreen
-import ktx.actors.onClick
-import ktx.actors.plus
-import ktx.actors.plusAssign
-import ktx.actors.setPosition
+import ktx.actors.*
 import ktx.ashley.allOf
 import ktx.ashley.get
 import ktx.inject.Context
 import ktx.log.logger
 import ktx.scene2d.*
-import ktx.style.button
-import ktx.style.label
-import ktx.style.skin
-import ktx.style.textButton
+import ktx.style.*
 
 class UISystem(object_pool: Context) : SortedIteratingSystem(
     allOf(TransformComponent::class, UILabelComponent::class).get(),
@@ -50,29 +47,13 @@ class UISystem(object_pool: Context) : SortedIteratingSystem(
     private val game_state: GameState = object_pool.inject()
     private lateinit var touchButton: Button
     private lateinit var gameStateLabel: Label
+    private lateinit var riseField : TextField
 
     private var max_players_id = 9
 
     init {
-        Scene2DSkin.defaultSkin = skin { s ->
-            addRegions(assets[TextureAtlasAssets.Game])
-
-            textButton {
-                font = game_font
-                fontColor = Color.WHITE
-                up = s.getDrawable("black_button_normal")
-                over = s.getDrawable("black_button_hover")
-                down = s.getDrawable("black_button_down")
-            }
-            label {
-                font = game_font
-                fontColor = Color.WHITE
-            }
-            button {
-
-            }
-
-        }
+        Scene2DSkin.defaultSkin = Skin(Gdx.files.internal("data/ui.json"))
+        Scene2DSkin.defaultSkin.getFont("default-font").data.setScale(1.5F)
 
         Gdx.input.inputProcessor = stage
 
@@ -89,54 +70,42 @@ class UISystem(object_pool: Context) : SortedIteratingSystem(
                 //pack()
             }
 */
-/*
-            table { table ->
-                table.width = 100F
-                table.height = 100F
-                table.setPosition(200F, 10F)
-                touchButton = textButton("Check") {
-                    onClick {
-                    }
-                    //setFillParent(true)
+            var button_width = 200F
+            var button_height = 100F
+
+            textButton("Check") {
+                width = button_width
+                height = button_height
+                onClick {
                 }
             }
-*/
-
-            table { table ->
-                table.width = 200F
-                table.height = 100F
-                table.setPosition(0F, 10F)
-                align(Align.left)
-                touchButton = textButton("Check") {
-                    onClick {
-                    }
-
-                    setFillParent(true)
+            touchButton = textButton("Rise") {
+                width = button_width
+                height = button_height
+                setPosition(Gdx.graphics.width - 200F, 0F)
+                onClick {
                 }
             }
-            table { table ->
-                table.width = 200F
-                table.height = 100F
-                table.setPosition(Gdx.graphics.width-200F, 10F)
-                align(Align.left)
-                touchButton = textButton("Rise") {
-                    onClick {
-                    }
-
-                    setFillParent(true)
+            textButton("Fold") {
+                width = button_width
+                height = button_height
+                setPosition(Gdx.graphics.width / 2 - 100F, 0F)
+                onClick {
                 }
             }
-            table { table ->
-                table.width = 200F
-                table.height = 100F
-                table.setPosition(Gdx.graphics.width/2-100F, 10F)
-                align(Align.left)
-                touchButton = textButton("Fold") {
-                    onClick {
-                    }
+            var riseSlider = slider(min = 10F, max = 1000F, step = 1F, vertical = true){
+                height = Gdx.graphics.height - (touchButton.height * 2)
+                setPosition(touchButton.getX() + (touchButton.width * 3 / 4), touchButton.getY() + (touchButton.height * 1.5F))
+                style.knob.minHeight = style.knob.minHeight * 4
+                style.knob.minWidth = style.knob.minWidth * 1.5F
 
-                   setFillParent(true)
+                onChange {
+                    riseField.text = "rise: $${value}"
                 }
+            }
+            riseField = textField("rise: $${riseSlider.minValue}"){
+                setPosition(touchButton.getX(), touchButton.getY() + (touchButton.height * 1.5F))
+                touchable = Touchable.disabled
             }
         }
 
@@ -149,7 +118,7 @@ class UISystem(object_pool: Context) : SortedIteratingSystem(
             )
         )
 */
-//        stage.isDebugAll = true
+        //stage.isDebugAll = true
     }
 
     override fun update(deltaTime: Float) {

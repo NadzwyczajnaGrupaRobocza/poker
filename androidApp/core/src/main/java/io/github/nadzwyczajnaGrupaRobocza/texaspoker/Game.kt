@@ -1,6 +1,7 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker
 
 import com.badlogic.ashley.core.PooledEngine
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
@@ -36,7 +37,7 @@ class Game : KtxGame<KtxScreen>() {
             bindSingleton(PooledEngine())
             bindSingleton(MyShapeRenderer())
             bindSingleton<Batch>(SpriteBatch())
-            bindSingleton(BitmapFont().apply {
+            bindSingleton(BitmapFont(Gdx.files.internal("data/default.fnt")).apply {
                 data.scale(1.05F)
             })
             bindSingleton(AssetManager())

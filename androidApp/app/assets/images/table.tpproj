@@ -35,6 +35,45 @@ scaleFactors=[{suffix:"",factor:1,resampling:bicubic}]
 inputFiles=[{path:cards_100x152/10D.png,type:Input,regionName:null},{path:cards_100x152/10C.png,type:Input,regionName:null},{path:cards_100x152/10H.png,type:Input,regionName:null},{path:cards_100x152/10S.png,type:Input,regionName:null},{path:cards_100x152/2C.png,type:Input,regionName:null},{path:cards_100x152/2D.png,type:Input,regionName:null},{path:cards_100x152/2H.png,type:Input,regionName:null},{path:cards_100x152/2S.png,type:Input,regionName:null},{path:cards_100x152/3C.png,type:Input,regionName:null},{path:cards_100x152/3D.png,type:Input,regionName:null},{path:cards_100x152/3H.png,type:Input,regionName:null},{path:cards_100x152/3S.png,type:Input,regionName:null},{path:cards_100x152/4C.png,type:Input,regionName:null},{path:cards_100x152/4D.png,type:Input,regionName:null},{path:cards_100x152/4H.png,type:Input,regionName:null},{path:cards_100x152/4S.png,type:Input,regionName:null},{path:cards_100x152/5C.png,type:Input,regionName:null},{path:cards_100x152/5D.png,type:Input,regionName:null},{path:cards_100x152/5H.png,type:Input,regionName:null},{path:cards_100x152/5S.png,type:Input,regionName:null},{path:cards_100x152/6C.png,type:Input,regionName:null},{path:cards_100x152/6D.png,type:Input,regionName:null},{path:cards_100x152/6H.png,type:Input,regionName:null},{path:cards_100x152/6S.png,type:Input,regionName:null},{path:cards_100x152/7C.png,type:Input,regionName:null},{path:cards_100x152/7D.png,type:Input,regionName:null},{path:cards_100x152/7H.png,type:Input,regionName:null},{path:cards_100x152/7S.png,type:Input,regionName:null},{path:cards_100x152/8C.png,type:Input,regionName:null},{path:cards_100x152/8D.png,type:Input,regionName:null},{path:cards_100x152/8H.png,type:Input,regionName:null},{path:cards_100x152/8S.png,type:Input,regionName:null},{path:cards_100x152/9C.png,type:Input,regionName:null},{path:cards_100x152/9D.png,type:Input,regionName:null},{path:cards_100x152/9H.png,type:Input,regionName:null},{path:cards_100x152/9S.png,type:Input,regionName:null},{path:cards_100x152/AC.png,type:Input,regionName:null},{path:cards_100x152/AD.png,type:Input,regionName:null},{path:cards_100x152/AH.png,type:Input,regionName:null},{path:cards_100x152/AS.png,type:Input,regionName:null},{path:cards_100x152/back.png,type:Input,regionName:null},{path:cards_100x152/frame.png,type:Input,regionName:null},{path:cards_100x152/JC.png,type:Input,regionName:null},{path:cards_100x152/JD.png,type:Input,regionName:null},{path:cards_100x152/JS.png,type:Input,regionName:null},{path:cards_100x152/KC.png,type:Input,regionName:null},{path:cards_100x152/KD.png,type:Input,regionName:null},{path:cards_100x152/KH.png,type:Input,regionName:null},{path:cards_100x152/KS.png,type:Input,regionName:null},{path:cards_100x152/QC.png,type:Input,regionName:null},{path:cards_100x152/QD.png,type:Input,regionName:null},{path:cards_100x152/QH.png,type:Input,regionName:null},{path:cards_100x152/QS.png,type:Input,regionName:null},{path:background_1200x800/background.jpg,type:Input,regionName:null},{path:cards_100x152/JH.png,type:Input,regionName:null},{path:playerIcon.png,type:Input,regionName:null},{path:GUI/button.png,type:Input,regionName:null},{path:GUI/buttondown.png,type:Input,regionName:null},{path:GUI/black_button_down.png,type:Input,regionName:null},{path:GUI/black_button_hover.png,type:Input,regionName:null},{path:GUI/black_button_normal.png,type:Input,regionName:null},{path:GUI/square_button.png,type:Input,regionName:null}]
 
 
+---
+
+name=ui
+filename=
+output=../data
+
+alias=true
+alphaThreshold=0
+debug=false
+duplicatePadding=false
+edgePadding=true
+fast=false
+filterMag=Nearest
+filterMin=Nearest
+ignoreBlankImages=true
+maxHeight=2048
+maxWidth=2048
+minHeight=16
+minWidth=16
+paddingX=2
+paddingY=2
+pot=true
+mof=false
+rotation=false
+stripWhitespaceX=false
+stripWhitespaceY=false
+wrapX=ClampToEdge
+wrapY=ClampToEdge
+premultiplyAlpha=false
+grid=false
+square=false
+bleed=true
+limitMemory=true
+useIndexes=true
+
+scaleFactors=[{suffix:"",factor:1,resampling:bicubic}]
+inputFiles=[{path:GUI/black_button_down.png,type:Input,regionName:null},{path:GUI/square_button.png,type:Input,regionName:null},{path:GUI/black_button_hover.png,type:Input,regionName:null},{path:GUI/black_button_normal.png,type:Input,regionName:null},{path:GUI/button.png,type:Input,regionName:null},{path:GUI/buttondown.png,type:Input,regionName:null},{path:../data/atlas/check-off.png,type:Input,regionName:null},{path:../data/atlas/check-on.png,type:Input,regionName:null},{path:../data/atlas/cursor.9.png,type:Input,regionName:null},{path:../data/atlas/default-pane-noborder.9.png,type:Input,regionName:null},{path:../data/atlas/default-pane.9.png,type:Input,regionName:null},{path:../data/atlas/default-rect-down.9.png,type:Input,regionName:null},{path:../data/atlas/default-rect-pad.9.png,type:Input,regionName:null},{path:../data/atlas/default-rect.9.png,type:Input,regionName:null},{path:../data/atlas/default-round-down.9.png,type:Input,regionName:null},{path:../data/atlas/default-round-large.9.png,type:Input,regionName:null},{path:../data/atlas/default-round.9.png,type:Input,regionName:null},{path:../data/atlas/default-scroll.9.png,type:Input,regionName:null},{path:../data/atlas/default-select-selection.9.png,type:Input,regionName:null},{path:../data/atlas/default-select.9.png,type:Input,regionName:null},{path:../data/atlas/default-slider-knob.png,type:Input,regionName:null},{path:../data/atlas/default-slider.9.png,type:Input,regionName:null},{path:../data/atlas/default-splitpane-vertical.9.png,type:Input,regionName:null},{path:../data/atlas/default-splitpane.9.png,type:Input,regionName:null},{path:../data/atlas/default-window.9.png,type:Input,regionName:null},{path:../data/atlas/selection.png,type:Input,regionName:null},{path:../data/atlas/textfield.9.png,type:Input,regionName:null},{path:../data/atlas/tree-minus.png,type:Input,regionName:null},{path:../data/atlas/tree-plus.png,type:Input,regionName:null},{path:../data/atlas/white.png,type:Input,regionName:null}]
+
+
 -PROJ-
 
 version=4.8.2

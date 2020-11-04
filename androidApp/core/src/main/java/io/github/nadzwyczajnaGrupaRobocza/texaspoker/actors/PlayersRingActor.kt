@@ -60,9 +60,9 @@ class PokerPlayerActor(
             }
             with<UILabelComponent> {
                 height = 40F
-                width = 125F
-                offsetX = 0F
-                offsetY = -height
+                width = 120F
+                offsetX = -width_r/2
+                offsetY = -height - 2F
                 texts["name: "] = "Kevin"
                 texts["Coin: "] = "100$"
             }
@@ -110,8 +110,8 @@ class PlayersRingActor(
 ) : GameActor(object_pool), KtxInputAdapter {
 
     private val circleR = 55F
-    private val ellipseOffsetX = 200F
-    private val ellipseOffsetY = 180F
+    private val ellipseOffsetX = 300F
+    private val ellipseOffsetY = 220F
     private val ellipseWidth = tableWidth - ellipseOffsetX
     private val ellipseWidthR = ellipseWidth / 2
     private val ellipseHeight = tableHeight - ellipseOffsetY
