@@ -11,104 +11,152 @@ class DealResultCalculateProcedure(val players: List<DealPlayer>) {
         nextRoundDealResult: NextRoundResult,
         cardDistribution: CardsDistribution
     ): DealResult {
-        val maxBettersWithCards = getMaxBettersWithCards(cardDistribution)
+        val maxBettersWithCards = getMaxBettersWithCards(cardDistribution, players)
         val bestPlayers = getBestPlayers(maxBettersWithCards).map { it.id }
-        val (splitPot, potDifferences) = getPot(bestPlayers)
-        val bestPlayersWithLeftoverChips =
-            getPlayersWithLeftoverChips(potDifferences, nextRoundDealResult, bestPlayers)
-
-        return DealResult(players.map {
-            PlayerResult(
-                it.uuid,
-                getChipsChange(it, bestPlayersWithLeftoverChips, splitPot, bestPlayers)
-            )
-        })
-    }
-
-    private fun getChipsChange(
-        it: DealPlayer,
-        bestPlayersWithLeftoverChips: List<PlayerId>,
-        splitPot: Int,
-        bestPlayers: List<PlayerId>
-    ) =
-        ChipsChange(
-            getWonChips(
-                it,
-                bestPlayersWithLeftoverChips,
-                splitPot,
-                bestPlayers
-            ) - it.chipsBet.amount
-        )
-
-    private fun getWonChips(
-        it: DealPlayer,
-        bestPlayersWithLeftoverChips: List<PlayerId>,
-        splitPot: Int,
-        bestPlayers: List<PlayerId>
-    ) =
-        when (it.uuid) {
-            in bestPlayersWithLeftoverChips -> splitPot + 1
-            in bestPlayers -> splitPot
-            else -> 0
+        return when (maxBettersWithCards.any { it.id.allIn() }) {
+            true -> splitPotWithAllInWInner(bestPlayers, nextRoundDealResult,players)
+            false -> splitPotWithoutAllInWinner(bestPlayers, nextRoundDealResult, players)
         }
-
-    private fun getPot(bestPlayers: List<PlayerId>): Pair<Int, Int> {
-        val pot = players.sumBy { it.chipsBet.amount }
-        val splitPot = pot / bestPlayers.size
-        val potDifferences = pot - splitPot * bestPlayers.size
-        return Pair(splitPot, potDifferences)
     }
-
-    private fun getMaxBettersWithCards(cardDistribution: CardsDistribution): List<PlayerWithHand> {
-        val maxBet = players.map { it.chipsBet.amount }.maxOrNull()
-        val maxBetters = players.filter { it.chipsBet.amount == maxBet }.map { it.uuid }
-        return cardDistribution.playersCards.filter { it.id in maxBetters }.map {
-            PlayerWithHand(
-                id = it.id, hand =
-                Hand(
-                    river = cardDistribution.riverCommunityCards,
-                    pocketCards = it.cards,
-                )
-            )
-        }.sortedByDescending { it.hand }
-    }
-
-    private fun getPlayersWithLeftoverChips(
-        leftoverChips: Int,
-        nextRoundDealResult: NextRoundResult,
-        bestPlayers: List<PlayerId>
-    ) = if (leftoverChips > 0) {
-        queuePlayersFrom(
-            players.map { it.uuid },
-            nextRoundDealResult.nextBetter
-        ).filter { it in bestPlayers }
-            .take(leftoverChips)
-    } else {
-        emptyList()
-    }
-
-    private fun queuePlayersFrom(
-        originalList: List<PlayerId>,
-        nextBetter: PlayerId,
-        listEnd: List<PlayerId> = emptyList()
-    ): List<PlayerId> = when {
-        nextBetter == originalList.first() -> originalList + listEnd
-        else -> queuePlayersFrom(originalList.drop(1), nextBetter, listEnd + originalList.first())
-    }
-
-    private fun getBestPlayers(
-        maxBettersWithCards: List<PlayerWithHand>,
-        bestPlayers: List<PlayerWithHand> = emptyList()
-    ): List<PlayerWithHand> = when {
-        maxBettersWithCards.isEmpty() -> bestPlayers
-        bestPlayers.isEmpty() || maxBettersWithCards.first().hand == bestPlayers.first().hand -> getBestPlayers(
-            maxBettersWithCards.drop(1),
-            bestPlayers + maxBettersWithCards.first()
-        )
-        else -> bestPlayers
-    }
-
-    private class PlayerWithHand(val id: PlayerId, val hand: Hand)
-
 }
+
+private fun splitPotWithAllInWInner(
+    bestPlayers: List<DealPlayer>,
+    nextRoundDealResult: NextRoundResult,
+    players: List<DealPlayer>
+): DealResult {
+    val allInWinners = bestPlayers.filter { it.allIn() }.sortedBy { it.chipsBet.amount }
+    val allInChips = allInWinners.first().chipsBet.amount
+    val playersWithLimitedBets = players.map {
+        DealPlayer(
+            uuid = it.uuid,
+            chipsBet = if (it.chipsBet.amount > allInChips) allInChips else it.chipsBet.amount,
+            initialChips = it.chips.amount
+        )
+    }
+    val playersWithout = players.map {
+        DealPlayer(
+            uuid = it.uuid,
+            chipsBet = if (it.chipsBet.amount > allInChips) allInChips else it.chipsBet.amount,
+            initialChips = it.chips.amount
+        )
+    }
+    val allInResult = splitPotWithoutAllInWinner(bestPlayers, nextRoundDealResult, playersWithLimitedBets)
+    return allInResult
+}
+
+private fun splitPotWithoutAllInWinner(
+    bestPlayers: List<DealPlayer>,
+    nextRoundDealResult: NextRoundResult,
+    players: List<DealPlayer>
+): DealResult {
+    val (splitPot, potDifferences) = getPot(bestPlayers, players)
+    val bestPlayersWithLeftoverChips =
+        getPlayersWithLeftoverChips(potDifferences, nextRoundDealResult, bestPlayers, players)
+
+    return DealResult(players.map {
+        PlayerResult(
+            it.uuid,
+            getChipsChange(it, bestPlayersWithLeftoverChips, splitPot, bestPlayers)
+        )
+    })
+}
+
+private fun getChipsChange(
+    dealPlayer: DealPlayer,
+    bestPlayersWithLeftoverChips: List<PlayerId>,
+    splitPot: Int,
+    bestPlayers: List<DealPlayer>
+) =
+    ChipsChange(
+        getWonChips(
+            dealPlayer,
+            bestPlayersWithLeftoverChips,
+            splitPot,
+            bestPlayers
+        ) - dealPlayer.chipsBet.amount
+    )
+
+private fun getWonChips(
+    it: DealPlayer,
+    bestPlayersWithLeftoverChips: List<PlayerId>,
+    splitPot: Int,
+    bestPlayers: List<DealPlayer>
+) =
+    when (it.uuid) {
+        in bestPlayersWithLeftoverChips -> splitPot + 1
+        in bestPlayers.map { it.uuid } -> splitPot
+        else -> 0
+    }
+
+private fun getPot(
+    bestPlayers: List<DealPlayer>,
+    players: List<DealPlayer>
+): Pair<Int, Int> {
+    val pot = players.sumBy { it.chipsBet.amount }
+    val splitPot = pot / bestPlayers.size
+    val potDifferences = pot - splitPot * bestPlayers.size
+    return Pair(splitPot, potDifferences)
+}
+
+private fun getMaxBettersWithCards(
+    cardDistribution: CardsDistribution,
+    players: List<DealPlayer>
+): List<PlayerWithHand> {
+    val maxBet = players.map { it.chipsBet.amount }.maxOrNull()
+    val maxBetters =
+        players.filter { it.maxBetter(maxBet) || it.allIn() }.map { it.uuid to it }.toMap()
+    return cardDistribution.playersCards.filter { it.id in maxBetters.keys }.map {
+        PlayerWithHand(
+            id = maxBetters.getValue(it.id), hand =
+            Hand(
+                river = cardDistribution.riverCommunityCards,
+                pocketCards = it.cards,
+            )
+        )
+    }.sortedByDescending { it.hand }
+}
+
+private fun getPlayersWithLeftoverChips(
+    leftoverChips: Int,
+    nextRoundDealResult: NextRoundResult,
+    bestPlayers: List<DealPlayer>,
+    players: List<DealPlayer>
+) = if (leftoverChips > 0) {
+    queuePlayersFrom(
+        players.map { it.uuid },
+        nextRoundDealResult.nextBetter
+    ).filter { it in bestPlayers.map { it.uuid } }
+        .take(leftoverChips)
+} else {
+    emptyList()
+}
+
+private fun queuePlayersFrom(
+    originalList: List<PlayerId>,
+    nextBetter: PlayerId,
+    listEnd: List<PlayerId> = emptyList()
+): List<PlayerId> = when {
+    nextBetter == originalList.first() -> originalList + listEnd
+    else -> queuePlayersFrom(originalList.drop(1), nextBetter, listEnd + originalList.first())
+}
+
+private fun getBestPlayers(
+    maxBettersWithCards: List<PlayerWithHand>,
+    bestPlayers: List<PlayerWithHand> = emptyList()
+): List<PlayerWithHand> = when {
+    maxBettersWithCards.isEmpty() -> bestPlayers
+    bestPlayers.isEmpty() || maxBettersWithCards.first().hand == bestPlayers.first().hand -> getBestPlayers(
+        maxBettersWithCards.drop(1),
+        bestPlayers + maxBettersWithCards.first()
+    )
+    else -> bestPlayers
+}
+
+private class PlayerWithHand(val id: DealPlayer, val hand: Hand)
+
+
+fun DealPlayer.allIn() = chips.amount == chipsBet.amount
+
+fun DealPlayer.maxBetter(maxBet: Int?) = chipsBet.amount == maxBet
 

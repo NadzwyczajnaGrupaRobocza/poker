@@ -32,6 +32,8 @@ class ChipsChange(val change: Int) {
         return false
     }
 
+    fun plus(rhs : ChipsChange) = ChipsChange(change + rhs.change)
+
     override fun hashCode(): Int {
         return change
     }

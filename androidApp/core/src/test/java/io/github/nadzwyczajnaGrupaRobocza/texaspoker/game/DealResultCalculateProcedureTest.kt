@@ -20,6 +20,7 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
     private val wonChips1 = ChipsChange(wonChipsAmount)
     private val noChipsChange = ChipsChange(0)
     private val initialChips = 1000
+    private val smallInitialChips = 150
     private val nextRoundDealResult = NextRoundResult(player3Id)
 
     @Test
@@ -215,6 +216,45 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
         )
     }
 
+    @Test
+    fun `When wins player with all in he should win only all in amount from other players, then rest goes to next winner`() {
+        val cardDistribution =
+            getCardDistributionWithBestHandsPlayer3Player2Player1Player4Player5()
+
+        val dealPlayers = getDealPlayersWithPlayer3AllInAndPlayers2And1MaxBetRestWithoutBet()
+
+        val restShowdownPlayersCount = 2
+        val allInPlayerWins = ChipsChange(smallInitialChips * restShowdownPlayersCount)
+        val restChipsWon = -smallInitialChips + 2 * (maxBetChipsAmount - smallInitialChips)
+        val maxBetPlayerChange = ChipsChange(restChipsWon)
+
+        assertThat(
+            DealResultCalculateProcedure(dealPlayers).dealResult(
+                nextRoundDealResult,
+                cardDistribution
+            ), equalTo(
+                DealResult(
+                    listOf(
+                        PlayerResult(player1Id, maxBetChipsLost),
+                        PlayerResult(player2Id, maxBetPlayerChange),
+                        PlayerResult(player3Id, allInPlayerWins),
+                        PlayerResult(player4Id, noChipsChange),
+                        PlayerResult(player5Id, noChipsChange),
+                    )
+                )
+            )
+        )
+    }
+
+    private fun getDealPlayersWithPlayer3AllInAndPlayers2And1MaxBetRestWithoutBet(): List<DealPlayer> =
+        listOf(
+            DealPlayer(player1Id, initialChips, maxBetChipsAmount),
+            DealPlayer(player2Id, initialChips, maxBetChipsAmount),
+            DealPlayer(player3Id, smallInitialChips, smallInitialChips),
+            DealPlayer(player4Id, initialChips),
+            DealPlayer(player5Id, initialChips),
+        )
+
     private fun getDealPlayersWithThreePlayersShowdown(): List<DealPlayer> =
         listOf(
             DealPlayer(player1Id, initialChips, maxBetChipsAmount),
@@ -235,6 +275,31 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
         val fourthPlayerCard2 = spadesTwo
         val fifthPlayerCard1 = clubsKing
         val fifthPlayerCard2 = clubsNine
+        val burn1 = spadesKing
+        val flopCards = listOf(clubsFive, clubsFour, heartsSeven)
+        val burn2 = spadesAce
+        val turn = spadesQueen
+        val burn3 = diamondsAce
+        val river = clubsQueen
+        val cardDistribution =
+            CardsDistribution.createCardsDistribution(
+                listOf(firstPlayerCard1) + secondPlayerCard1 + thirdPlayerCard1 + fourthPlayerCard1 + fifthPlayerCard1 + firstPlayerCard2 + secondPlayerCard2 + thirdPlayerCard2 + fourthPlayerCard2 + fifthPlayerCard2 + burn1 + flopCards + burn2 + turn + burn3 + river,
+                playersIds
+            )
+        return cardDistribution
+    }
+
+    private fun getCardDistributionWithBestHandsPlayer3Player2Player1Player4Player5(): CardsDistribution {
+        val firstPlayerCard1 = diamondsQueen
+        val firstPlayerCard2 = heartsThree
+        val secondPlayerCard1 = spadesFour
+        val secondPlayerCard2 = heartsFour
+        val thirdPlayerCard1 = diamondsSeven
+        val thirdPlayerCard2 = spadesSeven
+        val fourthPlayerCard1 = spadesFive
+        val fourthPlayerCard2 = diamondsKing
+        val fifthPlayerCard1 = heartsKing
+        val fifthPlayerCard2 = clubsJack
         val burn1 = spadesKing
         val flopCards = listOf(clubsFive, clubsFour, heartsSeven)
         val burn2 = spadesAce
