@@ -1,6 +1,7 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game
 
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards.Hand
+import java.lang.Integer.max
 
 class DealResultCalculateProcedure(val players: List<DealPlayer>) {
     fun dealResult(finalDealResult: FinalDealResult): DealResult {
@@ -10,20 +11,36 @@ class DealResultCalculateProcedure(val players: List<DealPlayer>) {
     fun dealResult(
         nextRoundDealResult: NextRoundResult,
         cardDistribution: CardsDistribution
-    ): DealResult {
-        val maxBettersWithCards = getMaxBettersWithCards(cardDistribution, players)
-        val bestPlayers = getBestPlayers(maxBettersWithCards).map { it.id }
-        return when (maxBettersWithCards.any { it.id.allIn() }) {
-            true -> splitPotWithAllInWInner(bestPlayers, nextRoundDealResult,players)
-            false -> splitPotWithoutAllInWinner(bestPlayers, nextRoundDealResult, players)
-        }
+    ): DealResult = calculateDealResults(nextRoundDealResult, cardDistribution, players)
+
+}
+
+private fun calculateDealResults(
+    nextRoundDealResult: NextRoundResult,
+    cardDistribution: CardsDistribution,
+    players: List<DealPlayer>,
+): DealResult {
+    val maxBettersWithCards = getMaxBettersWithCards(cardDistribution, players)
+    val bestPlayers = getBestPlayers(maxBettersWithCards).map { it.id }
+    return when (maxBettersWithCards.any { it.id.allIn() }) {
+        true -> splitPotWithAllInWInner(
+            bestPlayers, nextRoundDealResult,
+            cardDistribution,
+            players
+        )
+        false -> splitPotWithoutAllInWinner(
+            bestPlayers,
+            nextRoundDealResult,
+            players
+        )
     }
 }
 
 private fun splitPotWithAllInWInner(
     bestPlayers: List<DealPlayer>,
     nextRoundDealResult: NextRoundResult,
-    players: List<DealPlayer>
+    cardDistribution: CardsDistribution,
+    players: List<DealPlayer>,
 ): DealResult {
     val allInWinners = bestPlayers.filter { it.allIn() }.sortedBy { it.chipsBet.amount }
     val allInChips = allInWinners.first().chipsBet.amount
@@ -34,16 +51,27 @@ private fun splitPotWithAllInWInner(
             initialChips = it.chips.amount
         )
     }
-    val playersWithout = players.map {
+    val playersBetMinusAllIn = players.map {
         DealPlayer(
             uuid = it.uuid,
-            chipsBet = if (it.chipsBet.amount > allInChips) allInChips else it.chipsBet.amount,
+            chipsBet = max(0, it.chipsBet.amount - allInChips),
             initialChips = it.chips.amount
         )
     }
-    val allInResult = splitPotWithoutAllInWinner(bestPlayers, nextRoundDealResult, playersWithLimitedBets)
-    return allInResult
+    val allInResult =
+        splitPotWithoutAllInWinner(bestPlayers, nextRoundDealResult, playersWithLimitedBets)
+    val rest =  calculateDealResults(nextRoundDealResult, cardDistribution, playersBetMinusAllIn)
+    return allInResult + rest
+    //return allInResult + calculateDealResults(nextRoundDealResult, cardDistribution, playersBetMinusAllIn)
 }
+
+private operator fun DealResult.plus(other: DealResult) =
+    DealResult(playersResults.mapIndexed { index, playerResult ->
+        PlayerResult(
+            uuid = playerResult.uuid,
+            chips = ChipsChange(playerResult.chips.change + other.playersResults[index].chips.change)
+        )
+    })
 
 private fun splitPotWithoutAllInWinner(
     bestPlayers: List<DealPlayer>,

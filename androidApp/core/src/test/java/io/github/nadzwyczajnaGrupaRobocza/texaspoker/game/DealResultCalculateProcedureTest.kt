@@ -225,8 +225,8 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
 
         val restShowdownPlayersCount = 2
         val allInPlayerWins = ChipsChange(smallInitialChips * restShowdownPlayersCount)
-        val restChipsWon = -smallInitialChips + 2 * (maxBetChipsAmount - smallInitialChips)
-        val maxBetPlayerChange = ChipsChange(restChipsWon)
+        val restChipsLost = -100
+        val maxBetPlayerChange = ChipsChange(restChipsLost)
 
         assertThat(
             DealResultCalculateProcedure(dealPlayers).dealResult(
