@@ -21,6 +21,7 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
     private val noChipsChange = ChipsChange(0)
     private val initialChips = 1000
     private val smallInitialChips = 150
+    private val almostSmallInitialChips = smallInitialChips - 1
     private val anotherInitialChips = 888
     private val anotherInitialChips2 = 889
     private val nextRoundDealResult = NextRoundResult(player3Id)
@@ -267,7 +268,7 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
     }
 
     @Test
-    fun `When wins player with all in he should win only all in amount from other players, then rest goes to next winner`() {
+    fun `When wins player with all in he should win "only all" in amount from other players, then rest goes to next winner`() {
         val cardDistribution =
             getCardDistributionWithBestHandsPlayer3Player2Player1Player4Player5()
 
@@ -288,6 +289,35 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
                         PlayerResult(player1Id, maxBetChipsLost),
                         PlayerResult(player2Id, maxBetPlayerChange),
                         PlayerResult(player3Id, allInPlayerWins),
+                        PlayerResult(player4Id, noChipsChange),
+                        PlayerResult(player5Id, noChipsChange),
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `When wins player with all and all other folded should win all pot`() {
+        val cardDistribution =
+            getCardDistributionWithBestHandsPlayer3Player2Player1Player4Player5()
+
+        val dealPlayers = getDealPlayersWithAllPlayersWon()
+
+        val betPlayersAndFolded = 2
+        val allInPlayerWins = ChipsChange(almostSmallInitialChips * betPlayersAndFolded)
+        val otherPlayerLost = ChipsChange(-almostSmallInitialChips)
+
+        assertThat(
+            DealResultCalculateProcedure(dealPlayers).dealResult(
+                nextRoundDealResult,
+                cardDistribution
+            ), equalTo(
+                DealResult(
+                    listOf(
+                        PlayerResult(player1Id, allInPlayerWins),
+                        PlayerResult(player2Id, otherPlayerLost),
+                        PlayerResult(player3Id, otherPlayerLost),
                         PlayerResult(player4Id, noChipsChange),
                         PlayerResult(player5Id, noChipsChange),
                     )
@@ -322,6 +352,16 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
             DealPlayer(player4Id, initialChips, maxBetChipsAmount),
             DealPlayer(player5Id, initialChips, maxBetChipsAmount),
         )
+
+    private fun getDealPlayersWithAllPlayersWon(): List<DealPlayer> =
+        listOf(
+            DealPlayer(player1Id, smallInitialChips, smallInitialChips),
+            DealPlayer(player2Id, initialChips, almostSmallInitialChips),
+            DealPlayer(player3Id, anotherInitialChips, almostSmallInitialChips),
+            DealPlayer(player4Id, initialChips),
+            DealPlayer(player5Id, anotherInitialChips2),
+        )
+
 
     private fun getDealPlayersWithAllPlayersShowdownWithSomeAllIn(): List<DealPlayer> =
         listOf(
