@@ -55,14 +55,11 @@ private fun splitPotWithAllInWInner(
         DealPlayer(
             uuid = it.uuid,
             chipsBet = max(0, it.chipsBet.amount - allInChips),
-            initialChips = it.chips.amount
+            initialChips = max(0, it.chips.amount - allInChips),
         )
     }
-    val allInResult =
-        splitPotWithoutAllInWinner(bestPlayers, nextRoundDealResult, playersWithLimitedBets)
-    val rest =  calculateDealResults(nextRoundDealResult, cardDistribution, playersBetMinusAllIn)
-    return allInResult + rest
-    //return allInResult + calculateDealResults(nextRoundDealResult, cardDistribution, playersBetMinusAllIn)
+    return splitPotWithoutAllInWinner(bestPlayers, nextRoundDealResult, playersWithLimitedBets) +
+            calculateDealResults(nextRoundDealResult, cardDistribution, playersBetMinusAllIn)
 }
 
 private operator fun DealResult.plus(other: DealResult) =
@@ -184,7 +181,7 @@ private fun getBestPlayers(
 private class PlayerWithHand(val id: DealPlayer, val hand: Hand)
 
 
-fun DealPlayer.allIn() = chips.amount == chipsBet.amount
+fun DealPlayer.allIn() = chips.amount == chipsBet.amount && chipsBet.amount != 0
 
 fun DealPlayer.maxBetter(maxBet: Int?) = chipsBet.amount == maxBet
 

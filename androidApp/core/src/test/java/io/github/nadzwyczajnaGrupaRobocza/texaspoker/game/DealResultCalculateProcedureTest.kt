@@ -21,6 +21,8 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
     private val noChipsChange = ChipsChange(0)
     private val initialChips = 1000
     private val smallInitialChips = 150
+    private val anotherInitialChips = 888
+    private val anotherInitialChips2 = 889
     private val nextRoundDealResult = NextRoundResult(player3Id)
 
     @Test
@@ -115,6 +117,30 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
         val cardDistribution = getCardDistributionWithBestHandOnTable()
 
         val dealPlayers = getDealPlayersWithAllPlayersShowdown()
+
+        assertThat(
+            DealResultCalculateProcedure(dealPlayers).dealResult(
+                nextRoundDealResult,
+                cardDistribution
+            ), equalTo(
+                DealResult(
+                    listOf(
+                        PlayerResult(player1Id, noChipsChange),
+                        PlayerResult(player2Id, noChipsChange),
+                        PlayerResult(player3Id, noChipsChange),
+                        PlayerResult(player4Id, noChipsChange),
+                        PlayerResult(player5Id, noChipsChange),
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `When all players win with different all ins should be no change in chips`() {
+        val cardDistribution = getCardDistributionWithBestHandOnTable()
+
+        val dealPlayers = getDealPlayersWithAllPlayersShowdownWithSomeAllIn()
 
         assertThat(
             DealResultCalculateProcedure(dealPlayers).dealResult(
@@ -295,6 +321,15 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
             DealPlayer(player3Id, initialChips, maxBetChipsAmount),
             DealPlayer(player4Id, initialChips, maxBetChipsAmount),
             DealPlayer(player5Id, initialChips, maxBetChipsAmount),
+        )
+
+    private fun getDealPlayersWithAllPlayersShowdownWithSomeAllIn(): List<DealPlayer> =
+        listOf(
+            DealPlayer(player1Id, smallInitialChips, smallInitialChips),
+            DealPlayer(player2Id, initialChips, initialChips),
+            DealPlayer(player3Id, anotherInitialChips, anotherInitialChips),
+            DealPlayer(player4Id, initialChips, initialChips),
+            DealPlayer(player5Id, anotherInitialChips2, anotherInitialChips2),
         )
 
     private fun getCardDistributionWithThreeWinners(): CardsDistribution {
