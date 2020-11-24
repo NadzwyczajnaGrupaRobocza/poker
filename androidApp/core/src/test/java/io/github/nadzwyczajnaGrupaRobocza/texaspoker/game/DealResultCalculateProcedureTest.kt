@@ -111,6 +111,50 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
     }
 
     @Test
+    fun `When all players win should be no change in chips`() {
+        val firstPlayerCard1 = heartsFive
+        val firstPlayerCard2 = diamondsFive
+        val secondPlayerCard1 = heartsThree
+        val secondPlayerCard2 = diamondsThree
+        val thirdPlayerCard1 = diamondsKing
+        val thirdPlayerCard2 = spadesEight
+        val fourthPlayerCard1 = spadesFive
+        val fourthPlayerCard2 = clubsFive
+        val fifthPlayerCard1 = clubsKing
+        val fifthPlayerCard2 = clubsNine
+        val burn1 = clubsFour
+        val flopCards = listOf(spadesAce, spadesKing, spadesTen)
+        val burn2 = diamondsQueen
+        val turn = spadesQueen
+        val burn3 = diamondsAce
+        val river = spadesJack
+        val cardDistribution =
+            CardsDistribution.createCardsDistribution(
+                listOf(firstPlayerCard1) + secondPlayerCard1 + thirdPlayerCard1 + fourthPlayerCard1 + fifthPlayerCard1 + firstPlayerCard2 + secondPlayerCard2 + thirdPlayerCard2 + fourthPlayerCard2 + fifthPlayerCard2 + burn1 + flopCards + burn2 + turn + burn3 + river,
+                playersIds
+            )
+
+        val dealPlayers = getDealPlayersWithAllPlayersShowdown()
+
+        assertThat(
+            DealResultCalculateProcedure(dealPlayers).dealResult(
+                nextRoundDealResult,
+                cardDistribution
+            ), equalTo(
+                DealResult(
+                    listOf(
+                        PlayerResult(player1Id, noChipsChange),
+                        PlayerResult(player2Id, noChipsChange),
+                        PlayerResult(player3Id, noChipsChange),
+                        PlayerResult(player4Id, noChipsChange),
+                        PlayerResult(player5Id, noChipsChange),
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
     fun `When multiple players left given two equal hands should split win`() {
         val firstPlayerCard1 = heartsFive
         val firstPlayerCard2 = diamondsFive
@@ -262,6 +306,15 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
             DealPlayer(player3Id, initialChips, lostChips2Amount),
             DealPlayer(player4Id, initialChips, maxBetChipsAmount),
             DealPlayer(player5Id, initialChips),
+        )
+
+    private fun getDealPlayersWithAllPlayersShowdown(): List<DealPlayer> =
+        listOf(
+            DealPlayer(player1Id, initialChips, maxBetChipsAmount),
+            DealPlayer(player2Id, initialChips, maxBetChipsAmount),
+            DealPlayer(player3Id, initialChips, maxBetChipsAmount),
+            DealPlayer(player4Id, initialChips, maxBetChipsAmount),
+            DealPlayer(player5Id, initialChips, maxBetChipsAmount),
         )
 
     private fun getCardDistributionWithThreeWinners(): CardsDistribution {
