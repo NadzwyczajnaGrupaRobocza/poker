@@ -3,7 +3,7 @@ apply plugin: "kotlin"
 sourceSets.main.java.srcDirs = [ "src/" ]
 sourceSets.main.resources.srcDirs = ["../app/assets"]
 
-project.ext.mainClassName = "io.github.NadzwyczajnaGrupaRobocza.texaspoker.DesktopLauncher"
+project.ext.mainClassName = "io.github.nadzwyczajnaGrupaRobocza.texaspoker.DesktopLauncher"
 project.ext.assetsDir = new File("../app/assets")
 
 task run(dependsOn: classes, type: JavaExec) {
