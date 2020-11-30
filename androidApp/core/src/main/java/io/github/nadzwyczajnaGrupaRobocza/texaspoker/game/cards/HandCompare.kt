@@ -2,16 +2,9 @@ package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards
 
 private data class RanksToCompare(val lhs: Rank, val rhs: Rank)
 
-private const val equal = 0
-private const val bigger = 1
-private const val less = -1
-
-fun Hand.compareTo(other: Hand): Int =
-    when {
-        this.type < other.type -> less
-        this.type > other.type -> bigger
-        else -> compareFirstImportantCardsThenKickers(this, other)
-    }
+internal const val bigger = 1
+internal const val less = -1
+internal const val equal = 0
 
 fun compareFirstImportantCardsThenKickers(lhs: Hand, rhs: Hand) =
     when (val it = compareCards(lhs.importantCards, rhs.importantCards)) {

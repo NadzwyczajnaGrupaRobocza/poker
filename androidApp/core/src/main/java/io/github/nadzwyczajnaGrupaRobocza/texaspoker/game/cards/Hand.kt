@@ -2,8 +2,22 @@ package io.github.nadzwyczajnaGrupaRobocza.texaspoker.game.cards
 
 import java.lang.Integer.max
 
-class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
+
+class Hand(river: RiverCommunityCards, pocketCards: PocketCards) : Comparable<Hand> {
     val cards = (river.cards + pocketCards.card1 + pocketCards.card2).toSet()
+
+    override fun compareTo(other: Hand) =
+        when {
+            this.type < other.type -> less
+            this.type > other.type -> bigger
+            else -> compareFirstImportantCardsThenKickers(this, other)
+        }
+
+    override fun equals(other: Any?): Boolean = when (other) {
+        is Hand -> compareTo(other) == 0
+        else -> false
+    }
+
 
     private data class InternalHand(
         val type: HandType,
@@ -253,6 +267,10 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) {
 
     private fun getFiveMaxRankedCards(cards: List<Card>) =
         cards.filterOutDuplicatedRanks().take(handCardsCount)
+
+    override fun hashCode(): Int {
+        return cards.hashCode()
+    }
 
     companion object {
         private const val handCardsCount = 5
