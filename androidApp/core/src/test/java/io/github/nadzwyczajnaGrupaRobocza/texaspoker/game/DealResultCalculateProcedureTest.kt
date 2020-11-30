@@ -326,6 +326,34 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
         )
     }
 
+    @Test
+    fun `When split win with one all in player and other player should split win properly`() {
+        val cardDistribution = getCardDistributionWithBestHandOnTable()
+
+        val dealPlayers = getDealPlayersWithAllInPlayerAndOneMoreBetAndSomeLessBets()
+
+        val allInPlayerWin = ChipsChange(smallInitialChips / 2 + lostChips2Amount / 2)
+        val secondPlayerWin = ChipsChange(smallInitialChips / 2 + lostChips2Amount / 2 + lostChips2Amount)
+        val player4Lost = ChipsChange(-lostChips2Amount - smallInitialChips)
+
+        assertThat(
+            DealResultCalculateProcedure(dealPlayers).dealResult(
+                nextRoundDealResult,
+                cardDistribution
+            ), equalTo(
+                DealResult(
+                    listOf(
+                        PlayerResult(player1Id, allInPlayerWin),
+                        PlayerResult(player2Id, secondPlayerWin),
+                        PlayerResult(player3Id, lostChips2),
+                        PlayerResult(player4Id, player4Lost),
+                        PlayerResult(player5Id, noChipsChange),
+                    )
+                )
+            )
+        )
+    }
+
     private fun getDealPlayersWithPlayer3AllInAndPlayers2And1MaxBetRestWithoutBet(): List<DealPlayer> =
         listOf(
             DealPlayer(player1Id, initialChips, maxBetChipsAmount),
@@ -370,6 +398,15 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
             DealPlayer(player3Id, anotherInitialChips, anotherInitialChips),
             DealPlayer(player4Id, initialChips, initialChips),
             DealPlayer(player5Id, anotherInitialChips2, anotherInitialChips2),
+        )
+
+    private fun getDealPlayersWithAllInPlayerAndOneMoreBetAndSomeLessBets(): List<DealPlayer> =
+        listOf(
+            DealPlayer(player1Id, smallInitialChips, smallInitialChips),
+            DealPlayer(player2Id, initialChips, maxBetChipsAmount * 2),
+            DealPlayer(player3Id, initialChips, lostChips2Amount),
+            DealPlayer(player4Id, initialChips, lostChips2Amount + smallInitialChips),
+            DealPlayer(player5Id, initialChips),
         )
 
     private fun getCardDistributionWithThreeWinners(): CardsDistribution {
