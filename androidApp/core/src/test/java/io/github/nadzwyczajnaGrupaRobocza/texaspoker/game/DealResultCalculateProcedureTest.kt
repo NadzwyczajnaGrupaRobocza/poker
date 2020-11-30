@@ -220,7 +220,7 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
                 DealPlayer(player5Id, initialChips),
             )
 
-        val splitChipsWon = ChipsChange((lostChips3Amount) / 3)
+        val splitChipsWon = ChipsChange(lostChips3Amount / 3)
         val splitChipsWithLeftoverChipWon = ChipsChange(splitChipsWon.change + 1)
         assertThat(
             DealResultCalculateProcedure(dealPlayers).dealResult(
@@ -247,7 +247,7 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
 
         val dealPlayers = getDealPlayersWithThreePlayersShowdown()
 
-        val splitChipsWon = ChipsChange((lostChips2Amount) / 3)
+        val splitChipsWon = ChipsChange(lostChips2Amount / 3)
         val splitChipsWithLeftoverChipWon = ChipsChange(splitChipsWon.change + 1)
         assertThat(
             DealResultCalculateProcedure(dealPlayers).dealResult(

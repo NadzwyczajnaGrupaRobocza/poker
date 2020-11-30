@@ -18,6 +18,7 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) : Comparable<Ha
         else -> false
     }
 
+
     private data class InternalHand(
         val type: HandType,
         val handTypeCards: List<Card>,
@@ -266,6 +267,10 @@ class Hand(river: RiverCommunityCards, pocketCards: PocketCards) : Comparable<Ha
 
     private fun getFiveMaxRankedCards(cards: List<Card>) =
         cards.filterOutDuplicatedRanks().take(handCardsCount)
+
+    override fun hashCode(): Int {
+        return cards.hashCode()
+    }
 
     companion object {
         private const val handCardsCount = 5
