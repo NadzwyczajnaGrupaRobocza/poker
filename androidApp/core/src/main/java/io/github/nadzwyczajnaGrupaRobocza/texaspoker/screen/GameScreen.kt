@@ -74,6 +74,7 @@ class GameScreen(private val object_pool: Context) : KtxScreen {
                 centerOfScene
             )
         )
+        actors.add(PrizePoolActor(object_pool.inject(), centerOfScene))
     }
 
     private fun setupEntityComponentSystems() {
