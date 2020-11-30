@@ -333,7 +333,8 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
         val dealPlayers = getDealPlayersWithAllInPlayerAndOneMoreBetAndSomeLessBets()
 
         val allInPlayerWin = ChipsChange(smallInitialChips / 2 + lostChips2Amount / 2)
-        val secondPlayerWin = ChipsChange(smallInitialChips / 2 + lostChips2Amount / 2 + lostChips2Amount)
+        val secondPlayerWin =
+            ChipsChange(smallInitialChips / 2 + lostChips2Amount / 2 + lostChips2Amount)
         val player4Lost = ChipsChange(-lostChips2Amount - smallInitialChips)
 
         assertThat(
@@ -347,6 +348,35 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
                         PlayerResult(player2Id, secondPlayerWin),
                         PlayerResult(player3Id, lostChips2),
                         PlayerResult(player4Id, player4Lost),
+                        PlayerResult(player5Id, noChipsChange),
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `When split two all different all ins one should win half of own all in, second half of first all in plus difference between them`() {
+        val cardDistribution = getCardDistributionWithThreeWinners()
+
+        val dealPlayers = getDealPlayersWithTwoDifferentAllInsAndOneMaxBet()
+
+        val firstAllInPlayerWin = ChipsChange(smallInitialChips / 2)
+        val allInsDifference = maxBetChipsAmount - smallInitialChips
+        val secondAllInPlayerWin = ChipsChange(smallInitialChips / 2 + allInsDifference)
+        val playerLost = ChipsChange(-smallInitialChips - allInsDifference)
+
+        assertThat(
+            DealResultCalculateProcedure(dealPlayers).dealResult(
+                nextRoundDealResult,
+                cardDistribution
+            ), equalTo(
+                DealResult(
+                    listOf(
+                        PlayerResult(player1Id, firstAllInPlayerWin),
+                        PlayerResult(player2Id, secondAllInPlayerWin),
+                        PlayerResult(player3Id, playerLost),
+                        PlayerResult(player4Id, noChipsChange),
                         PlayerResult(player5Id, noChipsChange),
                     )
                 )
@@ -408,6 +438,14 @@ class DealResultCalculateProcedureTest : FivePlayersDealTestData() {
             DealPlayer(player4Id, initialChips, lostChips2Amount + smallInitialChips),
             DealPlayer(player5Id, initialChips),
         )
+
+    private fun getDealPlayersWithTwoDifferentAllInsAndOneMaxBet() = listOf(
+        DealPlayer(player1Id, smallInitialChips, smallInitialChips),
+        DealPlayer(player2Id, maxBetChipsAmount, maxBetChipsAmount),
+        DealPlayer(player3Id, initialChips, 2 * maxBetChipsAmount),
+        DealPlayer(player4Id, initialChips),
+        DealPlayer(player5Id, initialChips),
+    )
 
     private fun getCardDistributionWithThreeWinners(): CardsDistribution {
         val firstPlayerCard1 = heartsFive
