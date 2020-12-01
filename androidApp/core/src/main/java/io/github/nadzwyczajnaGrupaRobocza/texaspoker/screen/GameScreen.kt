@@ -17,11 +17,10 @@ class GameScreen(private val object_pool: Context) : KtxScreen {
     private val log = logger<GameScreen>()
     private val camera: OrthographicCamera = object_pool.inject()
     private val engine: PooledEngine = object_pool.inject()
-    private val assets: AssetManager = object_pool.inject()
 
     // All classes that depends on textures cannot be created at construction time
     // Textures are load just before the show() function is called
-    private var actors = arrayListOf<GameActor?>()
+    private var actors = arrayListOf<IGameActor?>()
 
     override fun show() {
         setupEntityComponentSystems()
@@ -52,29 +51,11 @@ class GameScreen(private val object_pool: Context) : KtxScreen {
         actors.add(
             TableActor(
                 object_pool,
-                assets,
                 centerOfScene,
                 camera.viewportWidth,
                 camera.viewportHeight
             )
         )
-        actors.add(
-            CommunityCardsActor(
-                object_pool,
-                assets,
-                centerOfScene
-            )
-        )
-        actors.add(
-            PlayersRingActor(
-                object_pool.inject(),
-                assets,
-                camera.viewportWidth,
-                camera.viewportHeight,
-                centerOfScene
-            )
-        )
-        actors.add(PrizePoolActor(object_pool.inject(), centerOfScene))
     }
 
     private fun setupEntityComponentSystems() {

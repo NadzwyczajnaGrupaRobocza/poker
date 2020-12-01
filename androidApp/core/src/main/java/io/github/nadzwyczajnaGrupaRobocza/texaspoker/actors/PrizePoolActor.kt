@@ -1,7 +1,7 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.actors
 
-import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.math.Vector2
+import io.github.nadzwyczajnaGrupaRobocza.texaspoker.actors.IGameActor
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.*
 import ktx.app.KtxInputAdapter
 import ktx.ashley.entity
@@ -11,7 +11,7 @@ import ktx.inject.Context
 class PrizePoolActor(
     object_pool: Context,
     private val center_of_scene: Vector2
-) : GameActor(object_pool), KtxInputAdapter {
+) : IGameActor(object_pool), KtxInputAdapter {
 
     init {
         drawPool()

@@ -10,4 +10,5 @@ class SpriteRendererComponent : Component {
     }
 
     val sprite = Sprite()
+    var hide : Boolean = false
 }

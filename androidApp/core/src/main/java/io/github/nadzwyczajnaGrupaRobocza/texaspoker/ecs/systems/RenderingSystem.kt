@@ -6,21 +6,15 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.badlogic.gdx.math.MathUtils
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.ArcRendererComponent
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.EllipseRendererComponent
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.SpriteRendererComponent
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.TransformComponent
-import io.github.nadzwyczajnaGrupaRobocza.texaspoker.screen.GameScreen
 import ktx.ashley.allOf
 import ktx.ashley.get
 import ktx.graphics.use
 import ktx.inject.Context
-import ktx.log.logger
-
-private val log = logger<GameScreen>()
-
 
 class MyShapeRenderer : ShapeRenderer() {
     /** Draws an arc using [ShapeType.Line] or [ShapeType.Filled].  */
@@ -74,36 +68,56 @@ class RenderingSystem(object_pool: Context) : SortedIteratingSystem(
     }
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
+        entity[TransformComponent.mapper]?.let { transform ->
+            drawSprites(entity, transform)
+            drawEllipses(entity, transform)
+        }
+        Gdx.gl.glLineWidth(defaultLineWidth)
+    }
+
+    private fun drawSprites(entity: Entity, transform: TransformComponent) {
         batch.use(camera) { batch ->
-            entity[TransformComponent.mapper]?.let { transform ->
-                entity[SpriteRendererComponent.mapper]?.let { renderer2d ->
+            entity[SpriteRendererComponent.mapper]?.let { renderer2d ->
+                if (!renderer2d.hide) {
+//                    batch.draw(
+//                        renderer2d.sprite,
+//                        transform.x,
+//                        transform.y,
+//                        renderer2d.sprite.width,
+//                        renderer2d.sprite.height
+//                    )
+
                     batch.draw(
                         renderer2d.sprite,
                         transform.x,
                         transform.y,
+                        0.0F,
+                        0.0F,
                         renderer2d.sprite.width,
-                        renderer2d.sprite.height
+                        renderer2d.sprite.height,
+                        1.0F,
+                        1.0F,
+                        transform.angle
                     )
                 }
             }
         }
+    }
+
+    private fun drawEllipses(entity: Entity, transform: TransformComponent) {
         renderer.projectionMatrix = batch.projectionMatrix;
         renderer.use(ShapeRenderer.ShapeType.Line) { renderer ->
-            entity[TransformComponent.mapper]?.let { transform ->
-                entity[EllipseRendererComponent.mapper]?.let { ellipse ->
-                    Gdx.gl.glLineWidth(ellipse.lineWidth)
-                    renderer.color = ellipse.color
-                    renderer.ellipse(transform.x, transform.y, ellipse.width, ellipse.height)
-                }
-                entity[ArcRendererComponent.mapper]?.let { arc ->
-                    Gdx.gl.glLineWidth(arc.lineWidth)
-                    renderer.color = arc.color
-                    renderer.arc(transform.x, transform.y, arc.radius, arc.start, arc.degrees)
-                }
+            entity[EllipseRendererComponent.mapper]?.let { ellipse ->
+                Gdx.gl.glLineWidth(ellipse.lineWidth)
+                renderer.color = ellipse.color
+                renderer.ellipse(transform.x, transform.y, ellipse.width, ellipse.height)
+            }
+            entity[ArcRendererComponent.mapper]?.let { arc ->
+                Gdx.gl.glLineWidth(arc.lineWidth)
+                renderer.color = arc.color
+                renderer.arc(transform.x, transform.y, arc.radius, arc.start, arc.degrees)
             }
         }
-
-        Gdx.gl.glLineWidth(defaultLineWidth)
     }
 
 }

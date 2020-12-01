@@ -1,6 +1,5 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.actors
 
-import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
@@ -20,7 +19,7 @@ class CommunityCardsActor(
     object_pool: Context,
     assets: AssetManager,
     private val center_of_scene: Vector2
-) : GameActor(object_pool) {
+) : IGameActor(object_pool) {
 
     companion object {
 
@@ -35,17 +34,22 @@ class CommunityCardsActor(
 
     private var clickId = 0
     private var frames = Array<Entity>(numberOfFrames)
-    private var cards = Array<Entity?>(0)
+    private var cards = Array<CardActor?>(0)
 
     init {
-        cards = Array(numberOfFrames)
         createCardFrames()
+        createInvisibleCards()
     }
 
     override fun update(delta: Float) {
         if (Gdx.input.justTouched()) {
             calculateNextCard()
-            putNextCard()
+
+            if (clickId == 0) {
+                hideAllCards()
+            } else {
+                showCardAtFrame(clickId - 1)
+            }
             logCardDetails()
         }
     }
@@ -54,33 +58,25 @@ class CommunityCardsActor(
         clickId = (clickId + 1) % (numberOfFrames + 1)
     }
 
-    private fun putNextCard() {
-        if (clickId == 0) {
-            takeOutAllCards()
-        } else {
-            drawCardAtFrame(clickId - 1)
-        }
-    }
-
-    private fun takeOutAllCards() {
+    private fun hideAllCards() {
         for (card in cards) {
-            engine?.removeEntity(card)
+            card?.setVisibility(false)
         }
-        cards = Array(numberOfFrames)
     }
 
-    private fun drawCardAtFrame(frameId: Int) {
-        frames[frameId][TransformComponent.mapper]?.let { transform ->
-            cards.add(
-                createVisibleObject(
-                    transform.x,
-                    transform.y,
-                    cardWidth,
-                    cardHeight,
-                    jHRegion
+    private fun createInvisibleCards() {
+        for (frame in frames) {
+            frame[TransformComponent.mapper]?.let { transform ->
+                cards.add(
+                    CardActor(object_pool, transform, jHRegion)
                 )
-            )
+                cards.last()?.setVisibility(false)
+            }
         }
+    }
+
+    private fun showCardAtFrame(frameId: Int) {
+        cards[frameId]?.setVisibility(visibility = true)
     }
 
     private fun logCardDetails() {

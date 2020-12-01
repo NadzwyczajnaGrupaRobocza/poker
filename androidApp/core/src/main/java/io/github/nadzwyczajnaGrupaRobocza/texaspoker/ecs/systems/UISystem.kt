@@ -4,22 +4,18 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.SortedIteratingSystem
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.Touchable
-import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.utils.Align
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.GameState
-import io.github.nadzwyczajnaGrupaRobocza.texaspoker.actors.GameActor
-import io.github.nadzwyczajnaGrupaRobocza.texaspoker.assets.TextureAtlasAssets
-import io.github.nadzwyczajnaGrupaRobocza.texaspoker.assets.get
+import io.github.nadzwyczajnaGrupaRobocza.texaspoker.actors.IGameActor
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.TransformComponent
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.UILabelComponent
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.screen.GameScreen
@@ -29,7 +25,6 @@ import ktx.ashley.get
 import ktx.inject.Context
 import ktx.log.logger
 import ktx.scene2d.*
-import ktx.style.*
 
 class UISystem(object_pool: Context) : SortedIteratingSystem(
     allOf(TransformComponent::class, UILabelComponent::class).get(),
@@ -43,7 +38,7 @@ class UISystem(object_pool: Context) : SortedIteratingSystem(
 
     // All classes that depends on textures cannot be created at construction time
     // Textures are load just before the show() function is called
-    private var actors = arrayListOf<GameActor?>()
+    private var actors = arrayListOf<IGameActor?>()
     private val game_state: GameState = object_pool.inject()
     private lateinit var touchButton: Button
     private lateinit var gameStateLabel: Label
@@ -71,7 +66,7 @@ class UISystem(object_pool: Context) : SortedIteratingSystem(
             }
 */
             var button_width = 200F
-            var button_height = 100F
+            var button_height = 50F
 
             textButton("Check") {
                 width = button_width
@@ -95,7 +90,7 @@ class UISystem(object_pool: Context) : SortedIteratingSystem(
             }
             var riseSlider = slider(min = 10F, max = 1000F, step = 1F, vertical = true){
                 height = Gdx.graphics.height - (touchButton.height * 2)
-                setPosition(touchButton.getX() + (touchButton.width * 3 / 4), touchButton.getY() + (touchButton.height * 1.5F))
+                setPosition(touchButton.x + (touchButton.width * 3 / 4), touchButton.y + (touchButton.height * 1.5F))
                 style.knob.minHeight = style.knob.minHeight * 4
                 style.knob.minWidth = style.knob.minWidth * 1.5F
 
@@ -104,7 +99,7 @@ class UISystem(object_pool: Context) : SortedIteratingSystem(
                 }
             }
             riseField = textField("rise: $${riseSlider.minValue}"){
-                setPosition(touchButton.getX(), touchButton.getY() + (touchButton.height * 1.5F))
+                setPosition(touchButton.x - 10, touchButton.y + (touchButton.height * 1.5F))
                 touchable = Touchable.disabled
             }
         }

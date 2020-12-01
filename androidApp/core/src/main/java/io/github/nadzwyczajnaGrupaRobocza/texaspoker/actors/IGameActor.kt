@@ -10,7 +10,7 @@ import ktx.ashley.entity
 import ktx.ashley.with
 import ktx.inject.Context
 
-abstract class GameActor(
+abstract class IGameActor(
     protected val object_pool : Context,
 ) {
     protected val engine: PooledEngine = object_pool.inject()
@@ -20,6 +20,22 @@ abstract class GameActor(
     }
 
     protected fun createVisibleObject(
+        transform : TransformComponent,
+        sprite_width: Float,
+        sprite_height: Float,
+        region: TextureRegion,
+        index: Int = 0
+    ): Entity? {
+        return engine.entity {
+            with<TransformComponent> { x = transform.x; y = transform.y; z = 5F; angle = transform.angle}
+            with<SpriteRendererComponent> {
+                sprite.setRegion(region)
+                sprite.setSize(sprite_width, sprite_height)
+                sprite.setPosition(transform.x, transform.y)
+            }
+        }
+    }
+    protected fun createVisibleObject(
         pos_x: Float,
         pos_y: Float,
         sprite_width: Float,
@@ -28,7 +44,7 @@ abstract class GameActor(
         index: Int = 0
     ): Entity? {
         return engine.entity {
-            with<TransformComponent> { x = pos_x; y = pos_y; z = 0F}
+            with<TransformComponent> { x = pos_x; y = pos_y; z = 5F}
             with<SpriteRendererComponent> {
                 sprite.setRegion(region)
                 sprite.setSize(sprite_width, sprite_height)
