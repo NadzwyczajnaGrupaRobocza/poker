@@ -4,13 +4,14 @@ import com.badlogic.ashley.core.Component
 import com.badlogic.gdx.graphics.Color
 import ktx.ashley.mapperFor
 
-class EllipseRendererComponent : Component {
+class ArcRendererComponent : Component {
     companion object {
-        val mapper = mapperFor<EllipseRendererComponent>()
+        val mapper = mapperFor<ArcRendererComponent>()
     }
 
-    var width = 0F
-    var height = 0F
+    var radius = 0F
+    var start = 0F
+    var degrees = 0F
     var color = Color.WHITE
     var lineWidth = 1F
 }

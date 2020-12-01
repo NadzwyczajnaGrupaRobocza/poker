@@ -3,42 +3,35 @@ package io.github.nadzwyczajnaGrupaRobocza.texaspoker.screen
 import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import io.github.nadzwyczajnaGrupaRobocza.texaspoker.actors.CommunityCardsActor
-import io.github.nadzwyczajnaGrupaRobocza.texaspoker.actors.GameActor
-import io.github.nadzwyczajnaGrupaRobocza.texaspoker.actors.PlayersRingActor
-import io.github.nadzwyczajnaGrupaRobocza.texaspoker.actors.TableActor
+import com.badlogic.gdx.math.Vector2
+import io.github.nadzwyczajnaGrupaRobocza.texaspoker.actors.*
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.systems.RenderingSystem
+import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.systems.UISystem
 import ktx.app.KtxScreen
+import ktx.inject.Context
 import ktx.log.debug
 import ktx.log.logger
-import kotlin.collections.arrayListOf
 
-class GameScreen(
-    private val batch: Batch,
-    private val assets: AssetManager,
-    private val camera: OrthographicCamera,
-    private val engine: PooledEngine,
-    private val shape_renderer: ShapeRenderer
-) : KtxScreen {
 
+class GameScreen(private val object_pool: Context) : KtxScreen {
     private val log = logger<GameScreen>()
+    private val camera: OrthographicCamera = object_pool.inject()
+    private val engine: PooledEngine = object_pool.inject()
 
     // All classes that depends on textures cannot be created at construction time
     // Textures are load just before the show() function is called
-    private var actors = arrayListOf<GameActor?>()
+    private var actors = arrayListOf<IGameActor?>()
+
+    override fun show() {
+        setupEntityComponentSystems()
+        createGameScene()
+    }
 
     override fun render(delta: Float) {
         updateGameScene(delta)
         engine.update(delta)
     }
 
-    override fun show() {
-        createGameScene()
-
-        setupEntityComponentSystems()
-    }
 
     private fun updateGameScene(delta: Float) {
         for (actor in actors) {
@@ -50,20 +43,25 @@ class GameScreen(
         log.debug {
             "create game with screen width: ${camera.viewportWidth} height: ${camera.viewportHeight}"
         }
-        actors.add(TableActor(assets, engine, camera.viewportWidth, camera.viewportHeight))
-        actors.add(CommunityCardsActor(assets, engine, camera.viewportWidth, camera.viewportHeight))
-        actors.add(PlayersRingActor(assets, engine, camera.viewportWidth, camera.viewportHeight))
+        val centerOfScene = Vector2(
+            camera.viewportWidth / 2f,
+            camera.viewportHeight / 2f + 30f
+        )
+
+        actors.add(
+            TableActor(
+                object_pool,
+                centerOfScene,
+                camera.viewportWidth,
+                camera.viewportHeight
+            )
+        )
     }
 
     private fun setupEntityComponentSystems() {
         engine.apply {
-            addSystem(
-                RenderingSystem(
-                    batch,
-                    camera,
-                    shape_renderer
-                )
-            )
+            addSystem(RenderingSystem(object_pool.inject()))
+            addSystem(UISystem(object_pool.inject()))
         }
     }
 }

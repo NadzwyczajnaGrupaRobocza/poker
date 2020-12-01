@@ -11,4 +11,6 @@ class TransformComponent : Component {
     var x = 0.0F
     var y = 0.0F
     var z = 0.0F
+
+    var angle = 0.0F
 }

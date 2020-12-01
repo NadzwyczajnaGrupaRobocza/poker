@@ -1,38 +1,48 @@
 package io.github.nadzwyczajnaGrupaRobocza.texaspoker.actors
 
-import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.assets.AssetManager
-import io.github.nadzwyczajnaGrupaRobocza.texaspoker.Game
+import com.badlogic.gdx.math.Vector2
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.assets.TextureAtlasAssets
 import io.github.nadzwyczajnaGrupaRobocza.texaspoker.assets.get
-import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.SpriteRendererComponent
-import io.github.nadzwyczajnaGrupaRobocza.texaspoker.ecs.components.TransformComponent
-import ktx.ashley.entity
-import ktx.ashley.with
+import ktx.inject.Context
 
 class TableActor(
-    assets: AssetManager,
-    engine: Engine?,
-    private val tableWidth: Float,
-    private val tableHeight: Float
-) : GameActor(engine) {
-    private val backgroundRegion = assets[TextureAtlasAssets.Game].findRegion("background")
+    object_pool: Context,
+    centerOfScene: Vector2,
+    tableWidth: Float,
+    tableHeight: Float
+) : IGameActor(object_pool) {
+    private val assets: AssetManager = object_pool.inject()
+    private val backgroundSprite = assets[TextureAtlasAssets.Game].findRegion("background")
 
-    init {
-        drawTable()
-    }
+    private val ellipsePosX = centerOfScene.x
+    private val ellipsePosY = centerOfScene.y
 
-    private fun drawTable() {
-        engine?.entity {
-            with<TransformComponent> {
-                x = 0F;
-                y = 0F;
-                z = -1F;
-            }
-            with<SpriteRendererComponent> {
-                sprite.setRegion(backgroundRegion)
-                sprite.setSize(tableWidth, tableHeight)
-            }
-        }
+    private val tableBackground =
+        BackgroundActor(object_pool, backgroundSprite, tableWidth, tableHeight)
+    private val tableArc = TableBorderActor(object_pool, ellipsePosX, ellipsePosY)
+
+    private val communityCards = CommunityCardsActor(
+        object_pool,
+        assets,
+        centerOfScene
+    )
+    private val playersRing =
+        PlayersRingActor(
+            object_pool.inject(),
+            assets,
+            tableWidth,
+            tableHeight,
+            centerOfScene
+        )
+    private val prizePool = PrizePoolActor(object_pool, centerOfScene)
+    private val playerHand = PlayerHandActor(object_pool)
+
+    override fun update(delta: Float) {
+        tableBackground.update(delta)
+        tableArc.update(delta)
+        communityCards.update(delta)
+        playersRing.update(delta)
+        prizePool.update(delta)
     }
 }
