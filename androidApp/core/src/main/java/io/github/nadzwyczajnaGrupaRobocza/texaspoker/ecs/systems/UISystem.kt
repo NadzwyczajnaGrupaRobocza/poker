@@ -89,8 +89,8 @@ class UISystem(object_pool: Context) : SortedIteratingSystem(
                 }
             }
             var riseSlider = slider(min = 10F, max = 1000F, step = 1F, vertical = true){
-                height = Gdx.graphics.height - (touchButton.height * 2)
-                setPosition(touchButton.x + (touchButton.width * 3 / 4), touchButton.y + (touchButton.height * 1.5F))
+                height = Gdx.graphics.height - touchButton.height * 2
+                setPosition(touchButton.x + touchButton.width * 3 / 4, touchButton.y + touchButton.height * 1.5F)
                 style.knob.minHeight = style.knob.minHeight * 4
                 style.knob.minWidth = style.knob.minWidth * 1.5F
 
@@ -99,7 +99,7 @@ class UISystem(object_pool: Context) : SortedIteratingSystem(
                 }
             }
             riseField = textField("rise: $${riseSlider.minValue}"){
-                setPosition(touchButton.x - 10, touchButton.y + (touchButton.height * 1.5F))
+                setPosition(touchButton.x - 10, touchButton.y + touchButton.height * 1.5F)
                 touchable = Touchable.disabled
             }
         }

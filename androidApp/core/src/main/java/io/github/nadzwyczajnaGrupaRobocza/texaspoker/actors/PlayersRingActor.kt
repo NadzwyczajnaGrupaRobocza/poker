@@ -55,11 +55,11 @@ class PlayersRingActor(
     }
 
     private fun getPlayerIconR(playerId: Int): Float {
-        val offset = 10
+//        val offset = 10
         return circleR
-        return if (game_state.current_player_id == playerId)
-            circleR + offset
-        else circleR
+//        return if (game_state.current_player_id == playerId)
+//            circleR + offset
+//        else circleR
     }
 
     private fun getPlayerIconLineWidth(playerId: Int): Float {
@@ -81,8 +81,8 @@ class PlayersRingActor(
             icons.add(
                 PlayerActor(
                     object_pool,
-                    (ellipseWidthR * cos(alpha) + ellipsePosX),
-                    (ellipseHeightR * sin(alpha) + ellipsePosY),
+                    ellipseWidthR * cos(alpha) + ellipsePosX,
+                    ellipseHeightR * sin(alpha) + ellipsePosY,
                     playerCircleR,
                     playerCircleR,
                     line_color = getPlayerIconLineColor(playerId),
