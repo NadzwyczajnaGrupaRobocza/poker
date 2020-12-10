@@ -11,10 +11,10 @@ open class GameTestData {
     private val player2Id = PlayerId("2")
     private val player3Id = PlayerId("3")
     private val player4Id = PlayerId("4")
-    val player1 = Player(player1Id)
-    val player2 = Player(player2Id)
-    val player3 = Player(player3Id)
-    val player4 = Player(player4Id)
+    val player1 = AlwaysFoldPlayer(player1Id)
+    val player2 = AlwaysFoldPlayer(player2Id)
+    val player3 = AlwaysFoldPlayer(player3Id)
+    val player4 = AlwaysFoldPlayer(player4Id)
     val startingChips = 1000
     val blinds = Blinds(10)
     val gameConfiguration = GameConfiguration(startingChips, blinds)
@@ -69,11 +69,11 @@ class GameTest : GameTestData() {
     private val player7Id = PlayerId("7")
     private val player8Id = PlayerId("8")
     private val player9Id = PlayerId("9")
-    private val player5 = Player(player5Id)
-    private val player6 = Player(player6Id)
-    private val player7 = Player(player7Id)
-    private val player8 = Player(player8Id)
-    private val player9 = Player(player9Id)
+    private val player5 = AlwaysFoldPlayer(player5Id)
+    private val player6 = AlwaysFoldPlayer(player6Id)
+    private val player7 = AlwaysFoldPlayer(player7Id)
+    private val player8 = AlwaysFoldPlayer(player8Id)
+    private val player9 = AlwaysFoldPlayer(player9Id)
 
     @Test
     fun `Game should not be constructed with no players`() {
