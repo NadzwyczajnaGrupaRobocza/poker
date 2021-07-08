@@ -1,0 +1,16 @@
+language: android
+jdk: oraclejdk8
+android: 
+  components: 
+    - tools 
+    - platform-tools 
+    - android
+    - build-tools-29.0.6
+  licenses:
+    - android-sdk-preview-license-.+
+    - android-sdk-license-.+
+    - google-gdk-license-.+
+before_script:
+  - cd androidApp
+script:
+  - ./gradlew build
